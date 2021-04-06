@@ -48,9 +48,7 @@ class AuthMiddleware implements MiddlewareInterface
         $jwtFactory = $this->container->get(JwtFactoryInterface::class);
         $jwt = $jwtFactory->make();
 
-
-
-            if (!$jwt->check()) {
+        if (!$jwt->check()) {
             return $this->response->json(
                 [
                     'code'    => 403,

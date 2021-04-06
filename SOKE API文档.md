@@ -705,7 +705,7 @@ http://{{host}}/api/v1/fund/products
 
 
 
-#### 产品购买
+#### 产品购买(预下单)
 
 **请求方式：**
 
@@ -714,7 +714,7 @@ POST
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/fund/product/buy
+http://{{host}}/api/v1/fund/product/buy/order
 ```
 
 **是否认证**：
@@ -732,15 +732,23 @@ http://{{host}}/api/v1/fund/product/buy
 ```json
 {
     "code": 200,
-    "message": "",
-    "data": [
-    ]
+    "message": "预下单成功",
+    "data": {
+        "no": "JZGM161770007165029",
+        "amount": "1010.000000"
+    }
 }
 ```
 
 **返回参数：**
 
-无
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| no     | String   | 产品ID   |
+| title  | String   | 产品名称 |
+| amount | Integer  | 总份数   |
+
+
 
 ## Websocket Api
 
