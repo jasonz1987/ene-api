@@ -36,14 +36,21 @@ class AuthMiddleware implements MiddlewareInterface
     {
         $this->container = $container;
         $this->response  = $response;
+        $this->request = $request;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        if (in_array($this->request->path(), ['api/v1/contract/indexes', 'api/v1/contract/index/kline', 'api/v1/contract/index/market'])) {
+            return $handler->handle($request);
+        }
+
         $jwtFactory = $this->container->get(JwtFactoryInterface::class);
         $jwt = $jwtFactory->make();
 
-        if (!$jwt->check()) {
+
+
+            if (!$jwt->check()) {
             return $this->response->json(
                 [
                     'code'    => 403,
