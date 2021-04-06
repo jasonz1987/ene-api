@@ -96,6 +96,7 @@ class FundController extends AbstractController
         }
 
         $no = $request->input('no');
+        $id = $request->input('id');
 
         // 查找订单
         $order = FundOrder::where('no', '=', $no)
@@ -115,9 +116,20 @@ class FundController extends AbstractController
             ];
         }
 
-        $id = $this->request->input('id');
+        // 校验交易ID
+        Db::beginTransaction();
 
-        $id = HashId::decode($id);
+        try {
+            $order->tx_id = $id;
+            $order->tx_status = 1;
+            $order->save();
+
+        } catch (\Exception $e) {
+            return [
+                'code'    => 500,
+                'message' => '订单提交失败:' . $e->getMessage(),
+            ];
+        }
     }
 
     public function buyOrder(RequestInterface $request)
@@ -239,6 +251,41 @@ class FundController extends AbstractController
         $id = $this->request->input('id');
 
         $id = HashId::decode($id);
+
+        // TODO 赎回限制
+
+        $order = FundOrder::where('id', '=', $id)
+            ->first();
+
+        if (!$order) {
+            return [
+                'code'    => 500,
+                'message' => '订单不存在',
+            ];
+        }
+
+        if ($order->tx_status != 1) {
+            return [
+                'code'    => 500,
+                'message' => '订单未付款',
+            ];
+        }
+
+        if ($order->reward_status != 0) {
+            return [
+                'code'    => 500,
+                'message' => '订单已结算',
+            ];
+        }
+
+        $order->redeemed_at = now();
+        $order->save();
+
+        return [
+            'code'    => 200,
+            'message' => '订单赎回成功',
+        ];
+
     }
 
     public function buyLogs(RequestInterface $request)

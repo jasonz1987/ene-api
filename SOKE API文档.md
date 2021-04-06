@@ -744,11 +744,83 @@ http://{{host}}/api/v1/fund/product/buy/order
 
 | 参数名 | 参数类型 | 参数说明 |
 | ------ | -------- | -------- |
-| no     | String   | 产品ID   |
-| title  | String   | 产品名称 |
-| amount | Integer  | 总份数   |
+| no     | String   | 订单号   |
+| amount | String   | 订单金额 |
 
 
+
+#### 产品购买
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/fund/product/buy
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明   |
+| ------ | -------- | ---------- |
+| no     | Integer  | 订单号     |
+| id     | String   | 区块交易ID |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功"
+}
+```
+
+**返回参数：**
+
+无
+
+
+
+#### 产品赎回
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/fund/product/buy/redeem
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| id     | Integer  | 产品ID   |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功"
+}
+```
+
+**返回参数：**
+
+无
 
 ## Websocket Api
 

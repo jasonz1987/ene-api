@@ -170,7 +170,7 @@ class ContractController extends AbstractController
             'message' => "",
             'data'    => [
                 'last_price'      => $this->contractService->getIndexLastPrice($index->code),
-                'open_price'      => $this->contractService->getIndexOpenPrice($index->code),
+                'open_price'      => (string)$this->contractService->getIndexOpenPrice($index->code),
                 'quote_change'    => $this->contractService->getIndexQuoteChange($index->code),
                 'today_high'      => $today ? strval($today['high']) : null,
                 'today_low'       => $today ? strval($today['low']) : null,
