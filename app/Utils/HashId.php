@@ -2,7 +2,7 @@
 
 namespace App\Utils;
 
-use App\Service\HashService;
+use App\Services\HashService;
 use Hyperf\Utils\ApplicationContext;
 
 class HashId
