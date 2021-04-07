@@ -63,15 +63,13 @@ class WebsocketController implements OnMessageInterface, OnOpenInterface, OnClos
         if (isset($request->get['token'])) {
             try {
                 $uid = $jwt->getPayload()->get('sub');
-                var_dump($uid);
                 $redis->hSet('ws.user.fds', strval($uid), $request->fd);
                 $redis->hSet('ws.fd.users',  strval($request->fd), $uid);
             } catch (\Exception $e) {
-                var_dump($e->getMessage());
                 $server->disconnect($request->fd, 401);
             }
         } else {
-            $server->disconnect($request->fd, 401);
+            $redis->hSet('ws.fd.users',  strval($request->fd), "0");
         }
     }
 }
