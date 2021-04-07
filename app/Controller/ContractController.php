@@ -342,7 +342,7 @@ class ContractController extends AbstractController
         $id = HashId::decode($id);
 
         $order = ContractOrder::where('id', '=', $id)
-            ->where('status', '=', 0)
+            ->where('status', '=', 1)
             ->first();
 
         if (!$order) {
