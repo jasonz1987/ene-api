@@ -24,7 +24,7 @@ Router::addGroup('/api/v1',function (){
     Router::addRoute(['GET',  'HEAD'], '/contract/index/market', 'App\Controller\ContractController@indexMarket');
     Router::addRoute(['POST', 'HEAD'], '/contract/order/create', 'App\Controller\ContractController@createOrder');
     Router::addRoute(['POST', 'HEAD'], '/contract/order/cancel', 'App\Controller\ContractController@cancelOrder');
-    Router::addRoute(['POST', 'HEAD'], '/contract/position/cose', 'App\Controller\ContractController@closePosition');
+    Router::addRoute(['POST', 'HEAD'], '/contract/position/close', 'App\Controller\ContractController@closePosition');
 
     Router::addRoute(['GET', 'HEAD'], '/fund/products', 'App\Controller\FundController@products');
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy/order', 'App\Controller\FundController@buyOrder');

@@ -403,7 +403,7 @@ class ContractController extends AbstractController
         $id = HashId::decode($id);
 
         $position = ContractPosition::where('id', '=', $id)
-            ->where('status', '=', 0)
+            ->where('status', '=', 1)
             ->first();
 
         if (!$position) {
