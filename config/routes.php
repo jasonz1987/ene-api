@@ -16,17 +16,22 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/api/v1/index/index', 'App\Controller
 Router::addRoute(['POST', 'HEAD'], '/api/v1/auth/nonce', 'App\Controller\AuthController@nonce');
 Router::addRoute(['POST', 'HEAD'], '/api/v1/auth/token', 'App\Controller\AuthController@token');
 
-Router::addGroup('/api/v1',function (){
+Router::addGroup('/api/v1',function () {
     Router::addRoute(['GET', 'HEAD'], '/contract/indexes', 'App\Controller\ContractController@indexes');
-    Router::addRoute(['GET', 'HEAD'], '/contract/positions', 'App\Controller\ContractController@positions');
-    Router::addRoute(['GET', 'HEAD'], '/contract/orders', 'App\Controller\ContractController@orders');
+    Router::addRoute(['GET', 'HEAD'], '/fund/products', 'App\Controller\FundController@products');
     Router::addRoute(['GET',  'HEAD'], '/contract/index/kline', 'App\Controller\ContractController@indexKline');
     Router::addRoute(['GET',  'HEAD'], '/contract/index/market', 'App\Controller\ContractController@indexMarket');
+},
+    ['middleware' => [AuthMiddleware::class]]
+);
+Router::addGroup('/api/v1',function (){
+
+    Router::addRoute(['GET', 'HEAD'], '/contract/positions', 'App\Controller\ContractController@positions');
+    Router::addRoute(['GET', 'HEAD'], '/contract/orders', 'App\Controller\ContractController@orders');
     Router::addRoute(['POST', 'HEAD'], '/contract/order/create', 'App\Controller\ContractController@createOrder');
     Router::addRoute(['POST', 'HEAD'], '/contract/order/cancel', 'App\Controller\ContractController@cancelOrder');
     Router::addRoute(['POST', 'HEAD'], '/contract/position/close', 'App\Controller\ContractController@closePosition');
 
-    Router::addRoute(['GET', 'HEAD'], '/fund/products', 'App\Controller\FundController@products');
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy/order', 'App\Controller\FundController@buyOrder');
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy', 'App\Controller\FundController@buy');
     Router::addRoute(['POST', 'HEAD'], '/fund/order/redeem', 'App\Controller\FundController@redeem');

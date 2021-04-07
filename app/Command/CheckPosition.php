@@ -25,7 +25,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @Command
  */
-class CreateKline extends HyperfCommand
+class CheckPosition extends HyperfCommand
 {
     /**
      * @var ContainerInterface
@@ -36,13 +36,13 @@ class CreateKline extends HyperfCommand
     {
         $this->container = $container;
 
-        parent::__construct('create:kline');
+        parent::__construct('check:position');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('生成K线');
+        $this->setDescription('检查仓位');
     }
 
     public function handle()
@@ -56,15 +56,13 @@ class CreateKline extends HyperfCommand
         $prices = $redis->hGetAll('market.prices');
 
         // 获取所有的仓位
-//        $positions = $db->query('SELECT `contract_positions`.*, `contract_indexes`.code FROM `contract_positions` inner join `contract_indexes` on `contract_poistions`.index_id = `contract_indexes` . id WHERE status = ?;', [1]);
         $positions = ContractPosition::with('index', 'user')
             ->where('status', '=', 1)
             ->get();
 
-
         $new_positions = $positions->groupBy('user_id');
 
-        foreach ($new_positions as $k=>$v) {
+        foreach ($new_positions as $k => $v) {
 
             $total_profit = BigDecimal::zero();
             $total_amount = BigDecimal::zero();
@@ -74,13 +72,15 @@ class CreateKline extends HyperfCommand
             $push_data = [];
 
             // 获取全部的收益
-            foreach ($v as $kk=>$vv) {
+            foreach ($v as $kk => $vv) {
                 $user = $vv->user;
                 $ids[] = $vv->id;
                 $total_amount = $total_amount->plus($vv->position_amount);
+
                 $profit = $contractService->getUnrealProfit($vv);
+
                 // 计算收益
-                if (BigDecimal::of($vv)->isGreaterThan(0)) {
+                if (BigDecimal::of($profit)->isGreaterThan(0)) {
                     $total_profit = $total_profit->plus($profit);
                 } else {
                     $total_profit = $total_profit->minus($profit);
@@ -93,7 +93,7 @@ class CreateKline extends HyperfCommand
                     'direction'         => $vv->direction,
                     'position_volume'   => $vv->position_volume,
                     'open_price'        => BigDecimal::of($vv->open_price)->toScale($vv->index->price_decimal),
-                    'liquidation_price' => $this->contractService->getLiquidationPrice($vv),
+                    'liquidation_price' => $contractService->getLiquidationPrice($vv),
                     'position_amount'   => BigDecimal::of($vv->position_amount)->toScale(6),
                     'profit_unreal'     => $profit,
                     'profit_rate'       => $rate,
@@ -106,7 +106,7 @@ class CreateKline extends HyperfCommand
                 ];
             }
 
-            if($user) {
+            if ($user) {
                 if ($total_profit->isLessThan(0)) {
 
                     // 可用余额
@@ -121,12 +121,11 @@ class CreateKline extends HyperfCommand
                         Db::beginTransaction();
 
                         try {
-
                             // 执行爆仓逻辑 加锁
                             ContractPosition::whereIn('id', $ids)
                                 ->update([
-                                    'status'    =>  0,
-                                    'liquidation_type'  => 2
+                                    'status'           => 0,
+                                    'liquidation_type' => 2
                                 ]);
 
                             // 减去冻结的保证金
@@ -138,12 +137,11 @@ class CreateKline extends HyperfCommand
                             Db::rollBack();
                             $logger->error(sprintf("爆仓失败:【%s】,%s", $user->id, $e->getMessage()));
                         }
-
                     }
                 }
 
                 // 推送仓位信息
-                $fd = $redis->hGet('ws.user.fds', $k);
+                $fd = $redis->hGet('ws.user.fds', (string)$k);
                 $sender = $this->container->get(Sender::class);
 
                 if ($fd) {
