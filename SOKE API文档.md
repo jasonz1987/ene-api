@@ -232,6 +232,234 @@ http://{{host}}/api/v1/auth/token
 | access_token | String   | 登陆Token |
 | expired_at   | Integer  | 过期时间  |
 
+
+
+#### 首页
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/index/index
+```
+
+**是否认证**：
+
+否
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "status_code": 200,
+    "message": "",
+    "data": {
+        "global": {
+            "market_pool": 0,
+            "incentive_pool": 0
+        },
+        "my": {
+            "market_pledge": 0,
+            "balance": 0,
+            "address": null,
+            "power": null,
+            "market_income": 0,
+            "market_loss": 0,
+            "power_income": 0,
+            "fund_income": 0
+        },
+        "power": {
+            "power_pool": 0,
+            "power_rate": 10,
+            "is_open_power": null
+        },
+        "index": [
+            {
+                "id": 383064256,
+                "title": "主流指数",
+                "sub_title": "SOKE-MAIN",
+                "code": "sokemain",
+                "quote_change": "-0.1127"
+            }
+        ],
+        "fund": [
+            {
+                "id": 383064256,
+                "title": "测试基金",
+                "profit": "0.2"
+            }
+        ]
+    }
+}
+```
+
+**返回参数：**
+
+| 参数名         | 参数类型 | 参数说明   |
+| -------------- | -------- | ---------- |
+| global         | Object   | 全局数据   |
+| <Object>       |          |            |
+| market_pool    | String   | 做市资金池 |
+| incentive_pool | String   | 激励资金池 |
+| </Object>      |          |            |
+| my             | Object   | 个人数据   |
+| <Object>       |          |            |
+| market_pledge  | String   | 做市质押   |
+| balance        | String   | 指数账户   |
+| addresss       | String   | 钱包地址   |
+| power          | String   | 算力       |
+| market_income  | String   | 做市收益   |
+| market_loss    | String   | 做市亏损   |
+| power_income   | String   | 算力收益   |
+| fund_income    | String   | 基金盈亏   |
+| </Object>      |          |            |
+| index          |          | 指数列表   |
+| <Array>        |          |            |
+| id             | Integer  | ID         |
+| title          | String   | 标题       |
+| sub_title      | String   | 副标题     |
+| code           | String   | 代码       |
+| quote_change   | String   | 涨跌幅     |
+| </Array>       |          |            |
+| fund           |          |            |
+| <Array>        |          |            |
+| id             | Integer  | ID         |
+| title          | String   | 标题       |
+| profit         | String   | 收益率     |
+| </Array>       |          |            |
+
+### 首页模块
+
+#### 充值(预下单)
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/index/recharge/order
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| amount | String   | 充值金额 |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "预下单成功",
+    "data": {
+        "no": "ZHCZ161770007165029",
+        "amount": "1010.000000"
+    }
+}
+```
+
+**返回参数：**
+
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| no     | String   | 订单号   |
+| amount | String   | 订单金额 |
+
+
+
+#### 充值
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/index/recharge
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明   |
+| ------ | -------- | ---------- |
+| no     | Integer  | 订单号     |
+| id     | String   | 区块交易ID |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功"
+}
+```
+
+**返回参数：**
+
+无
+
+
+
+#### 提现
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/index/withdraw
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| amount | String   | 提现金额 |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功",
+    "data": {
+        "no": "ZHTX161770007165029",
+        "amount": "1010.000000"
+    }
+}
+```
+
+**返回参数：**
+
+无
+
+
+
 ### 指数市场模块
 
 #### 全部指数
@@ -1038,7 +1266,310 @@ http://{{host}}/api/v1/fund/reward/logs
 | title      | String   | 基金标题 |
 | </Object>  |          |          |
 
-#### 
+### 做市模块
+
+#### 质押(预下单)
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/market/pledge/order
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| amount | String   | 质押金额 |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "预下单成功",
+    "data": {
+        "no": "ZSZY161770007165029",
+        "amount": "1010.000000"
+    }
+}
+```
+
+**返回参数：**
+
+| 参数名 | 参数类型 | 参数说明 |
+| ------ | -------- | -------- |
+| no     | String   | 订单号   |
+| amount | String   | 订单金额 |
+
+
+
+#### 质押
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/market/pledge
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+| 参数名 | 参数类型 | 参数说明   |
+| ------ | -------- | ---------- |
+| no     | Integer  | 订单号     |
+| id     | String   | 区块交易ID |
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功"
+}
+```
+
+**返回参数：**
+
+无
+
+
+
+#### 取消质押
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/market/pledge/cancel
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "提交成功"
+}
+```
+
+**返回参数：**
+
+无
+
+
+
+#### 盈利日志
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/market/income/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 383064256,
+            "reward": "1000.000000",
+            "created_at": "2021-04-06 18:40:03"  
+        }
+    ],
+    "page": {
+        "total": 1,
+        "count": 1,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+| 参数名     | 参数类型 | 参数说明 |
+| ---------- | -------- | -------- |
+| id         | String   | 订单ID   |
+| reward     | String   | 金额     |
+| created_at | Datetime | 时间     |
+
+#### 亏损日志
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/market/loss/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 383064256,
+            "reward": "1000.000000",
+            "created_at": "2021-04-06 18:40:03"  
+        }
+    ],
+    "page": {
+        "total": 1,
+        "count": 1,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+同上
+
+
+
+### 算力模块
+
+#### 开启挖矿
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/power/start
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "操作成功",
+}
+```
+
+**返回参数：**
+
+无
+
+
+
+#### 盈利日志
+
+**请求方式：**
+
+POST
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/power/reward/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 383064256,
+            "reward": "1000.000000",
+            "created_at": "2021-04-06 18:40:03"  
+        }
+    ],
+    "page": {
+        "total": 1,
+        "count": 1,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+无
+
+
 
 ## Websocket Api
 

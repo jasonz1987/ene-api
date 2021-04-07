@@ -458,7 +458,6 @@ class ContractController extends AbstractController
         }
     }
 
-
     public function positions(RequestInterface $request)
     {
 //        $validator = $this->validationFactory->make(
