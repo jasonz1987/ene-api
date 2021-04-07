@@ -129,7 +129,7 @@ class ContractService
             $position->position_volume += $order->volume;
             $new_amount = BigDecimal::of($position->position_amount)->plus($order->amount);
             $position->position_amount = $new_amount;
-            $position->open_price = $new_amount->dividedBy($position->position_volume)->toScale($order->index->price_decimal, RoundingMode::DOWN);
+            $position->open_price = $new_amount->dividedBy($position->position_volume,$order->index->price_decimal, RoundingMode::DOWN);
             $position->save();
         }
 
