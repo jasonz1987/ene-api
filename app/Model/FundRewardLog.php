@@ -12,7 +12,7 @@ class FundRewardLog extends Model
      *
      * @var string
      */
-    protected $table = 'power_reward_logs';
+    protected $table = 'fund_reward_logs';
     /**
      * The attributes that are mass assignable.
      *
@@ -26,5 +26,7 @@ class FundRewardLog extends Model
      */
     protected $casts = [];
 
-
+    public function order() {
+        return $this->belongsTo(FundOrder::class);
+    }
 }

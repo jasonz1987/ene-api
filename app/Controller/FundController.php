@@ -18,6 +18,7 @@ use App\Model\FundProduct;
 use App\Model\FundRewardLog;
 use App\Services\FundService;
 use App\Utils\HashId;
+use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Hyperf\DbConnection\Db;
@@ -264,7 +265,7 @@ class FundController extends AbstractController
             ];
         }
 
-        if ($order->tx_status != 1) {
+        if ($order->tx_status != 2) {
             return [
                 'code'    => 500,
                 'message' => '订单未付款',
@@ -278,12 +279,13 @@ class FundController extends AbstractController
             ];
         }
 
-        $order->redeemed_at = now();
+        $order->redeemed_at = Carbon::now();
+        $order->redeemed_at = Carbon::now();
         $order->save();
 
         return [
             'code'    => 200,
-            'message' => '订单赎回成功',
+            'message' => '提交成功',
         ];
 
     }
@@ -312,7 +314,7 @@ class FundController extends AbstractController
 
         $user = Context::get('user');
 
-        $logs = FundOrder::whereNull('redeem_at')
+        $logs = FundOrder::where('redeem_status', '=', 0)
             ->where('user_id', '=', $user->id)
             ->orderBy('id', 'desc')
             ->paginate();
@@ -333,11 +335,13 @@ class FundController extends AbstractController
         foreach ($logs as $log) {
             $result[] = [
                 'id'         => HashId::encode($log->id),
-                'volume'     => $log->direction,
-                'amount'     => BigDecimal::of($log->amount)->toScale(6),
+                'unit_price' => MyNumber::formatSoke($log->unit_price),
+                'amount'     => MyNumber::formatSoke($log->amount),
+                'period'     => $log->period,
+                'volume'     => $log->volume,
+                'status'     => $log->tx_status,
                 'no'         => $log->no,
                 'created_at' => Carbon::parse($log->created_at)->toDateTimeString(),
-                'unit_price' => $log->unit_price,
                 'product'    => [
                     'id'    => HashId::encode($log->product->id),
                     'title' => $log->product->title,
@@ -428,8 +432,12 @@ class FundController extends AbstractController
         foreach ($logs as $log) {
             $result[] = [
                 'id'         => HashId::encode($log->id),
-                'reward'     => $log->reward,
+                'reward'     => MyNumber::formatSoke($log->reward),
                 'created_at' => Carbon::parse($log->created_at)->toDateTimeString(),
+                'product'    => [
+                    'id'    => HashId::encode($log->order->product->id),
+                    'title' => $log->order->product->title
+                ]
             ];
         }
 

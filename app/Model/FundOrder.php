@@ -26,11 +26,7 @@ class FundOrder extends Model
      */
     protected $casts = [];
 
-    public function order() {
-        return $this->belongsTo(ContractIndex::class);
-    }
-
-    public function index() {
-        return $this->belongsTo(ContractIndex::class);
+    public function product() {
+        return $this->belongsTo(FundProduct::class);
     }
 }

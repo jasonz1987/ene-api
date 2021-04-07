@@ -822,6 +822,224 @@ http://{{host}}/api/v1/fund/product/buy/redeem
 
 无
 
+
+
+#### 购买记录
+
+**请求方式：**
+
+GET
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/fund/buy/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 449274139,
+            "unit_price": "101.000000",
+            "amount": "1010.000000",
+            "period": 3,
+            "volume": 10,
+            "status": 0,
+            "no": "JZGM161770007165029",
+            "created_at": "2021-04-06 17:07:51",
+            "product": {
+                "id": 383064256,
+                "title": "测试基金"
+            }
+        },
+        {
+            "id": 383064256,
+            "unit_price": "101.000000",
+            "amount": "1010.000000",
+            "period": 3,
+            "volume": 10,
+            "status": 0,
+            "no": "JZGM161733879841152",
+            "created_at": "2021-04-02 12:46:38",
+            "product": {
+                "id": 383064256,
+                "title": "测试基金"
+            }
+        }
+    ],
+    "page": {
+        "total": 2,
+        "count": 2,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+| 参数名     | 参数类型 | 参数说明                                 |
+| ---------- | -------- | ---------------------------------------- |
+| id         | String   | 订单ID                                   |
+| unit_price | String   | 单价                                     |
+| amount     | String   | 金额                                     |
+| period     | Integer  | 周期                                     |
+| volume     | String   | 成交份数                                 |
+| status     | String   | 状态 0未付款 1确认中 2确认成功 3确认失败 |
+| no         | Integer  | 订单号                                   |
+| created_at | Datetime | 时间                                     |
+| product    |          |                                          |
+| <Object>   |          |                                          |
+| id         | Integer  | 基金ID                                   |
+| title      | String   | 基金标题                                 |
+| </Object>  |          |                                          |
+
+#### 赎回记录
+
+**请求方式：**
+
+GET
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/fund/redeem/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 449274139,
+            "unit_price": "101.000000",
+            "amount": "1010.000000",
+            "period": 3,
+            "volume": 10,
+            "status": 0,
+            "no": "JZGM161770007165029",
+            "created_at": "2021-04-06 17:07:51",
+            "product": {
+                "id": 383064256,
+                "title": "测试基金"
+            }
+        },
+        {
+            "id": 383064256,
+            "unit_price": "101.000000",
+            "amount": "1010.000000",
+            "period": 3,
+            "volume": 10,
+            "status": 0,
+            "no": "JZGM161733879841152",
+            "created_at": "2021-04-02 12:46:38",
+            "product": {
+                "id": 383064256,
+                "title": "测试基金"
+            }
+        }
+    ],
+    "page": {
+        "total": 2,
+        "count": 2,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+同上
+
+#### 盈亏记录
+
+**请求方式：**
+
+GET
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/fund/reward/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 383064256,
+            "reward": "1000.000000",
+            "created_at": "2021-04-06 18:40:03",
+            "product": {
+                "id": 383064256,
+                "title": "测试基金"
+            }
+        }
+    ],
+    "page": {
+        "total": 1,
+        "count": 1,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+| 参数名     | 参数类型 | 参数说明 |
+| ---------- | -------- | -------- |
+| id         | String   | 订单ID   |
+| reward     | String   | 金额     |
+| created_at | Datetime | 时间     |
+| product    |          |          |
+| <Object>   |          |          |
+| id         | Integer  | 基金ID   |
+| title      | String   | 基金标题 |
+| </Object>  |          |          |
+
+#### 
+
 ## Websocket Api
 
 ### 指数市场模块

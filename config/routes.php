@@ -28,7 +28,10 @@ Router::addGroup('/api/v1',function (){
     Router::addRoute(['GET', 'HEAD'], '/fund/products', 'App\Controller\FundController@products');
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy/order', 'App\Controller\FundController@buyOrder');
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy', 'App\Controller\FundController@buy');
-    Router::addRoute(['POST', 'HEAD'], '/fund/product/redeem', 'App\Controller\FundController@redeem');
+    Router::addRoute(['POST', 'HEAD'], '/fund/order/redeem', 'App\Controller\FundController@redeem');
+    Router::addRoute(['GET', 'HEAD'], '/fund/buy/logs', 'App\Controller\FundController@buyLogs');
+    Router::addRoute(['GET', 'HEAD'], '/fund/redeem/logs', 'App\Controller\FundController@redeemLogs');
+    Router::addRoute(['GET', 'HEAD'], '/fund/reward/logs', 'App\Controller\FundController@rewardLogs');
 
 },
     ['middleware' => [AuthMiddleware::class]]
