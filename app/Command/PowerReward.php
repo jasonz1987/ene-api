@@ -27,13 +27,13 @@ class PowerReward extends HyperfCommand
     {
         $this->container = $container;
 
-        parent::__construct('demo:command');
+        parent::__construct('power:reward');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Hyperf Demo Command');
+        $this->setDescription('算力挖矿收益');
     }
 
     public function handle()

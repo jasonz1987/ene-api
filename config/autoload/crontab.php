@@ -10,7 +10,7 @@ return [
             'command' => 'create:kline',
         ]),
 
-        (new Crontab())->setType('command')->setName('CheckPower')->setRule('* * * * * *')->setCallback([
+        (new Crontab())->setType('command')->setName('CheckPower')->setRule('* * * * *')->setCallback([
             'command' => 'check:power',
         ]),
     ],

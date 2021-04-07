@@ -12,7 +12,7 @@ declare(strict_types=1);
 use Hyperf\HttpServer\Router\Router;
 use App\Middleware\AuthMiddleware;
 
-Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index');
+Router::addRoute(['GET', 'POST', 'HEAD'], '/api/v1/index/index', 'App\Controller\IndexController@index');
 Router::addRoute(['POST', 'HEAD'], '/api/v1/auth/nonce', 'App\Controller\AuthController@nonce');
 Router::addRoute(['POST', 'HEAD'], '/api/v1/auth/token', 'App\Controller\AuthController@token');
 
