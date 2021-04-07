@@ -9,5 +9,9 @@ return [
         (new Crontab())->setType('command')->setName('CreateKline')->setRule('* * * * * *')->setCallback([
             'command' => 'create:kline',
         ]),
+
+        (new Crontab())->setType('command')->setName('CheckPower')->setRule('* * * * * *')->setCallback([
+            'command' => 'check:power',
+        ]),
     ],
 ];

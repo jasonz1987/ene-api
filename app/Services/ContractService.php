@@ -137,7 +137,7 @@ class ContractService
         $order->position_id = $position->id;
         $order->status = 1;
         $order->trade_amount = $order->amount;
-        $order->trade_voume = $order->volume;
+        $order->trade_volume = $order->volume;
         $order->save();
     }
 

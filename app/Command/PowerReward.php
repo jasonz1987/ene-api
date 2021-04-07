@@ -51,6 +51,7 @@ class PowerReward extends HyperfCommand
 
             foreach ($users as $user) {
 
+                // 计算收益
                 $rate = BigDecimal::of($user->power)->dividedBy($total_power, 6, RoundingMode::DOWN);
                 $reward = BigDecimal::of(1000)->multipliedBy($rate)->toScale(6, RoundingMode::DOWN);
 

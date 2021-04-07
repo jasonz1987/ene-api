@@ -35,6 +35,7 @@ class CheckPower extends HyperfCommand
 
     public function handle()
     {
+        // 清空算力
         $users = User::where('power', '>', 0)
             ->whereNotNull('power_created_at')
             ->where('power_created_at', '<', Carbon::now()->subDays(1)->toDateTimeString())

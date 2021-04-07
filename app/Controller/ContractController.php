@@ -187,7 +187,7 @@ class ContractController extends AbstractController
             [
                 'id'         => 'required|integer',
                 'direction'  => 'required | in:buy,sell',
-                'price'      => '  min:1 | numeric',
+                'price'      => 'required_if:price_type,limit |  min:1 | numeric',
                 'volume'     => 'required | integer | min: 1',
                 'price_type' => 'required | in:limit,market',
             ],
@@ -196,7 +196,8 @@ class ContractController extends AbstractController
                 'direction.required'  => 'direction is required',
                 'direction.in'        => 'direction error',
                 'price_type.required' => 'price is required',
-                'price.in'            => 'price type error'
+                'price_type.in'       => 'price type error',
+                'price.required_if'   => 'price is required'
             ]
         );
 
