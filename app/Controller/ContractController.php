@@ -342,13 +342,19 @@ class ContractController extends AbstractController
         $id = HashId::decode($id);
 
         $order = ContractOrder::where('id', '=', $id)
-            ->where('status', '=', 1)
             ->first();
 
         if (!$order) {
             return [
                 'code'    => 500,
-                'message' => '订单不存在或已成交',
+                'message' => '订单不存在',
+            ];
+        }
+
+        if ($order->status != 0) {
+            return [
+                'code'    => 500,
+                'message' => '订单已成交或撤销',
             ];
         }
 
