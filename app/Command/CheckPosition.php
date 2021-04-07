@@ -144,7 +144,7 @@ class CheckPosition extends HyperfCommand
                 $fd = $redis->hGet('ws.user.fds', (string)$k);
                 $sender = $this->container->get(Sender::class);
 
-                if ($fd) {
+                if ($fd && $fd > 0) {
                     $push_data = json_encode([
                         'ch'   => "index.positions",
                         'ts'   => Carbon::now()->getPreciseTimestamp(3),

@@ -13,5 +13,9 @@ return [
         (new Crontab())->setType('command')->setName('CheckPower')->setRule('* * * * *')->setCallback([
             'command' => 'check:power',
         ]),
+
+        (new Crontab())->setType('command')->setName('CheckPosition')->setRule('*/5 * * * * *')->setCallback([
+            'command' => 'check:position',
+        ]),
     ],
 ];

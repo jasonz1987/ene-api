@@ -314,7 +314,7 @@ class FundController extends AbstractController
 
         $user = Context::get('user');
 
-        $logs = FundOrder::where('redeem_status', '=', 0)
+        $logs = FundOrder::where('redeemed_status', '=', 0)
             ->where('user_id', '=', $user->id)
             ->orderBy('id', 'desc')
             ->paginate();
