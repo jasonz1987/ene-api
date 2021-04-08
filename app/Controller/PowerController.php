@@ -59,6 +59,26 @@ class PowerController extends AbstractController
         ];
     }
 
+    public function stop(RequestInterface $request)
+    {
+        $user = Context::get('user');
+
+        if ($user->is_open_power == 0) {
+            return [
+                'code'    => 500,
+                'message' => '账户未开启算力挖矿',
+            ];
+        }
+
+        $user->is_open_power = 0;
+        $user->save();
+
+        return [
+            'code'    => 200,
+            'message' => '关闭成功',
+        ];
+    }
+
     public function rewardLogs(RequestInterface $request)
     {
         $validator = $this->validationFactory->make(

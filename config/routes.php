@@ -50,6 +50,7 @@ Router::addGroup('/api/v1',function (){
     Router::addRoute(['GET', 'HEAD'], '/market/loss/logs', 'App\Controller\MarketController@lossLogs');
 
     Router::addRoute(['POST', 'HEAD'], '/power/start', 'App\Controller\PowerController@start');
+    Router::addRoute(['POST', 'HEAD'], '/power/stop', 'App\Controller\PowerController@stop');
     Router::addRoute(['GET', 'HEAD'], '/power/reward/logs', 'App\Controller\PowerController@rewardLogs');
 
 

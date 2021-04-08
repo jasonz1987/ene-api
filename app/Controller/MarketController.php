@@ -132,7 +132,7 @@ class MarketController extends AbstractController
         try {
             $log = new MarketPledgeLog();
             $log->user_id = $user->id;
-            $log->amount = $request->amount;
+            $log->amount = $request->input('amount');
             $log->no = 'ZSZY' . time() . mt_rand(10000, 99999);
             $log->save();
 
