@@ -91,7 +91,6 @@ class MarketController extends AbstractController
 
         try {
             $order->tx_id = $id;
-            $order->tx_status = 1;
             $order->save();
 
         } catch (\Exception $e) {

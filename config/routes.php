@@ -26,9 +26,9 @@ Router::addGroup('/api/v1',function () {
 );
 Router::addGroup('/api/v1',function (){
 
-    Router::addRoute(['POST', 'HEAD'], '/api/v1/index/recharge', 'App\Controller\IndexController@recharge');
-    Router::addRoute(['POST', 'HEAD'], '/api/v1/index/recharge/order', 'App\Controller\IndexController@rechargeOrder');
-    Router::addRoute(['POST', 'HEAD'], '/api/v1/index/withdraw', 'App\Controller\IndexController@withdraw');
+    Router::addRoute(['POST', 'HEAD'], '/index/recharge', 'App\Controller\IndexController@recharge');
+    Router::addRoute(['POST', 'HEAD'], '/index/recharge/order', 'App\Controller\IndexController@rechargeOrder');
+    Router::addRoute(['POST', 'HEAD'], '/index/withdraw', 'App\Controller\IndexController@withdraw');
 
     Router::addRoute(['GET', 'HEAD'], '/contract/positions', 'App\Controller\ContractController@positions');
     Router::addRoute(['GET', 'HEAD'], '/contract/orders', 'App\Controller\ContractController@orders');
