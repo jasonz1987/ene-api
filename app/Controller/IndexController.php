@@ -15,13 +15,24 @@ namespace App\Controller;
 
 use App\Model\ContractIndex;
 use App\Model\FundProduct;
+use App\Model\MarketPledgeLog;
 use App\Utils\HashId;
+use App\Utils\MyNumber;
+use Hyperf\DbConnection\Db;
 use Hyperf\Utils\Context;
 use Hyperf\Di\Annotation\Inject;
 use App\Services\ContractService;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController extends AbstractController
 {
+    /**
+     * @Inject()
+     * @var ValidatorFactoryInterface
+     */
+    protected $validationFactory;
+
     /**
      * @Inject()
      * @var ContractService
@@ -180,8 +191,8 @@ class IndexController extends AbstractController
         try {
             $log = new MarketPledgeLog();
             $log->user_id = $user->id;
-            $log->amount = $request->amount;
-            $log->no = 'ZSZY' . time() . mt_rand(10000, 99999);
+            $log->amount = $request->input('amount');
+            $log->no = 'ZHCZ' . time() . mt_rand(10000, 99999);
             $log->save();
 
             Db::commit();
