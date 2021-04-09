@@ -16,6 +16,7 @@ namespace App\Controller;
 use App\Model\ContractIndex;
 use App\Model\FundProduct;
 use App\Model\MarketPledgeLog;
+use App\Model\RechargeLog;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Hyperf\DbConnection\Db;
@@ -47,7 +48,7 @@ class IndexController extends AbstractController
         $indexes = ContractIndex::orderBy('id')
             ->select('id', 'title', 'sub_title', 'code')
             ->get()
-            ->map(function($item){
+            ->map(function ($item) {
                 $item->id = HashId::encode($item->id);
                 $item->quote_change = $this->contractService->getIndexQuoteChange($item->code);
                 return $item;
@@ -58,7 +59,7 @@ class IndexController extends AbstractController
         $funds = FundProduct::orderBy('id')
             ->select('id', 'title', 'periods')
             ->get()
-            ->map(function($item){
+            ->map(function ($item) {
                 $periods = json_decode($item->periods, true);
 
                 if ($periods) {
@@ -91,13 +92,13 @@ class IndexController extends AbstractController
                     'power_income'  => 0,
                     'fund_income'   => 0
                 ],
-                'power' => [
+                'power'  => [
                     'power_pool'    => 0,
                     'power_rate'    => 10,
                     'is_open_power' => $user->is_open_power
                 ],
-                'index' => $indexes,
-                'fund'  =>  $funds
+                'index'  => $indexes,
+                'fund'   => $funds
             ]
         ];
     }
@@ -128,7 +129,7 @@ class IndexController extends AbstractController
         $id = $request->input('id');
 
         // 查找订单
-        $order = MarketPledgeLog::where('no', '=', $no)
+        $order = RechargeLog::where('no', '=', $no)
             ->first();
 
         if (!$order) {
@@ -138,7 +139,7 @@ class IndexController extends AbstractController
             ];
         }
 
-        if ($order->tx_status > 0) {
+        if ($order->status > 0) {
             return [
                 'code'    => 500,
                 'message' => '订单已处理',
@@ -146,12 +147,14 @@ class IndexController extends AbstractController
         }
 
         // 校验交易ID
-        Db::beginTransaction();
-
         try {
             $order->tx_id = $id;
-            $order->tx_status = 1;
             $order->save();
+
+            return [
+                'code'    => 200,
+                'message' => '提交成功',
+            ];
 
         } catch (\Exception $e) {
             return [
@@ -182,17 +185,21 @@ class IndexController extends AbstractController
         }
 
         // TODO 质押限制
-
         $user = Context::get('user');
 
         // 构造订单
         Db::beginTransaction();
 
+        $hash = md5($user->id . http_build_query($request->all()) . time());
+
         try {
-            $log = new MarketPledgeLog();
+            $log = new RechargeLog();
             $log->user_id = $user->id;
             $log->amount = $request->input('amount');
+            $log->hash = $hash;
             $log->no = 'ZHCZ' . time() . mt_rand(10000, 99999);
+            $log->from = $user->address;
+            $log->to = '0x111';
             $log->save();
 
             Db::commit();
@@ -263,6 +270,11 @@ class IndexController extends AbstractController
             $order->tx_id = $id;
             $order->tx_status = 1;
             $order->save();
+
+            return [
+                'code'    => 200,
+                'message' => '提交成功',
+            ];
 
         } catch (\Exception $e) {
             return [

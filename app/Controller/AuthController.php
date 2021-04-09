@@ -110,12 +110,12 @@ class AuthController extends AbstractController
         }
 
         // 验证签名
-//        if (!$this->authService->verifySignature($nonce, $address, $signature)) {
-//            return [
-//                'code'    => 500,
-//                'message' => 'signature verify failure'
-//            ];
-//        }
+        if (!$this->authService->verifySignature($nonce, $address, $signature)) {
+            return [
+                'code'    => 500,
+                'message' => 'signature verify failure'
+            ];
+        }
 
         // 判断用户是否存在
         $user = User::where('address', '=', $address)

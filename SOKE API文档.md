@@ -238,7 +238,7 @@ http://{{host}}/api/v1/auth/token
 
 **请求方式：**
 
-POST
+GET
 
 **请求地址：**
 
@@ -1015,7 +1015,7 @@ http://{{host}}/api/v1/fund/product/buy
 
 
 
-#### 产品赎回
+#### 订单赎回
 
 **请求方式：**
 
@@ -1024,7 +1024,7 @@ POST
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/fund/product/buy/redeem
+http://{{host}}/api/v1/fund/order/redeem
 ```
 
 **是否认证**：
@@ -1035,7 +1035,7 @@ http://{{host}}/api/v1/fund/product/buy/redeem
 
 | 参数名 | 参数类型 | 参数说明 |
 | ------ | -------- | -------- |
-| id     | Integer  | 产品ID   |
+| id     | Integer  | 订单ID   |
 
 **返回结果：**
 
