@@ -63,7 +63,7 @@ class MarketController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'MARKET_PLEDGE_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'MARKET_PLEDGE_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
@@ -136,7 +136,7 @@ class MarketController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'MARKET_PLEDGE_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'MARKET_PLEDGE_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
@@ -185,7 +185,7 @@ class MarketController extends AbstractController
     {
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'MARKET_PLEDGE_CANCEL_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'MARKET_PLEDGE_CANCEL_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',

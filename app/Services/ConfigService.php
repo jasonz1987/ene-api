@@ -35,7 +35,7 @@ class ConfigService
 
     public function setLimit($uid, $key,$time = 10) {
         $redis = $this->container->get(Redis::class);
-        return $redis->set(sprintf("%s:%d", $uid, $key), time(), ['nx', 'ex' => $time]);
+        return $redis->set(sprintf("%s:%s", $uid, $key), time(), ['nx', 'ex' => $time]);
     }
 
 }

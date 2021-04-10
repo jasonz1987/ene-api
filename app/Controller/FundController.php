@@ -166,7 +166,7 @@ class FundController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'FUND_BUY_ORDER_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'FUND_BUY_ORDER_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
@@ -273,7 +273,7 @@ class FundController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'FUND_REDEEM_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'FUND_REDEEM_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',

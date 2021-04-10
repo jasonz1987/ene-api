@@ -165,7 +165,7 @@ class IndexController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'INDEX_RECHARGE_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'INDEX_RECHARGE_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
@@ -235,7 +235,7 @@ class IndexController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'INDEX_RECHARGE_ORDER_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'INDEX_RECHARGE_ORDER_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
@@ -302,7 +302,7 @@ class IndexController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->uid, 'INDEX_WITHDRAW_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'INDEX_WITHDRAW_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
