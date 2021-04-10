@@ -5,14 +5,14 @@ namespace App\Model;
 
 /**
  */
-class RechargeLog extends Model
+class IndexAccountLog extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'recharge_logs';
+    protected $table = 'index_account_logs';
     /**
      * The attributes that are mass assignable.
      *

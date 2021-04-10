@@ -12,19 +12,16 @@ declare(strict_types=1);
 use Hyperf\HttpServer\Router\Router;
 use App\Middleware\AuthMiddleware;
 
-Router::addRoute(['GET', 'HEAD'], '/api/v1/index/index', 'App\Controller\IndexController@index');
 Router::addRoute(['POST', 'HEAD'], '/api/v1/auth/nonce', 'App\Controller\AuthController@nonce');
 Router::addRoute(['POST', 'HEAD'], '/api/v1/auth/token', 'App\Controller\AuthController@token');
 
-Router::addGroup('/api/v1',function () {
+Router::addGroup('/api/v1',function (){
+
+    Router::addRoute(['GET', 'HEAD'], '/index/index', 'App\Controller\IndexController@index');
     Router::addRoute(['GET', 'HEAD'], '/contract/indexes', 'App\Controller\ContractController@indexes');
     Router::addRoute(['GET', 'HEAD'], '/fund/products', 'App\Controller\FundController@products');
     Router::addRoute(['GET',  'HEAD'], '/contract/index/kline', 'App\Controller\ContractController@indexKline');
     Router::addRoute(['GET',  'HEAD'], '/contract/index/market', 'App\Controller\ContractController@indexMarket');
-},
-    []
-);
-Router::addGroup('/api/v1',function (){
 
     Router::addRoute(['POST', 'HEAD'], '/index/recharge', 'App\Controller\IndexController@recharge');
     Router::addRoute(['POST', 'HEAD'], '/index/recharge/order', 'App\Controller\IndexController@rechargeOrder');

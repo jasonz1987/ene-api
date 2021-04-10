@@ -263,20 +263,21 @@ http://{{host}}/api/v1/index/index
     "data": {
         "global": {
             "market_pool": 0,
-            "incentive_pool": 0
+            "incentive_pool_address": "0xbb2225273a96cb229f8a128b1b59a3f0f6477837",
+            "defi_pool_address":"0xbb2225273a96cb229f8a128b1b59a3f0f6477837"
         },
         "my": {
             "market_pledge": 0,
-            "balance": 0,
-            "address": null,
-            "power": null,
+            "balance": "0.111",
+            "address": "0xbb2225273a96cb229f8a128b1b59a3f0f6477837",
+            "power": "0.111",
             "market_income": 0,
             "market_loss": 0,
             "power_income": 0,
             "fund_income": 0
         },
         "power": {
-            "power_pool": 0,
+            "power_pool_address": "0xbb2225273a96cb229f8a128b1b59a3f0f6477837",
             "power_rate": 10,
             "is_open_power": null
         },
@@ -302,38 +303,45 @@ http://{{host}}/api/v1/index/index
 
 **返回参数：**
 
-| 参数名         | 参数类型 | 参数说明   |
-| -------------- | -------- | ---------- |
-| global         | Object   | 全局数据   |
-| <Object>       |          |            |
-| market_pool    | String   | 做市资金池 |
-| incentive_pool | String   | 激励资金池 |
-| </Object>      |          |            |
-| my             | Object   | 个人数据   |
-| <Object>       |          |            |
-| market_pledge  | String   | 做市质押   |
-| balance        | String   | 指数账户   |
-| addresss       | String   | 钱包地址   |
-| power          | String   | 算力       |
-| market_income  | String   | 做市收益   |
-| market_loss    | String   | 做市亏损   |
-| power_income   | String   | 算力收益   |
-| fund_income    | String   | 基金盈亏   |
-| </Object>      |          |            |
-| index          |          | 指数列表   |
-| <Array>        |          |            |
-| id             | Integer  | ID         |
-| title          | String   | 标题       |
-| sub_title      | String   | 副标题     |
-| code           | String   | 代码       |
-| quote_change   | String   | 涨跌幅     |
-| </Array>       |          |            |
-| fund           |          |            |
-| <Array>        |          |            |
-| id             | Integer  | ID         |
-| title          | String   | 标题       |
-| profit         | String   | 收益率     |
-| </Array>       |          |            |
+| 参数名                 | 参数类型 | 参数说明         |
+| ---------------------- | -------- | ---------------- |
+| global                 | Object   | 全局数据         |
+| <Object>               |          |                  |
+| market_pool            | String   | 做市资金池       |
+| incentive_pool_address | String   | 激励资金池地址   |
+| defi_pool_address      | String   | 流动性挖矿地址   |
+| </Object>              |          |                  |
+| my                     | Object   | 个人数据         |
+| <Object>               |          |                  |
+| market_pledge          | String   | 做市质押         |
+| balance                | String   | 指数账户         |
+| addresss               | String   | 钱包地址         |
+| power                  | String   | 算力             |
+| market_income          | String   | 做市收益         |
+| market_loss            | String   | 做市亏损         |
+| power_income           | String   | 算力收益         |
+| fund_income            | String   | 基金盈亏         |
+| </Object>              |          |                  |
+| power                  | Object   | 算力             |
+| <Object>               |          |                  |
+| power_pool_address     | String   | 算力池地址       |
+| power_rate             | String   | 算力比率         |
+| is_open_power          | Integer  | 是否开启算力挖矿 |
+| </Object>              |          |                  |
+| index                  |          | 指数列表         |
+| <Array>                |          |                  |
+| id                     | Integer  | ID               |
+| title                  | String   | 标题             |
+| sub_title              | String   | 副标题           |
+| code                   | String   | 代码             |
+| quote_change           | String   | 涨跌幅           |
+| </Array>               |          |                  |
+| fund                   |          |                  |
+| <Array>                |          |                  |
+| id                     | Integer  | ID               |
+| title                  | String   | 标题             |
+| profit                 | String   | 收益率           |
+| </Array>               |          |                  |
 
 ### 首页模块
 

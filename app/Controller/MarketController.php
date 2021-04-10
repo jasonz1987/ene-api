@@ -18,6 +18,7 @@ use App\Model\FundProduct;
 use App\Model\FundRewardLog;
 use App\Model\MarketPledgeLog;
 use App\Model\MarketRewardLog;
+use App\Services\ConfigService;
 use App\Services\FundService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
@@ -43,6 +44,12 @@ class MarketController extends AbstractController
      */
     protected $fundService;
 
+    /**
+     * @Inject
+     * @var ConfigService
+     */
+    private $configService;
+
     public function pledge(RequestInterface $request)
     {
         $validator = $this->validationFactory->make(
@@ -62,6 +69,15 @@ class MarketController extends AbstractController
             return [
                 'code'    => 400,
                 'message' => $errorMessage,
+            ];
+        }
+
+        $user = Context::get('user');
+
+        if (!$this->configService->setLimit($user->uid, 'MARKET_PLEDGE_LIMIT')) {
+            return [
+                'code'    => 500,
+                'message' => '操作频繁，请稍后再试',
             ];
         }
 
@@ -91,12 +107,20 @@ class MarketController extends AbstractController
 
         try {
             $order->tx_id = $id;
+            $order->status = 1;
             $order->save();
+
+            Db::commit();
+
+            return [
+                'code'    => 200,
+                'message' => '提交成功'
+            ];
 
         } catch (\Exception $e) {
             return [
                 'code'    => 500,
-                'message' => '订单提交失败:' . $e->getMessage(),
+                'message' => '提交成功:' . $e->getMessage(),
             ];
         }
     }
@@ -121,9 +145,16 @@ class MarketController extends AbstractController
             ];
         }
 
-        // TODO 质押限制
-
         $user = Context::get('user');
+
+        if (!$this->configService->setLimit($user->uid, 'MARKET_PLEDGE_LIMIT')) {
+            return [
+                'code'    => 500,
+                'message' => '操作频繁，请稍后再试',
+            ];
+        }
+
+        $hash = md5($user->id . http_build_query($request->all()) . time());
 
         // 构造订单
         Db::beginTransaction();
@@ -132,16 +163,22 @@ class MarketController extends AbstractController
             $log = new MarketPledgeLog();
             $log->user_id = $user->id;
             $log->amount = $request->input('amount');
+            $log->hash = $hash;
             $log->no = 'ZSZY' . time() . mt_rand(10000, 99999);
+            $log->from = $user->address;
+            $log->to = $this->configService->getKey('MARKET_PLEDGE_RECHARGE_ADDRESS');
+            $log->type = 1;
             $log->save();
 
             Db::commit();
 
             return [
                 'code'    => 200,
-                'message' => '预下单成功',
+                'message' => '下单成功',
                 'data'    => [
                     'no'     => $log->no,
+                    'from'   => $log->from,
+                    'to'     => $log->to,
                     'amount' => MyNumber::formatSoke($log->amount)
                 ]
             ];
@@ -150,50 +187,43 @@ class MarketController extends AbstractController
 
             return [
                 'code'    => 500,
-                'message' => '预下单失败:' . $e->getMessage()
+                'message' => '下单失败:' . $e->getMessage()
             ];
         }
     }
 
     public function cancelPledge(RequestInterface $request)
     {
-//        $validator = $this->validationFactory->make(
-//            $request->all(),
-//            [
-//                'id' => 'required|integer',
-//            ],
-//            [
-//                'id.required' => 'id is required',
-//            ]
-//        );
-//
-//        if ($validator->fails()) {
-//            $errorMessage = $validator->errors()->first();
-//            return [
-//                'code'    => 400,
-//                'message' => $errorMessage,
-//            ];
-//        }
-
         $user = Context::get('user');
-        // TODO 赎回限制
+
+        if (!$this->configService->setLimit($user->uid, 'MARKET_PLEDGE_CANCEL_LIMIT')) {
+            return [
+                'code'    => 500,
+                'message' => '操作频繁，请稍后再试',
+            ];
+        }
 
         if ($user->market_pledge == 0) {
             return [
                 'code'    => 500,
-                'message' => '没有质押记录',
+                'message' => '无质押记录',
             ];
         }
+
+        $hash = md5($user->id . http_build_query($request->all()) . time());
 
         Db::beginTransaction();
 
         try {
-            MarketPledgeLog::where('user_id', '=', $user->uid)
-                ->where('tx_status', '=', 2)
-                ->whereNotNull('canceled_at')
-            - update([
-                'canceled_at' => Carbon::now()
-            ]);
+            $log = new MarketPledgeLog();
+            $log->user_id = $user->id;
+            $log->amount = $user->market_pledge;
+            $log->hash = $hash;
+            $log->no = 'ZSTX' . time() . mt_rand(10000, 99999);
+            $log->from = $user->address;
+            $log->to = $this->configService->getKey('MARKET_PLEDGE_WITHDRAW_ADDRESS');
+            $log->type = 2;
+            $log->save();
 
             $user->market_pledge = 0;
             $user->save();

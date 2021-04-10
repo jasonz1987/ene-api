@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Services;
 
 use Hyperf\Redis\Redis;
 use Hyperf\WebSocketServer\Sender;
