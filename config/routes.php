@@ -50,7 +50,6 @@ Router::addGroup('/api/v1',function (){
     Router::addRoute(['POST', 'HEAD'], '/power/stop', 'App\Controller\PowerController@stop');
     Router::addRoute(['GET', 'HEAD'], '/power/reward/logs', 'App\Controller\PowerController@rewardLogs');
 
-
 },
     ['middleware' => [AuthMiddleware::class]]
 );

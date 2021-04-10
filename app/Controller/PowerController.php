@@ -12,14 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\ContractIndex;
-use App\Model\FundOrder;
-use App\Model\FundProduct;
-use App\Model\FundRewardLog;
-use App\Model\MarketPledgeLog;
-use App\Model\MarketRewardLog;
+
 use App\Model\PowerRewardLog;
-use App\Services\FundService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;

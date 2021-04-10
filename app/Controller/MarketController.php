@@ -12,14 +12,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\ContractIndex;
-use App\Model\FundOrder;
-use App\Model\FundProduct;
-use App\Model\FundRewardLog;
 use App\Model\MarketPledgeLog;
 use App\Model\MarketRewardLog;
 use App\Services\ConfigService;
-use App\Services\FundService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
@@ -40,15 +35,9 @@ class MarketController extends AbstractController
 
     /**
      * @Inject()
-     * @var FundService
-     */
-    protected $fundService;
-
-    /**
-     * @Inject
      * @var ConfigService
      */
-    private $configService;
+    protected $configService;
 
     public function pledge(RequestInterface $request)
     {
@@ -320,7 +309,6 @@ class MarketController extends AbstractController
             'page'    => $this->getPage($logs)
         ];
     }
-
 
     protected function formatRewards($logs)
     {

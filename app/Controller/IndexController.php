@@ -48,7 +48,7 @@ class IndexController extends AbstractController
     protected $contractService;
 
     /**
-     * @Inject
+     * @Inject()
      * @var ConfigService
      */
     private $configService;
