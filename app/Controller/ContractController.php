@@ -17,6 +17,7 @@ use App\Model\ContractOrder;
 use App\Model\ContractPosition;
 use App\Services\ContractService;
 use App\Utils\HashId;
+use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
 use Brick\Math\BigNumber;
 use Brick\Math\RoundingMode;
@@ -583,6 +584,58 @@ class ContractController extends AbstractController
                     'title'     => $order->index->title,
                     'sub_title' => $order->index->sub_title,
                 ]
+            ];
+        }
+
+        return $result;
+    }
+
+    public function rewardLogs(RequestInterface $request)
+    {
+        $validator = $this->validationFactory->make(
+            $request->all(),
+            [
+                'page'     => 'integer | min: 1',
+                'per_page' => 'integer | min: 1',
+            ],
+            [
+                'page.integer'     => 'page must be integer',
+                'per_page.integer' => 'per_page must be integer'
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first();
+            return [
+                'code'    => 400,
+                'message' => $errorMessage,
+            ];
+        }
+
+        $user = Context::get('user');
+
+        $logs = ContractPosition::where('user_id', '=', $user->id)
+            ->where('status', '=', 0)
+            ->orderBy('id', 'desc')
+            ->paginate();
+
+        return [
+            'code'    => 200,
+            'message' => '',
+            'data'    => $this->formatRewards($logs),
+            'page'    => $this->getPage($logs)
+        ];
+    }
+
+    protected function formatRewards($logs)
+    {
+        $result = [];
+
+        foreach ($logs as $log) {
+            $result[] = [
+                'id'         => HashId::encode($log->id),
+                'reward'     => MyNumber::formatSoke($log->profit),
+                'created_at' => Carbon::parse($log->created_at)->toDateTimeString(),
             ];
         }
 

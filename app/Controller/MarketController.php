@@ -236,7 +236,7 @@ class MarketController extends AbstractController
 
     }
 
-    public function incomeLogs(RequestInterface $request)
+    public function rewardLogs(RequestInterface $request)
     {
         $validator = $this->validationFactory->make(
             $request->all(),
@@ -261,44 +261,6 @@ class MarketController extends AbstractController
         $user = Context::get('user');
 
         $logs = MarketRewardLog::where('user_id', '=', $user->id)
-            ->where('reward', '>', 0)
-            ->orderBy('id', 'desc')
-            ->paginate();
-
-        return [
-            'code'    => 200,
-            'message' => '',
-            'data'    => $this->formatRewards($logs),
-            'page'    => $this->getPage($logs)
-        ];
-    }
-
-    public function lossLogs(RequestInterface $request)
-    {
-        $validator = $this->validationFactory->make(
-            $request->all(),
-            [
-                'page'     => 'integer | min: 1',
-                'per_page' => 'integer | min: 1',
-            ],
-            [
-                'page.integer'     => 'page must be integer',
-                'per_page.integer' => 'per_page must be integer'
-            ]
-        );
-
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return [
-                'code'    => 400,
-                'message' => $errorMessage,
-            ];
-        }
-
-        $user = Context::get('user');
-
-        $logs = MarketRewardLog::where('user_id', '=', $user->id)
-            ->where('reward', '<', 0)
             ->orderBy('id', 'desc')
             ->paginate();
 

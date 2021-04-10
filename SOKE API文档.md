@@ -234,6 +234,8 @@ http://{{host}}/api/v1/auth/token
 
 
 
+### 首页模块
+
 #### 首页
 
 **请求方式：**
@@ -343,7 +345,7 @@ http://{{host}}/api/v1/index/index
 | profit                 | String   | 收益率           |
 | </Array>               |          |                  |
 
-### 首页模块
+### 
 
 #### 充值(预下单)
 
@@ -865,6 +867,49 @@ http://{{host}}/api/v1/contract/orders
 | title        | String   | 标题     |
 | sub_title    | String   | 副标题   |
 | </Object>    |          |          |
+
+#### 盈亏日志
+
+**请求方式：**
+
+GET
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/contract/reward/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 383064256,
+            "reward": "1000.000000",
+            "created_at": "2021-04-06 18:40:03"  
+        }
+    ],
+    "page": {
+        "total": 1,
+        "count": 1,
+        "per_page": 15,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
 
 
 
@@ -1393,16 +1438,16 @@ http://{{host}}/api/v1/market/pledge/cancel
 
 
 
-#### 盈利日志
+#### 盈亏日志
 
 **请求方式：**
 
-POST
+GET
 
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/market/income/logs
+http://{{host}}/api/v1/market/reward/logs
 ```
 
 **是否认证**：
@@ -1443,53 +1488,6 @@ http://{{host}}/api/v1/market/income/logs
 | id         | String   | 订单ID   |
 | reward     | String   | 金额     |
 | created_at | Datetime | 时间     |
-
-#### 亏损日志
-
-**请求方式：**
-
-POST
-
-**请求地址：**
-
-```
-http://{{host}}/api/v1/market/loss/logs
-```
-
-**是否认证**：
-
-是
-
-**请求参数：**
-
-无
-
-**返回结果：**
-
-```json
-{
-    "code": 200,
-    "message": "",
-    "data": [
-        {
-            "id": 383064256,
-            "reward": "1000.000000",
-            "created_at": "2021-04-06 18:40:03"  
-        }
-    ],
-    "page": {
-        "total": 1,
-        "count": 1,
-        "per_page": 15,
-        "current_page": 1,
-        "total_pages": 1
-    }
-}
-```
-
-**返回参数：**
-
-同上
 
 
 
@@ -1534,7 +1532,7 @@ http://{{host}}/api/v1/power/start
 
 **请求方式：**
 
-POST
+GET
 
 **请求地址：**
 

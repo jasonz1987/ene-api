@@ -32,6 +32,7 @@ Router::addGroup('/api/v1',function (){
     Router::addRoute(['POST', 'HEAD'], '/contract/order/create', 'App\Controller\ContractController@createOrder');
     Router::addRoute(['POST', 'HEAD'], '/contract/order/cancel', 'App\Controller\ContractController@cancelOrder');
     Router::addRoute(['POST', 'HEAD'], '/contract/position/close', 'App\Controller\ContractController@closePosition');
+    Router::addRoute(['GET', 'HEAD'], '/contract/reward/logs', 'App\Controller\ContractController@rewardLogs');
 
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy/order', 'App\Controller\FundController@buyOrder');
     Router::addRoute(['POST', 'HEAD'], '/fund/product/buy', 'App\Controller\FundController@buy');
@@ -43,8 +44,7 @@ Router::addGroup('/api/v1',function (){
     Router::addRoute(['POST', 'HEAD'], '/market/pledge', 'App\Controller\MarketController@pledge');
     Router::addRoute(['POST', 'HEAD'], '/market/pledge/order', 'App\Controller\MarketController@pledgeOrder');
     Router::addRoute(['POST', 'HEAD'], '/market/pledge/cancel', 'App\Controller\MarketController@cancelPledge');
-    Router::addRoute(['GET', 'HEAD'], '/market/income/logs', 'App\Controller\MarketController@incomeLogs');
-    Router::addRoute(['GET', 'HEAD'], '/market/loss/logs', 'App\Controller\MarketController@lossLogs');
+    Router::addRoute(['GET', 'HEAD'], '/market/reward/logs', 'App\Controller\MarketController@rewardLogs');
 
     Router::addRoute(['POST', 'HEAD'], '/power/start', 'App\Controller\PowerController@start');
     Router::addRoute(['POST', 'HEAD'], '/power/stop', 'App\Controller\PowerController@stop');
