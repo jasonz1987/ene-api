@@ -7,7 +7,7 @@ namespace App\Command;
 use App\Model\ContractIndex;
 use App\Model\ContractOrder;
 use App\Model\ContractPosition;
-use App\Service\SenderService;
+use App\Services\SenderService;
 use App\Services\ContractService;
 use Carbon\Carbon;
 use Hyperf\Command\Command as HyperfCommand;
