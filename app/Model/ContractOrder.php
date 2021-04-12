@@ -33,4 +33,8 @@ class ContractOrder extends Model
     public function index() {
         return $this->belongsTo(ContractIndex::class);
     }
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }
