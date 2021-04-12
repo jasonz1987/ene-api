@@ -297,7 +297,7 @@ class ContractController extends AbstractController
             } else {
                 $this->contractService->updatePosition($order);
                 $user->increment('frozen_balance', $amount->toFloat());
-                $user->decrement('balance', $fee->toFloat());
+                $user->decrement('balance', $amount->plus($fee)->toFloat());
             }
 
             DB::commit();
