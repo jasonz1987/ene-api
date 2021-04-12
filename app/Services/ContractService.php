@@ -127,10 +127,11 @@ class ContractService
             $position->save();
         } else {
             // 更新仓位
+            $position->open_price = BigDecimal::of($position->open_price)->multipliedBy($position->position_volume)->dividedBy($position->position_volume+$order->volume,$order->index->price_decimal, RoundingMode::DOWN);
             $position->position_volume += $order->volume;
             $new_amount = BigDecimal::of($position->position_amount)->plus($order->amount);
             $position->position_amount = $new_amount;
-            $position->open_price = $new_amount->dividedBy($position->position_volume,$order->index->price_decimal, RoundingMode::DOWN);
+
             $position->save();
         }
 
