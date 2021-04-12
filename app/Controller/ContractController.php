@@ -249,7 +249,7 @@ class ContractController extends AbstractController
         // 手续费
         $fee = BigDecimal::of($amount)->multipliedBy($index->fee_rate)->toScale($index->price_decimal, RoundingMode::UP);
 
-        $balance = BigDecimal::of($user->balance)->minus($user->frozen_balance);
+        $balance = BigDecimal::of($user->balance);
 
         if ($amount->plus($fee)->isGreaterThan($balance)) {
             return [
@@ -293,6 +293,7 @@ class ContractController extends AbstractController
 
             if ($price_type == 'limit') {
                 $user->increment('frozen_balance', $amount->plus($fee)->toFloat());
+                $user->decrement('balance', $amount->plus($fee)->toFloat());
             } else {
                 $this->contractService->updatePosition($order);
                 $user->increment('frozen_balance', $amount->toFloat());
@@ -367,6 +368,7 @@ class ContractController extends AbstractController
 
             // 取消冻结的保证金
             $order->user->decrement('frozen_balance', BigDecimal::of($order->amount)->plus($order->fee)->toFloat());
+            $order->user->increment('balance', BigDecimal::of($order->amount)->plus($order->fee)->toFloat());
 
             Db::commit();
 
@@ -439,6 +441,7 @@ class ContractController extends AbstractController
             } else {
                 if ($profit->abs()->isLessThan(BigDecimal::of($position->position_amount))) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
+                    $position->user->increment('frozen_balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
                 }
             }
 

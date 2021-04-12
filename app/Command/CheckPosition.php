@@ -110,7 +110,7 @@ class CheckPosition extends HyperfCommand
                 if ($total_profit->isLessThan(0)) {
 
                     // 可用余额
-                    $balance = BigDecimal::of($user->balance)->minus($user->frozen_balance);
+                    $balance = BigDecimal::of($user->balance);
 
                     if ($total_profit->abs()->isGreaterThan($balance)) {
 
