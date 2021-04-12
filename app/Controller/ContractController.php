@@ -464,24 +464,6 @@ class ContractController extends AbstractController
 
     public function positions(RequestInterface $request)
     {
-//        $validator = $this->validationFactory->make(
-//            $request->all(),
-//            [
-//                'id'         => 'integer',
-//            ],
-//            [
-//                'id.integer'        => 'id is required',
-//            ]
-//        );
-//
-//        if ($validator->fails()) {
-//            $errorMessage = $validator->errors()->first();
-//            return [
-//                'code' => 400,
-//                'message'     => $errorMessage,
-//            ];
-//        }
-
         $user = Context::get('user');
 
         $positions = ContractPosition::with('index')

@@ -110,6 +110,7 @@ class ContractService
     {
         // 判断是否开仓
         $position = ContractPosition::where('index_id', '=', $order->index->id)
+            ->where('user_id', '=', $order->user_id)
             ->where('status', '=', 1)
             ->first();
 
