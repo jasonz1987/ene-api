@@ -537,6 +537,45 @@ class ContractController extends AbstractController
 
         $orders = ContractOrder::with('index')
             ->where('user_id', '=', $user->id)
+            ->where('status', '=', 0)
+            ->orderBy('id', 'desc')
+            ->paginate($request->input('per_page', 10));
+
+        return [
+            'code'    => 200,
+            'message' => '',
+            'data'    => $this->formatOrders($orders),
+            'page'    => $this->getPage($orders)
+        ];
+    }
+
+    public function historyOrders(RequestInterface $request)
+    {
+        $validator = $this->validationFactory->make(
+            $request->all(),
+            [
+                'page'     => 'integer | min: 1',
+                'per_page' => 'integer | min: 1',
+            ],
+            [
+                'page.integer'     => 'page must be integer',
+                'per_page.integer' => 'per_page must be integer'
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first();
+            return [
+                'code'    => 400,
+                'message' => $errorMessage,
+            ];
+        }
+
+        $user = Context::get('user');
+
+        $orders = ContractOrder::with('index')
+            ->where('user_id', '=', $user->id)
+            ->where('status', '>', 0)
             ->orderBy('id', 'desc')
             ->paginate($request->input('per_page', 10));
 
