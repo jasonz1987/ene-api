@@ -153,7 +153,7 @@ class ContractService
 
         if ($last_price) {
 
-            $balance = BigDecimal::of($position->user->balance)->minus(BigDecimal::of($position->user->frozen_balance));
+            $balance = BigDecimal::of($position->user->balance)->plus(BigDecimal::of($position->user->frozen_balance));
 
             $volume = BigDecimal::of($position->index->size)->multipliedBy($position->position_volume);
 
