@@ -432,6 +432,7 @@ class ContractController extends AbstractController
 
             $position->profit = $profit;
             $position->status = 0;
+            $position->liquidate_type = 0;
             $position->save();
 
             // 取消冻结的保证金
@@ -441,7 +442,7 @@ class ContractController extends AbstractController
             } else {
                 if ($profit->abs()->isLessThan(BigDecimal::of($position->position_amount))) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
-                    $position->user->increment('frozen_balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
+                    $position->user->increment('balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
                 }
             }
 

@@ -53,8 +53,6 @@ class CheckPosition extends HyperfCommand
         $logger = $this->container->get(StdoutLoggerInterface::class);
         $contractService = $this->container->get(ContractService::class);
 
-        $prices = $redis->hGetAll('market.prices');
-
         // 获取所有的仓位
         $positions = ContractPosition::with('index', 'user')
             ->where('status', '=', 1)
@@ -125,7 +123,7 @@ class CheckPosition extends HyperfCommand
                             ContractPosition::whereIn('id', $ids)
                                 ->update([
                                     'status'           => 0,
-                                    'liquidation_type' => 2
+                                    'liquidate_type' => 2
                                 ]);
 
                             // 减去冻结的保证金
