@@ -826,6 +826,7 @@ http://{{host}}/api/v1/contract/orders
         {
             "id": 177194047,
             "direction": "buy",
+          	"price":"100.2000",
             "volume": 1,
             "trade_volume": 1,
            	"price_type":"market",
@@ -855,6 +856,7 @@ http://{{host}}/api/v1/contract/orders
 | ------------ | -------- | -------- |
 | id           | String   | 订单ID   |
 | direction    | String   | 方向     |
+| price        | String   | 委托价格 |
 | volume       | Integer  | 委托数量 |
 | trade_volume | Integer  | 成交数量 |
 | price_type   | String   | 价格类型 |
@@ -867,6 +869,64 @@ http://{{host}}/api/v1/contract/orders
 | title        | String   | 标题     |
 | sub_title    | String   | 副标题   |
 | </Object>    |          |          |
+
+#### 历史委托
+
+**请求方式：**
+
+GET
+
+**请求地址：**
+
+```
+http://{{host}}/api/v1/contract/history/orders
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+无
+
+**返回结果：**
+
+```json
+{
+    "code": 200,
+    "message": "",
+    "data": [
+        {
+            "id": 177194047,
+            "direction": "buy",
+          	"price":"100.2000",
+            "volume": 1,
+            "trade_volume": 1,
+           	"price_type":"market",
+            "fee": "0.000100",
+            "created_at": "2021-04-01 11:32:58",
+            "lever": 20,
+            "index": {
+                "id": 383064256,
+                "title": "主流指数",
+                "sub_title": "SOKE-MAIN"
+            }
+        }
+    ],
+    "page": {
+        "total": 1,
+        "count": 1,
+        "per_page": 10,
+        "current_page": 1,
+        "total_pages": 1
+    }
+}
+```
+
+**返回参数：**
+
+同上
 
 #### 盈亏日志
 

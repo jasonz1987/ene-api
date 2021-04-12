@@ -595,12 +595,13 @@ class ContractController extends AbstractController
             $result[] = [
                 'id'           => HashId::encode($order->id),
                 'direction'    => $order->direction,
+                'price'        => MyNumber::formatSoke($order->price),
                 'volume'       => $order->volume,
                 'trade_volume' => $order->volume,
                 'price_type'   => $order->price_type,
 //                'amount'       => BigDecimal::of($order->amount)->toScale(6),
 //                'trade_amount' => BigDecimal::of($order->trade_amount)->toScale(6),
-                'fee'          => BigDecimal::of($order->fee)->toScale(6),
+                'fee'          => MyNumber::formatSoke($order->fee),
                 'created_at'   => Carbon::parse($order->created_at)->toDateTimeString(),
                 'lever'        => $order->lever,
                 'index'        => [
