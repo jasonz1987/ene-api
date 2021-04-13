@@ -35,11 +35,11 @@ class SenderService
 
         $redis = $this->container->get(Redis::class);
 
-        $uid = $redis->hGet('fd:users', strval($fd));
+        $uid = $redis->hGet('ws.fd.users', strval($fd));
 
         if ($uid) {
-            $redis->hDel('user:fds', $uid);
+            $redis->hDel('ws.user.fds', $uid);
         }
-        $redis->hDel('fd:users', $fd);
+        $redis->hDel('ws.fd.users', $fd);
     }
 }

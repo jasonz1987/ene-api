@@ -9,6 +9,7 @@ use App\Model\ContractOrder;
 use App\Model\ContractPosition;
 use App\Services\SenderService;
 use App\Services\ContractService;
+use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
@@ -108,7 +109,9 @@ class CreateKline extends HyperfCommand
                         // 更新仓位
                         $contractService->updatePosition($order);
 
-                        // 更新余额
+                        if ($order->user->is_open_power == 1) {
+                            $order->user->increment('power', BigDecimal::of($order->fee)->dividedBy(10)->toFloat());
+                        }
 
                         Db::commit();
 

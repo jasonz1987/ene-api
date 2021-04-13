@@ -17,5 +17,9 @@ return [
         (new Crontab())->setType('command')->setName('CheckPosition')->setRule('*/5 * * * * *')->setCallback([
             'command' => 'check:position',
         ]),
+
+        (new Crontab())->setType('command')->setName('CheckOrder')->setRule('*/5 * * * * *')->setCallback([
+            'command' => 'check:order',
+        ]),
     ],
 ];

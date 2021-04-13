@@ -1759,3 +1759,30 @@ http://{{host}}/api/v1/power/reward/logs
 }
 ```
 
+#### 用户当前委托
+
+```json
+{
+    "ch": "index.orders", 
+    "ts": 1617262568257, 
+    "data":[
+    	 {
+            "id": 177194047,
+            "direction": "buy",
+          	"price":"100.2000",
+            "volume": 1,
+            "trade_volume": 1,
+           	"price_type":"market",
+            "fee": "0.000100",
+            "created_at": "2021-04-01 11:32:58",
+            "lever": 20,
+            "index": {
+                "id": 383064256,
+                "title": "主流指数",
+                "sub_title": "SOKE-MAIN"
+            }
+        }
+    ]
+}
+```
+

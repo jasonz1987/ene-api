@@ -8,6 +8,7 @@ use App\Helpers\MyCache;
 use App\Model\ContractPosition;
 use App\Model\User;
 use App\Services\ContractService;
+use App\Services\SenderService;
 use App\Utils\HashId;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -48,7 +49,7 @@ class CheckPosition extends HyperfCommand
     public function handle()
     {
         $db = $this->container->get(DB::class);
-        $sender = $this->container->get(Sender::class);
+        $sender = $this->container->get(SenderService::class);
         $redis = $this->container->get(\Hyperf\Redis\Redis::class);
         $logger = $this->container->get(StdoutLoggerInterface::class);
         $contractService = $this->container->get(ContractService::class);
@@ -140,7 +141,6 @@ class CheckPosition extends HyperfCommand
 
                 // 推送仓位信息
                 $fd = $redis->hGet('ws.user.fds', (string)$k);
-                $sender = $this->container->get(Sender::class);
 
                 if ($fd && $fd > 0) {
                     $push_data = json_encode([

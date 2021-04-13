@@ -300,6 +300,10 @@ class ContractController extends AbstractController
                 $user->decrement('balance', $amount->plus($fee)->toFloat());
             }
 
+            if ($user->is_open_power == 1) {
+                $user->increment('power', $fee->dividedBy(10)->toFloat());
+            }
+
             DB::commit();
 
             return [
