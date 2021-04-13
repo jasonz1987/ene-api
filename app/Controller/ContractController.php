@@ -15,6 +15,7 @@ namespace App\Controller;
 use App\Model\ContractIndex;
 use App\Model\ContractOrder;
 use App\Model\ContractPosition;
+use App\Model\User;
 use App\Services\ContractService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
@@ -46,11 +47,18 @@ class ContractController extends AbstractController
     public function indexes()
     {
         $indexes = ContractIndex::where('status', '=', 1)
-            ->select(['id', 'title', 'sub_title', 'lever', 'code'])
+            ->select(['id', 'title', 'sub_title', 'lever', 'code', 'symbols'])
             ->get()
             ->map(function ($item) {
                 $item->id = HashId::encode($item->id);
                 $item->quote_change = $this->contractService->getIndexQuoteChange($item->code);
+                $symbols = json_decode($item->symbols, true);
+
+                $new_symbols = [];
+                foreach ($symbols as $symbol) {
+                    $new_symbols[] = strtoupper($symbol['symbol']);
+                }
+                $item['symbols'] = $new_symbols;
                 return $item;
             });
 
@@ -441,8 +449,12 @@ class ContractController extends AbstractController
 
             // 取消冻结的保证金
             if ($profit->isGreaterThan(0)) {
-                $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
-                $position->user->increment('balance', $profit->toFloat());
+                $total_pledge = User::sum('market_pledge');
+
+                if (BigDecimal::of($total_pledge)->isGreaterThan($profit)) {
+                    $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
+                    $position->user->increment('balance', $profit->toFloat());
+                }
             } else {
                 if ($profit->abs()->isLessThan(BigDecimal::of($position->position_amount))) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
@@ -544,7 +556,7 @@ class ContractController extends AbstractController
             ->where('user_id', '=', $user->id)
             ->where('status', '=', 0)
             ->orderBy('id', 'desc')
-            ->paginate($request->input('per_page', 10));
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,
