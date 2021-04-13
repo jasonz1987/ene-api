@@ -117,7 +117,7 @@ class FundController extends AbstractController
             ];
         }
 
-        if ($order->tx_status > 0) {
+        if ($order->status > 0) {
             return [
                 'code'    => 500,
                 'message' => '订单已处理',
@@ -129,7 +129,7 @@ class FundController extends AbstractController
 
         try {
             $order->tx_id = $id;
-            $order->tx_status = 1;
+            $order->status = 1;
             $order->save();
 
             $order->product->decrement('remain_volume', $order->volume);
