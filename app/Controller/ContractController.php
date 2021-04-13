@@ -301,7 +301,7 @@ class ContractController extends AbstractController
             }
 
             if ($user->is_open_power == 1) {
-                $user->increment('power', $fee->dividedBy(10)->toFloat());
+                $user->increment('power', $fee->dividedBy(10, 6, RoundingMode::DOWN)->toFloat());
             }
 
             DB::commit();
