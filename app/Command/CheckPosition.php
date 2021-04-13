@@ -109,7 +109,7 @@ class CheckPosition extends HyperfCommand
                 if ($total_profit->isLessThan(0)) {
 
                     // 可用余额
-                    $balance = BigDecimal::of($user->balance);
+                    $balance = BigDecimal::of($user->balance)->multipliedBy(0.995);
 
                     if ($total_profit->abs()->isGreaterThan($balance)) {
 
@@ -124,6 +124,7 @@ class CheckPosition extends HyperfCommand
                             ContractPosition::whereIn('id', $ids)
                                 ->update([
                                     'status'           => 0,
+                                    'profit'           => Db::raw('position_amount * (-1)'),
                                     'liquidate_type' => 2
                                 ]);
 

@@ -132,7 +132,14 @@ class FundController extends AbstractController
             $order->tx_status = 1;
             $order->save();
 
+            $order->product->decrement('remain_volume', $order->volume);
+
+            Db::commit();
+
         } catch (\Exception $e) {
+
+            Db::rollBack();
+
             return [
                 'code'    => 500,
                 'message' => '订单提交失败:' . $e->getMessage(),
