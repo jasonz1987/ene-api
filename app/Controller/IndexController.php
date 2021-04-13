@@ -25,6 +25,7 @@ use App\Services\ConfigService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Hyperf\DbConnection\Db;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\Context;
@@ -118,7 +119,6 @@ class IndexController extends AbstractController
                 'global' => [
                     'market_pool'            => MyNumber::formatSoke($total_pledge),
                     'incentive_pool_address' => $this->configService->getKey('INCENTIVE_POOL_ADDRESS'),
-                    'defi_pool_address'      => $this->configService->getKey('DEFI_POOL_ADDRESS')
                 ],
                 'my'     => [
                     'market_pledge' => MyNumber::formatSoke($user->market_pledge),
@@ -132,7 +132,7 @@ class IndexController extends AbstractController
                 ],
                 'power'  => [
                     'power_pool_address' => $this->configService->getKey('POWER_POOL_ADDRESS'),
-                    'power_rate'         => BigDecimal::of($total_power)->isGreaterThan(0) ? MyNumber::formatSoke(BigDecimal::of(1000)->dividedBy($total_power)) : 0,
+                    'power_rate'         => BigDecimal::of($total_power)->isGreaterThan(0) ? MyNumber::formatSoke(BigDecimal::of(1000)->dividedBy($total_power, 6, RoundingMode::UP)) : 0,
                     'is_open_power'      => $user->is_open_power
                 ],
                 'index'  => $indexes,
