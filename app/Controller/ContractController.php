@@ -490,7 +490,7 @@ class ContractController extends AbstractController
             ->where('user_id', '=', $user->id)
             ->where('status', '=', 1)
             ->orderBy('id', 'desc')
-            ->paginate($request->input('per_page', 10));
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,
@@ -597,7 +597,7 @@ class ContractController extends AbstractController
             ->where('user_id', '=', $user->id)
             ->where('status', '>', 0)
             ->orderBy('id', 'desc')
-            ->paginate($request->input('per_page', 10));
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,
@@ -662,7 +662,7 @@ class ContractController extends AbstractController
         $logs = ContractPosition::where('user_id', '=', $user->id)
             ->where('status', '=', 0)
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,

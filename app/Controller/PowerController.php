@@ -99,7 +99,7 @@ class PowerController extends AbstractController
 
         $logs = PowerRewardLog::where('user_id', '=', $user->id)
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,

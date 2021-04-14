@@ -53,7 +53,7 @@ class FundController extends AbstractController
         $products = FundProduct::where('status', '=', 1)
             ->orderBy('order', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->get();
 
         return [
             'code'    => 200,
@@ -390,7 +390,7 @@ class FundController extends AbstractController
             ->where('user_id', '=', $user->id)
             ->where('type', '=', 1)
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,
@@ -457,7 +457,7 @@ class FundController extends AbstractController
             ->where('status', '>', 0)
             ->where('user_id', '=', $user->id)
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,
@@ -493,7 +493,7 @@ class FundController extends AbstractController
 
         $logs = FundRewardLog::where('user_id', '=', $user->id)
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->paginate((int)$request->input('per_page', 10));
 
         return [
             'code'    => 200,
