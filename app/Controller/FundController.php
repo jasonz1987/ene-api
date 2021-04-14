@@ -418,7 +418,7 @@ class FundController extends AbstractController
                 'status'     => $log->status,
                 'no'         => $log->no,
                 'created_at' => Carbon::parse($log->created_at)->toDateTimeString(),
-                'redeem_fee' => $fee,
+                'redeem_fee' => $log->type == 1 ? $fee : $log->fee,
                 'product'    => [
                     'id'    => HashId::encode($log->product->id),
                     'title' => $log->product->title,
