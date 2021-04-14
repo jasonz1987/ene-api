@@ -333,6 +333,7 @@ class FundController extends AbstractController
             $newOrder = new FundOrder();
             $newOrder->user_id = $order->user_id;
             $newOrder->product_id = $order->product_id;
+            $newOrder->unit_price = $order->unit_price;
             $newOrder->period = $order->period;
             $newOrder->volume = $order->volume;
             $newOrder->amount = $order->amount;
