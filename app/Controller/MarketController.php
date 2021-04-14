@@ -119,7 +119,7 @@ class MarketController extends AbstractController
         $validator = $this->validationFactory->make(
             $request->all(),
             [
-                'amount' => 'required|integer|min:1',
+                'amount' => 'required|integer|min:0',
             ],
             [
                 'amount.required' => 'volume is required',
@@ -183,6 +183,24 @@ class MarketController extends AbstractController
 
     public function cancelPledge(RequestInterface $request)
     {
+        $validator = $this->validationFactory->make(
+            $request->all(),
+            [
+                'amount' => 'required|integer|min:0',
+            ],
+            [
+                'amount.required' => 'volume is required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first();
+            return [
+                'code'    => 400,
+                'message' => $errorMessage,
+            ];
+        }
+
         $user = Context::get('user');
 
         if (!$this->configService->setLimit($user->id, 'MARKET_PLEDGE_CANCEL_LIMIT')) {
@@ -199,6 +217,15 @@ class MarketController extends AbstractController
             ];
         }
 
+        $amount = $request->input('amount');
+
+        if (BigDecimal::of($amount)->isGreaterThan($user->market_pledge)) {
+            return [
+                'code'    => 500,
+                'message' => '余额不足',
+            ];
+        }
+
         $hash = md5($user->id . http_build_query($request->all()) . time());
 
         Db::beginTransaction();
@@ -206,7 +233,7 @@ class MarketController extends AbstractController
         try {
             $log = new MarketPledgeLog();
             $log->user_id = $user->id;
-            $log->amount = $user->market_pledge;
+            $log->amount = $amount;
             $log->hash = $hash;
             $log->no = 'ZSTX' . time() . mt_rand(10000, 99999);
             $log->from = $user->address;
@@ -214,8 +241,7 @@ class MarketController extends AbstractController
             $log->type = 2;
             $log->save();
 
-            $user->market_pledge = 0;
-            $user->save();
+            $user->decrement('market_pledge', $amount);
 
             Db::commit();
 
