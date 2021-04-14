@@ -308,7 +308,7 @@ class FundController extends AbstractController
             ];
         }
 
-        if ($order->is_redeemed = 1) {
+        if ($order->is_redeemed == 1) {
             return [
                 'code'    => 500,
                 'message' => '订单已赎回',
@@ -352,6 +352,7 @@ class FundController extends AbstractController
             ];
 
         } catch (\Exception $e) {
+            Db::rollBack();
             return [
                 'code'    => 500,
                 'message' => '提交失败:' . $e->getMessage(),
