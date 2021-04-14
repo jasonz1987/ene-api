@@ -324,7 +324,7 @@ class FundController extends AbstractController
 
         Db::beginTransaction();
         $hash = md5($user->id . http_build_query($request->all()) . time());
-        $fee = BigDecimal::of($order->amount)->multipliedBy(Carbon::now()->diffInDays($order->expired_at))->multipliedBy($order->product->fee);
+        $fee = BigDecimal::of($order->amount)->multipliedBy(Carbon::now()->diffInDays($order->expired_at))->multipliedBy($order->product->redeem_fee);
 
         try {
             $order->is_redeemed = 1;
