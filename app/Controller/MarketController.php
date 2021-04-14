@@ -236,8 +236,8 @@ class MarketController extends AbstractController
             $log->amount = $amount;
             $log->hash = $hash;
             $log->no = 'ZSTX' . time() . mt_rand(10000, 99999);
-            $log->from = $user->address;
-            $log->to = $this->configService->getKey('MARKET_PLEDGE_WITHDRAW_ADDRESS');
+            $log->from = $this->configService->getKey('MARKET_PLEDGE_WITHDRAW_ADDRESS');
+            $log->to = $user->address;
             $log->type = 2;
             $log->save();
 
