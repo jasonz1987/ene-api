@@ -1067,6 +1067,8 @@ http://{{host}}/api/v1/fund/product/buy/order
 | 参数名 | 参数类型 | 参数说明 |
 | ------ | -------- | -------- |
 | id     | Integer  | 产品ID   |
+| volume | Integer  | 份数     |
+| period | string   | 对应周期 |
 
 **返回结果：**
 

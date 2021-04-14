@@ -422,6 +422,8 @@ class FundController extends AbstractController
                 ]
             ];
         }
+
+        return $result;
     }
 
     public function redeemLogs(RequestInterface $request)
