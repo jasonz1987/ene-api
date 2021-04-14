@@ -136,7 +136,7 @@ class MarketController extends AbstractController
 
         $user = Context::get('user');
 
-        if (!$this->configService->setLimit($user->id, 'MARKET_PLEDGE_LIMIT')) {
+        if (!$this->configService->setLimit($user->id, 'MARKET_PLEDGE_ORDER_LIMIT')) {
             return [
                 'code'    => 500,
                 'message' => '操作频繁，请稍后再试',
