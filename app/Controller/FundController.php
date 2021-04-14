@@ -404,7 +404,7 @@ class FundController extends AbstractController
         $result = [];
 
         foreach ($logs as $log) {
-            $fee = BigDecimal::of($log->amount)->multipliedBy(Carbon::now()->diffInDays($log->expired_at))->multipliedBy($log->product->fee);
+            $fee = BigDecimal::of($log->amount)->multipliedBy(Carbon::now()->diffInDays($log->expired_at))->multipliedBy($log->product->redeem_fee);
 
             $result[] = [
                 'id'         => HashId::encode($log->id),
