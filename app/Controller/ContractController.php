@@ -453,7 +453,7 @@ class ContractController extends AbstractController
 
                 if (BigDecimal::of($total_pledge)->isGreaterThan($profit)) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
-                    $position->user->increment('balance', $profit->toFloat());
+                    $position->user->increment('balance', $profit->plus(BigDecimal::of($position->position_amount))->toFloat());
                 } else {
                     $position->reward_status = 0;
                     $position->save();
