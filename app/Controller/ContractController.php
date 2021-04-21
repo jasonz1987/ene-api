@@ -271,6 +271,7 @@ class ContractController extends AbstractController
         try {
             // 查找是否有对应的仓位
             $position = ContractPosition::where('index_id', '=', $index->id)
+                ->where('user_id', '=', $user->id)
                 ->where('status', '=', 1)
                 ->first();
 
