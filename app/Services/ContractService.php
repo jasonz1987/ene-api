@@ -149,11 +149,11 @@ class ContractService
     public function getLiquidationPrice($position)
     {
         // 获取当前最新价格
-        $last_price = $this->getIndexLastPrice($position->index->code);
-
+        $last_price = $position->open_price;
+//
         if ($last_price) {
 
-            $balance = BigDecimal::of($position->user->balance);
+            $balance = BigDecimal::of($position->user->balance)->dividedBy($position->lever, $position->index->price_decimal, RoundingMode::UP);
 
             $volume = BigDecimal::of($position->index->size)->multipliedBy($position->position_volume);
 
@@ -193,7 +193,7 @@ class ContractService
                 $profit = BigDecimal::of($position->open_price)->minus($last_price);
             }
 
-            $profit = $profit->multipliedBy($position->position_volume)->multipliedBy($position->index->size)->toScale(6);
+            $profit = $profit->multipliedBy($position->position_volume)->multipliedBy($position->index->size)->dividedBy($position->index->lever)->toScale(6);
         }
 
         return $profit;
