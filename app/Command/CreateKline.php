@@ -111,6 +111,10 @@ class CreateKline extends HyperfCommand
 
                         if ($order->user->is_open_power == 1) {
                             $order->user->increment('power', BigDecimal::of($order->fee)->dividedBy(10)->toFloat());
+                            if(!$order->user->power_created_at) {
+                                $order->user->power_created_at = Carbon::now();
+                                $order->user->save();
+                            }
                         }
 
                         Db::commit();

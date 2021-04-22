@@ -311,6 +311,10 @@ class ContractController extends AbstractController
 
             if ($user->is_open_power == 1) {
                 $user->increment('power', $fee->dividedBy(10, 6, RoundingMode::DOWN)->toFloat());
+                if(!$user->power_created_at) {
+                    $user->power_created_at = Carbon::now();
+                    $user->save();
+                }
             }
 
             DB::commit();
