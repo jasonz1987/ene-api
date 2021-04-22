@@ -4,13 +4,14 @@ namespace App\Utils;
 
 use App\Services\HashService;
 use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Hyperf\Utils\ApplicationContext;
 
 class MyNumber
 {
     public static function formatSoke($amount)
     {
-        return BigDecimal::of($amount)->toScale(6);
+        return BigDecimal::of($amount)->toScale(6, RoundingMode::DOWN);
     }
 
 }
