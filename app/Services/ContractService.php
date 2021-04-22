@@ -168,7 +168,7 @@ class ContractService
                 $liquidation_price = BigDecimal::of($last_price)->plus($price);
             }
 
-            return $liquidation_price;
+            return $liquidation_price->toScale(6, RoundingMode::DOWN);
         }
 
         return null;
