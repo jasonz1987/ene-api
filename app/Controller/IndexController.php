@@ -132,7 +132,7 @@ class IndexController extends AbstractController
                 ],
                 'power'  => [
                     'power_pool_address' => $this->configService->getKey('POWER_POOL_ADDRESS'),
-                    'power_rate'         => BigDecimal::of($total_power)->isGreaterThan(0) ? MyNumber::formatSoke(BigDecimal::of(1000)->dividedBy($total_power, 6, RoundingMode::UP)) : 0,
+                    'power_rate'         => BigDecimal::of($total_power)->isGreaterThan(0) ? MyNumber::formatSoke(BigDecimal::of(100)->dividedBy($total_power, 6, RoundingMode::UP)) : 0,
                     'is_open_power'      => $user->is_open_power
                 ],
                 'index'  => $indexes,
