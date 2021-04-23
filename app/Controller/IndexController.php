@@ -218,10 +218,10 @@ class IndexController extends AbstractController
         $validator = $this->validationFactory->make(
             $request->all(),
             [
-                'amount' => 'required|integer|min:1',
+                'amount' => 'required|numeric|gt:0',
             ],
             [
-                'amount.required' => 'volume is required',
+                'amount.required' => 'amount is required',
             ]
         );
 
