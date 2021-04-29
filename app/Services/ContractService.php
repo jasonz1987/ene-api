@@ -193,7 +193,7 @@ class ContractService
                 $profit = BigDecimal::of($position->open_price)->minus($last_price);
             }
 
-            $profit = $profit->multipliedBy($position->position_volume)->multipliedBy($position->index->size)->dividedBy($position->index->lever)->toScale(6);
+            $profit = $profit->multipliedBy($position->position_volume)->multipliedBy($position->index->size)->toScale(6);
         }
 
         return $profit;
