@@ -82,6 +82,11 @@ class ContractService
         return null;
     }
 
+    public function addIndexOrders($index, $price, $direction)
+    {
+        return $this->container->get(Redis::class)->zAdd('index.orders:' . $index . ':' . $direction,  strval($price));
+    }
+
     /**
      * 获取委托记录
      *
