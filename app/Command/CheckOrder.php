@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Helpers\MyCache;
+use App\Model\ContractOrder;
 use App\Model\ContractPosition;
 use App\Model\User;
 use App\Services\ContractService;
@@ -56,7 +57,7 @@ class CheckOrder extends HyperfCommand
         $contractService = $this->container->get(ContractService::class);
 
         // 获取所有的仓位
-        $orders = ContractPosition::with('index', 'user')
+        $orders = ContractOrder::with('index', 'user')
             ->where('status', '=', 1)
             ->get();
 
@@ -97,8 +98,6 @@ class CheckOrder extends HyperfCommand
                 $logger->info("推送委托:" . $push_data);
 
                 $sender->push((int)$fd, $push_data);
-
-
             }
         }
     }

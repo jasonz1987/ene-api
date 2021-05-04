@@ -291,7 +291,8 @@ class FundController extends AbstractController
 
         $id = HashId::decode($id);
 
-        $order = FundOrder::where('id', '=', $id)
+        $order = FundOrder::with('product')
+            ->where('id', '=', $id)
             ->first();
 
         if (!$order) {

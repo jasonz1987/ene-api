@@ -79,8 +79,8 @@ class CreateKline extends HyperfCommand
             $price = round($price, $index->price_decimal);
 
             // 获取订单
-            $buy_ids = $contractService->getIndexOrders($index, $price, 'buy');
-            $sell_ids = $contractService->getIndexOrders($index, $price, 'sell');
+            $buy_ids = $contractService->getIndexOrders($index->code, $price, 'buy');
+            $sell_ids = $contractService->getIndexOrders($index->code, $price, 'sell');
 
             $ids = array_merge($buy_ids, $sell_ids);
 
@@ -119,11 +119,8 @@ class CreateKline extends HyperfCommand
 
                         Db::commit();
 
-                        // 更新对应仓位的未实现收益
-
                     } catch (\Exception $e) {
                         Db::rollBack();
-
                     }
 
                 }

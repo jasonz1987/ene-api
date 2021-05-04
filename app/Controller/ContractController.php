@@ -448,6 +448,7 @@ class ContractController extends AbstractController
             $profit = $this->contractService->getUnrealProfit($position);
 
             $position->profit = $profit;
+            $position->close_price = $this->contractService->getIndexLastPrice($position->index->code);
             $position->status = 0;
             $position->liquidate_type = 0;
             $position->save();
