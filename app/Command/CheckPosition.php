@@ -125,7 +125,7 @@ class CheckPosition extends HyperfCommand
                                 ]);
 
                             // 减去冻结的保证金
-                            $user->decrement('balance_frozen', $total_amount);
+                            $user->decrement('balance_frozen', $total_amount->toFloat());
 
                             Db::commit();
 
