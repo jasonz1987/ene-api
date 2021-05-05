@@ -82,7 +82,7 @@ class CheckPosition extends HyperfCommand
                 if (BigDecimal::of($profit)->isGreaterThan(0)) {
                     $total_profit = $total_profit->plus($profit);
                 } else {
-                    $total_profit = $total_profit->minus($profit);
+                    $total_profit = $total_profit->minus($profit->abs());
                 }
 
                 $rate = $profit->dividedBy($vv->position_amount, 4, RoundingMode::UP);
