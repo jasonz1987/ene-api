@@ -113,11 +113,11 @@ class CheckPosition extends HyperfCommand
 
                     if ($total_profit->abs()->isGreaterThan($balance)) {
 
+                        Db::beginTransaction();
+
                         ContractPosition::whereIn('id', $ids)
                             ->lockForUpdate()
                             ->get();
-
-                        Db::beginTransaction();
 
                         try {
                             // 执行爆仓逻辑 加锁
