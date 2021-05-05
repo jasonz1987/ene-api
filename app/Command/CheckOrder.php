@@ -79,7 +79,7 @@ class CheckOrder extends HyperfCommand
                         'trade_volume' => $vv->trade_volume,
                         'price_type'   => $vv->price_type,
                         'fee'          => MyNumber::formatSoke($vv->fee),
-                        'created_at'   => $vv->created_at,
+                        'created_at'   => Carbon::parse($vv->created_at)->toDateTimeString(),
                         'lever'        => $vv->lever,
                         'index'        => [
                             'id'        => HashId::encode($vv->index_id),
