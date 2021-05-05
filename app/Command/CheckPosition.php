@@ -115,10 +115,6 @@ class CheckPosition extends HyperfCommand
 
                         Db::beginTransaction();
 
-                        ContractPosition::whereIn('id', $ids)
-                            ->lockForUpdate()
-                            ->get();
-
                         try {
                             // 执行爆仓逻辑 加锁
                             ContractPosition::whereIn('id', $ids)
