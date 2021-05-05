@@ -301,7 +301,7 @@ class ContractController extends AbstractController
             $order->save();
 
             if ($price_type == 'limit') {
-                $this->contractService->addIndexOrders($index->code, $price, $direction);
+                $this->contractService->addIndexOrders($index->code, $price, $direction, $order->id);
                 $user->increment('frozen_balance', $amount->plus($fee)->toFloat());
                 $user->decrement('balance', $amount->plus($fee)->toFloat());
             } else {

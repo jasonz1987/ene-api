@@ -82,9 +82,9 @@ class ContractService
         return null;
     }
 
-    public function addIndexOrders($index, $price, $direction)
+    public function addIndexOrders($index, $price, $direction, $id)
     {
-        return $this->container->get(Redis::class)->zAdd('index.orders:' . $index . ':' . $direction,  strval($price));
+        return $this->container->get(Redis::class)->zAdd('index.orders:' . $index . ':' . $direction,  strval($price), $id);
     }
 
     /**
