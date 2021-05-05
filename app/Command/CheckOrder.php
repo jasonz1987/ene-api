@@ -58,7 +58,7 @@ class CheckOrder extends HyperfCommand
 
         // 获取所有的仓位
         $orders = ContractOrder::with('index', 'user')
-            ->where('status', '=', 1)
+            ->where('status', '=', 0)
             ->get();
 
         $new_orders = $orders->groupBy('user_id');
