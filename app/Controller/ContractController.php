@@ -381,12 +381,14 @@ class ContractController extends AbstractController
         Db::beginTransaction();
 
         try {
-            $order->status = 2;
-            $order->save();
 
             // 取消冻结的保证金
             $order->user->decrement('frozen_balance', BigDecimal::of($order->amount)->plus($order->fee)->toFloat());
             $order->user->increment('balance', BigDecimal::of($order->amount)->plus($order->fee)->toFloat());
+
+            $order->status = 2;
+            $order->fee=0;
+            $order->save();
 
             Db::commit();
 
