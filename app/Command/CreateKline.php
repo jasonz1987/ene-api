@@ -120,6 +120,8 @@ class CreateKline extends HyperfCommand
                         Db::commit();
 
                     } catch (\Exception $e) {
+                        $logger->info("订单成交失败:" . $e->getMessage());
+
                         Db::rollBack();
                     }
 
