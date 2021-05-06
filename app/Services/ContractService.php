@@ -98,9 +98,9 @@ class ContractService
     public function getIndexOrders($index, $price, $direction)
     {
         if ($direction == 'buy') {
-            return $this->container->get(Redis::class)->zRangeByScore('index.orders:' . $index . ':' . $direction, "0", strval($price));
+            return $this->container->get(Redis::class)->zRangeByScore('index.orders:' . $index . ':' . $direction, strval($price-5), strval($price));
         } else if ($direction == 'sell') {
-            return $this->container->get(Redis::class)->zRangeByScore('index.orders:' . $index . ':' . $direction, strval($price), '+inf');
+            return $this->container->get(Redis::class)->zRangeByScore('index.orders:' . $index . ':' . $direction, strval($price), strval($price+5));
         }
 
         return [];
