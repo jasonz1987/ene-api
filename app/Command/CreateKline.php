@@ -90,7 +90,7 @@ class CreateKline extends HyperfCommand
                 ->get();
 
             foreach ($orders as $order) {
-                if ($contractService->addOrderLock($order)) {
+                if ($contractService->addOrderLock($order->id)) {
                     // 判断订单状态
                     if ($order->status != 0) {
                         // 移除订单队列

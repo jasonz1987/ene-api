@@ -229,4 +229,8 @@ class ContractService
     public function addOrderLimit($uid) {
         return $this->container->get(Redis::class)->set('index.order.limit:' . $uid, time(), ['nx', 'ex' => 5]);
     }
+
+    public function addOrderLock($id) {
+        return $this->container->get(Redis::class)->set('index.order.lock:' . $id, time(), ['nx', 'ex' => 5]);
+    }
 }
