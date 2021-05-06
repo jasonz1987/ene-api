@@ -63,8 +63,8 @@ class CheckPosition extends HyperfCommand
 
         foreach ($new_positions as $k => $v) {
 
-            $total_profit = BigDecimal::zero();
-            $total_amount = BigDecimal::zero();
+//            $total_profit = BigDecimal::zero();
+//            $total_amount = BigDecimal::zero();
 
             $ids = [];
 
@@ -74,16 +74,15 @@ class CheckPosition extends HyperfCommand
             foreach ($v as $kk => $vv) {
                 $user = $vv->user;
                 $ids[] = $vv->id;
-                $total_amount = $total_amount->plus($vv->position_amount);
 
                 $profit = $contractService->getUnrealProfit($vv);
 
-                // 计算收益
-                if (BigDecimal::of($profit)->isGreaterThan(0)) {
-                    $total_profit = $total_profit->plus($profit);
-                } else {
-                    $total_profit = $total_profit->minus($profit->abs());
-                }
+//                // 计算收益
+//                if (BigDecimal::of($profit)->isGreaterThan(0)) {
+//                    $total_profit = $total_profit->plus($profit);
+//                } else {
+//                    $total_profit = $total_profit->minus($profit->abs());
+//                }
 
                 $rate = $profit->dividedBy($vv->position_amount, 4, RoundingMode::UP);
 
@@ -103,29 +102,27 @@ class CheckPosition extends HyperfCommand
                         'sub_title' => $vv->index->sub_title,
                     ]
                 ];
-            }
 
-            if ($user) {
-                if ($total_profit->isLessThan(0)) {
+                if ($profit->isLessThan(0)) {
 
                     // 可用余额
                     $balance = BigDecimal::of($user->balance)->multipliedBy(0.995);
 
-                    if ($total_profit->abs()->isGreaterThan($balance)) {
+                    if ($profit->abs()->isGreaterThan($balance->plus($vv->position_amount))) {
 
                         Db::beginTransaction();
 
                         try {
-                            // 执行爆仓逻辑 加锁
-                            ContractPosition::whereIn('id', $ids)
-                                ->update([
-                                    'status'           => 0,
-                                    'profit'           => Db::raw('position_amount * (-1)'),
-                                    'liquidate_type' => 2
-                                ]);
+
+                            $vv->status = 0;
+                            $vv->profit = $balance->plus($vv->position_amount);
+                            $vv->liquidate_type = 2;
+                            $vv->save();
 
                             // 减去冻结的保证金
-                            $user->decrement('frozen_balance', $total_amount->toFloat());
+                            $user->frozen_balance = BigDecimal::of($user->frozen_balance)->minus(BigDecimal::of($vv->position_amount));
+                            $user->balance = 0;
+                            $user->save();
 
                             Db::commit();
 
@@ -135,6 +132,10 @@ class CheckPosition extends HyperfCommand
                         }
                     }
                 }
+
+            }
+
+            if ($user) {
 
                 // 推送仓位信息
                 $fd = $redis->hGet('ws.user.fds', (string)$k);
