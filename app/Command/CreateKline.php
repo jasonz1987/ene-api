@@ -102,7 +102,6 @@ class CreateKline extends HyperfCommand
                     Db::beginTransaction();
 
                     try {
-                        $order->trade_price = $order->price;
                         $order->trade_volume = $order->volume;
                         $order->save();
 
