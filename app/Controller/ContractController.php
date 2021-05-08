@@ -198,14 +198,14 @@ class ContractController extends AbstractController
                 'direction'  => 'required | in:buy,sell',
                 'price'      => 'required_if:price_type,limit |  min:1 | numeric',
                 'volume'     => 'required | integer | min: 1',
-                'price_type' => 'required | in:limit,market',
+                'price_type' => 'required | in:market',
             ],
             [
                 'id.required'         => 'id is required',
                 'direction.required'  => 'direction is required',
                 'direction.in'        => 'direction error',
                 'price_type.required' => 'price is required',
-                'price_type.in'       => 'price type error',
+                'price_type.in'       => '仅支持限价委托',
                 'price.required_if'   => 'price is required'
             ]
         );
