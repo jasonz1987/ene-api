@@ -115,7 +115,7 @@ class CheckPosition extends HyperfCommand
                         try {
 
                             $vv->status = 0;
-                            $vv->profit = $user->balance->plus($vv->position_amount);
+                            $vv->profit = BigDecimal::of($user->balance)->plus($vv->position_amount);
                             $vv->liquidate_type = 2;
                             $vv->save();
 
