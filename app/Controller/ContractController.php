@@ -456,25 +456,35 @@ class ContractController extends AbstractController
             $position->liquidate_type = 0;
             $position->save();
 
+            $reward = 0;
+
             // 取消冻结的保证金
             if ($profit->isGreaterThan(0)) {
-                $total_pledge = User::sum('market_pledge');
+                $total_pledge = $this->contractService->getTotalMarket();
 
-                if (BigDecimal::of($total_pledge)->isGreaterThan($profit)) {
+                if ($profit->isGreaterThan($total_pledge)) {
+                    $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
+                    $position->user->increment('balance', BigDecimal::of($position->position_amount)->toFloat());
+                } else {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
                     $position->user->increment('balance', $profit->plus(BigDecimal::of($position->position_amount))->toFloat());
-                } else {
-                    $position->reward_status = 0;
-                    $position->save();
+
+                    $reward = $profit * (-1);
                 }
+
             } else {
                 if ($profit->abs()->isLessThan(BigDecimal::of($position->position_amount))) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
                     $position->user->increment('balance', BigDecimal::of($position->position_amount)->minus($profit->abs())->toFloat());
+                    $reward = $profit->abs();
                 }
             }
 
             Db::commit();
+
+            if ($reward != 0) {
+                $this->contractService->incrTotalMarket($profit->toFloat());
+            }
 
             return [
                 'code'    => 200,

@@ -218,8 +218,6 @@ class ContractService
     public function updatePositionProfit($uid, $index, $profit, $balance)
     {
          $this->container->get(Redis::class)->hSet('index.positions:' . $uid, $index, $profit);
-
-
     }
 
     public function removePositionQueue($uid, $index) {
@@ -233,4 +231,13 @@ class ContractService
     public function addOrderLock($id) {
         return $this->container->get(Redis::class)->set('index.order.lock:' . $id, time(), ['nx', 'ex' => 5]);
     }
+
+    public function getTotalMarket() {
+        return $this->container->get(Redis::class)->get('soke_database_market_pledge');
+    }
+
+    public function incrTotalMarket($num) {
+        return $this->container->get(Redis::class)->incrByFloat('soke_database_market_pledge', $num);
+    }
+
 }

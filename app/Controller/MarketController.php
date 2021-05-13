@@ -15,6 +15,7 @@ namespace App\Controller;
 use App\Model\MarketPledgeLog;
 use App\Model\MarketRewardLog;
 use App\Services\ConfigService;
+use App\Services\ContractService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
@@ -38,6 +39,12 @@ class MarketController extends AbstractController
      * @var ConfigService
      */
     protected $configService;
+
+    /**
+     * @Inject()
+     * @var ContractService
+     */
+    protected $contractService;
 
     public function pledge(RequestInterface $request)
     {
@@ -244,6 +251,8 @@ class MarketController extends AbstractController
             $user->decrement('market_pledge', $amount);
 
             Db::commit();
+
+            $this->contractService->incrTotalMarket($amount * -1);
 
             return [
                 'code'    => 200,

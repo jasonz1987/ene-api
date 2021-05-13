@@ -126,6 +126,9 @@ class CheckPosition extends HyperfCommand
 
                             Db::commit();
 
+                            // 添加到
+                            $contractService->incrTotalMarket($vv->profit*(-1));
+
                         } catch (\Exception $e) {
                             Db::rollBack();
                             $logger->error(sprintf("爆仓失败:【%s】,%s", $user->id, $e->getMessage()));
