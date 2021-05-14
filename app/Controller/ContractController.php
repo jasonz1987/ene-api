@@ -483,7 +483,7 @@ class ContractController extends AbstractController
             Db::commit();
 
             if (!$reward->isEqualTo(BigDecimal::zero())) {
-                $this->contractService->incrTotalMarket($profit->toFloat());
+                $this->contractService->incrTotalMarket($reward->toFloat());
             }
 
             return [
