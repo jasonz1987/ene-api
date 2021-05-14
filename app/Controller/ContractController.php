@@ -460,9 +460,17 @@ class ContractController extends AbstractController
 
             // 取消冻结的保证金
             if ($profit->isGreaterThan(0)) {
-                $total_pledge = $this->contractService->getTotalMarket();
+                $cache_market = $this->contractService->getTotalMarket();
 
-                if ($profit->isGreaterThan($total_pledge)) {
+                if (!$cache_market) {
+                    $cache_market = BigDecimal::zero();
+                }
+
+                $total_pledge = User::sum('market_pledge');
+
+                $real_pledge = $total_pledge->plus($cache_market);
+
+                if ($profit->isGreaterThan($real_pledge)) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
                     $position->user->increment('balance', BigDecimal::of($position->position_amount)->toFloat());
                 } else {

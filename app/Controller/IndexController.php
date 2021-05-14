@@ -89,7 +89,7 @@ class IndexController extends AbstractController
             ->toArray();
 
         // 获取总质押
-        $total_pledge = $this->contractService->getTotalMarket();
+        $total_pledge = User::sum('market_pledge');
 
         // 获取做市收益
         $market_income = MarketRewardLog::where('user_id', '=', $user->id)

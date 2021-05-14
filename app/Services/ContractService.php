@@ -213,8 +213,6 @@ class ContractService
         return $rate;
     }
 
-
-
     public function updatePositionProfit($uid, $index, $profit, $balance)
     {
          $this->container->get(Redis::class)->hSet('index.positions:' . $uid, $index, $profit);
