@@ -468,7 +468,7 @@ class ContractController extends AbstractController
 
                 $total_pledge = User::sum('market_pledge');
 
-                $real_pledge = $total_pledge->plus($cache_market);
+                $real_pledge = BigDecimal::of($total_pledge)->plus($cache_market);
 
                 if ($profit->isGreaterThan($real_pledge)) {
                     $position->user->decrement('frozen_balance', BigDecimal::of($position->position_amount)->toFloat());
