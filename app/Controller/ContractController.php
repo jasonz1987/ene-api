@@ -727,4 +727,51 @@ class ContractController extends AbstractController
             'total_pages'  => ceil($logs->total() / $logs->perPage()),
         ];
     }
+
+    public function positionCount(RequestInterface $request)
+    {
+        $validator = $this->validationFactory->make(
+            $request->all(),
+            [
+                'address' => 'required',
+            ],
+            [
+                'address.required' => 'address is required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            // Handle exception
+            $errorMessage = $validator->errors()->first();
+            return [
+                'code'    => 400,
+                'message' => $errorMessage,
+            ];
+        }
+
+
+        $user = User::where('address', '=', $request->input('address'))
+            ->first();
+
+        if (!$user) {
+            return [
+                'code'    => 500,
+                'message' => '钱包地址不存在',
+            ];
+        }
+
+        // 获取持仓量
+        $position_count = ContractPosition::where('status', '=', 1)
+            ->where('user_id', '=', $user->id)
+            ->count();
+
+        return [
+            'code'    => 200,
+            'message' => "",
+            'data'    => [
+                'position_count' => $position_count,
+            ]
+        ];
+    }
+
 }

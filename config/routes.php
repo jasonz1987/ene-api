@@ -55,6 +55,15 @@ Router::addGroup('/api/v1',function (){
     ['middleware' => [AuthMiddleware::class]]
 );
 
+Router::addGroup('/api/v1',function () {
+
+    Router::addRoute(['GET', 'HEAD'], '/contract/position/count', 'App\Controller\ContractController@positionCount');
+}
+    ,
+    []
+);
+
+
 Router::get('/favicon.ico', function () {
     return '';
 });
