@@ -761,8 +761,7 @@ class ContractController extends AbstractController
         }
 
         // 获取持仓量
-        $position_count = ContractPosition::where('status', '=', 1)
-            ->where('user_id', '=', $user->id)
+        $position_count = ContractPosition::where('user_id', '=', $user->id)
             ->count();
 
         return [
