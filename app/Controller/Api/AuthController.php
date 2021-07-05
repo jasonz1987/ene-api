@@ -194,6 +194,8 @@ class AuthController extends AbstractController
                 if (!$user->source_address) {
                     $this->getSource($address, $source);
                     $this->insertChildren($user, $source);
+                    $user->source_address = $source->address;
+                    $user->save();
                 }
             }
 
