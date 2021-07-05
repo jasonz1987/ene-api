@@ -52,7 +52,7 @@ class AuthController extends AbstractController
         $validator = $this->validationFactory->make(
             $request->all(),
             [
-                'address'   => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
+                'address' => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
             ],
             [
                 'address' => 'address is required',
@@ -76,7 +76,7 @@ class AuthController extends AbstractController
             'code'    => 200,
             'message' => "success",
             'data'    => [
-                'is_bind'   => $user && $user->source ? true : false
+                'is_bind' => $user && $user->source ? true : false
             ]
         ];
     }
@@ -86,7 +86,7 @@ class AuthController extends AbstractController
         $validator = $this->validationFactory->make(
             $request->all(),
             [
-                'address'   => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
+                'address' => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
             ],
             [
                 'address' => 'address is required',
@@ -125,7 +125,7 @@ class AuthController extends AbstractController
             $request->all(),
             [
                 'address'   => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
-                'source'   => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
+                'source'    => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
                 'signature' => 'required|regex:/^(0x)?[0-9a-zA-Z]{130}$/',
             ],
             [
@@ -133,8 +133,8 @@ class AuthController extends AbstractController
                 'signature.required' => 'signature is required',
                 'address.regex'      => 'address format error',
                 'signature.regex'    => 'signature format error',
-                'source.required'   => 'source is required',
-                'source.regex'      => 'source format error',
+                'source.required'    => 'source is required',
+                'source.regex'       => 'source format error',
             ]
         );
 
@@ -174,48 +174,47 @@ class AuthController extends AbstractController
             ];
         }
 
-        // 判断用户是否存在
-        $user = User::where('address', '=', $address)
-            ->first();
+        Db::beginTransaction();
 
-        if (!$user) {
-            $user = new User();
-            $user->address = $address;
-            $user->password = sha1(Str::random(16));
-            $user->save();
-        }
+        try {
 
-        // 生成TOKEN
-        if ($request->has('address')) {
-            if (!$user->source_address) {
-                $this->getSource($address, $source);
+            // 判断用户是否存在
+            $user = User::where('address', '=', $address)
+                ->first();
 
-                Db::beginTransaction();
+            if (!$user) {
+                $user = new User();
+                $user->address = $address;
+                $user->password = sha1(Str::random(16));
+                $user->save();
+            }
 
-                try {
+            // 生成TOKEN
+            if ($request->has('address')) {
+                if (!$user->source_address) {
+                    $this->getSource($address, $source);
                     $this->insertChildren($user, $source);
-                    // 更新上次的算力
-                    $this->userService->updateSharePower($source);
-
-                } catch (\Exception $e) {
-                    return [
-                        'code'    => 500,
-                        'message' => $e->getMessage()
-                    ];
                 }
             }
+
+            $token = $this->authService->createToken($user);
+
+            return [
+                'code'    => 200,
+                'message' => "认证成功",
+                'data'    => [
+                    'access_token' => $token,
+                    'expired_at'   => time() + 60 * 60 * 24,
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'code'    => 500,
+                'message' => $e->getMessage(),
+            ];
         }
 
-        $token = $this->authService->createToken($user);
-
-        return [
-            'code'    => 200,
-            'message' => "认证成功",
-            'data'    => [
-                'access_token'   => $token,
-                'expired_at'     => time() + 60 * 60 * 24,
-            ]
-        ];
     }
 
     public function bind(RequestInterface $request)
