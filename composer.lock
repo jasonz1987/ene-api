@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8062a05d9d7b620cea5d2b737b9cde2c",
+    "content-hash": "8a7a262db323df8b22bcaec28cd5c9f9",
     "packages": [
         {
             "name": "brick/math",
@@ -5023,6 +5023,21 @@
             ],
             "description": "Sign and verify stuff",
             "time": "2021-01-25T09:39:37+00:00"
+        },
+        {
+            "name": "serderovsh/web3.php",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/serderovsh/web3.php",
+                "reference": "patch-1"
+            },
+            "type": "package",
+            "autoload": {
+                "psr-4": {
+                    "Web3\\": "src/"
+                }
+            }
         },
         {
             "name": "simplito/bigint-wrapper-php",

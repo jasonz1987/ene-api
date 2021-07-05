@@ -5,14 +5,14 @@ namespace App\Model;
 
 /**
  */
-class IndexAccountLog extends Model
+class ProfitLog extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'index_account_logs';
+    protected $table = 'profit_logs';
     /**
      * The attributes that are mass assignable.
      *

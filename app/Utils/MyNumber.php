@@ -9,9 +9,14 @@ use Hyperf\Utils\ApplicationContext;
 
 class MyNumber
 {
-    public static function formatSoke($amount)
+    public static function formatCpu($amount)
     {
         return BigDecimal::of($amount)->toScale(6, RoundingMode::DOWN);
+    }
+
+    public static function formatPower($amount)
+    {
+        return BigDecimal::of($amount)->toScale(4, RoundingMode::DOWN);
     }
 
 }

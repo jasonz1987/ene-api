@@ -5,14 +5,14 @@ namespace App\Model;
 
 /**
  */
-class FundProduct extends Model
+class DepositLog extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'fund_products';
+    protected $table = 'deposit_logs';
     /**
      * The attributes that are mass assignable.
      *
@@ -25,5 +25,6 @@ class FundProduct extends Model
      * @var array
      */
     protected $casts = [];
+
 
 }

@@ -5,14 +5,14 @@ namespace App\Model;
 
 /**
  */
-class FundOrder extends Model
+class InvitationLog extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'fund_orders';
+    protected $table = 'invitation_logs';
     /**
      * The attributes that are mass assignable.
      *
@@ -26,7 +26,13 @@ class FundOrder extends Model
      */
     protected $casts = [];
 
-    public function product() {
-        return $this->belongsTo(FundProduct::class);
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function child() {
+        return $this->belongsTo(User::class, 'child_id', 'id');
+    }
+
 }

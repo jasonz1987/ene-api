@@ -5,14 +5,14 @@ namespace App\Model;
 
 /**
  */
-class ContractSymbol extends Model
+class MineLog extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'contract_symbols';
+    protected $table = 'mine_logs';
     /**
      * The attributes that are mass assignable.
      *
@@ -25,4 +25,6 @@ class ContractSymbol extends Model
      * @var array
      */
     protected $casts = [];
+
+
 }

@@ -38,4 +38,14 @@ class ConfigService
         return $redis->set(sprintf("%s:%s", $uid, $key), time(), ['nx', 'ex' => $time]);
     }
 
+    public function getLastBlockNumber() {
+        $redis = $this->container->get(Redis::class);
+        return $redis->get('latest_block_number');
+    }
+
+    public function setLastBlockNumber($number) {
+        $redis = $this->container->get(Redis::class);
+        return $redis->set('latest_block_number', $number);
+    }
+
 }
