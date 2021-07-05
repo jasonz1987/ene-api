@@ -17,8 +17,8 @@ Router::addRoute(['POST', 'HEAD'], '/api/auth/nonce', 'App\Controller\Api\AuthCo
 Router::addRoute(['POST', 'HEAD'], '/api/auth/token', 'App\Controller\Api\AuthController@token');
 
 Router::addGroup('/api',function (){
-    Router::addRoute(['GET', 'HEAD'], '/power/index', 'App\Controller\Api\PowerController@start');
-    Router::addRoute(['POST', 'HEAD'], '/power/profit', 'App\Controller\Api\PowerController@stop');
+    Router::addRoute(['GET', 'HEAD'], '/power/index', 'App\Controller\Api\PowerController@index');
+    Router::addRoute(['POST', 'HEAD'], '/power/profit', 'App\Controller\Api\PowerController@profit');
 
 },
     ['middleware' => [AuthMiddleware::class]]
