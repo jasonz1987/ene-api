@@ -50,7 +50,7 @@ class PowerController extends AbstractController
         // 获取全网总算力
 
         // 累计产出
-        $total_yield = User::sum('profit');
+        $total_mine = User::sum('profit');
 
         // 获取挖矿算力
         $mine_power = $user->mine_power;
@@ -72,7 +72,7 @@ class PowerController extends AbstractController
             'data'        => [
                 'global' => [
                     'total_power' => MyNumber::formatPower(0),
-                    'total_yield' => MyNumber::formatCpu($total_yield),
+                    'total_mine' => MyNumber::formatCpu($total_mine),
                 ],
                 'my'     => [
                     'total_power' => MyNumber::formatPower($total_power),

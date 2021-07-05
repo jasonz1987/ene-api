@@ -213,6 +213,8 @@ class AuthController extends AbstractController
             ];
 
         } catch (\Exception $e) {
+            Db::rollBack();
+
             return [
                 'code'    => 500,
                 'message' => $e->getMessage(),
