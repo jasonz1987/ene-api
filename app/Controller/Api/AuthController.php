@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Controller\AbstractController;
 use App\Model\InvitationLog;
 use App\Model\User;
 use App\Services\AuthService;
