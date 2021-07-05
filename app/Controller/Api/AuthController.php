@@ -67,7 +67,7 @@ class AuthController extends AbstractController
             ];
         }
 
-        $address = $request->input('address');
+        $address = strtolower($request->input('address'));
 
         $user = User::where('address', '=', $address)
             ->first();
@@ -101,7 +101,7 @@ class AuthController extends AbstractController
             ];
         }
 
-        $address = $request->input('address');
+        $address = strtolower($request->input('address'));
 
         $nonce = $this->authService->getNonce($address);
 
@@ -146,7 +146,7 @@ class AuthController extends AbstractController
             ];
         }
 
-        $address = $request->input('address');
+        $address = strtolower($request->input('address'));
         $signature = $request->input('signature');
 
         $nonce = $this->authService->getNonce($address);
@@ -188,7 +188,7 @@ class AuthController extends AbstractController
         // 生成TOKEN
         if ($request->has('address')) {
             if (!$user->source_address) {
-                $this->getSource($request->input('address'), $source);
+                $this->getSource($address, $source);
 
                 Db::beginTransaction();
 

@@ -25,11 +25,11 @@
 
 ## 环境
 
-| 环境     | public api |
-| -------- | ---------- |
-| 本地环境 |            |
-| 测试环境 |            |
-| 生产环境 |            |
+| 环境     | public api             |
+| -------- | ---------------------- |
+| 本地环境 |                        |
+| 测试环境 |                        |
+| 生产环境 | http://api.cpuswap.io/ |
 
 ## 返回
 
@@ -101,7 +101,7 @@ GET
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/auth/info
+http://{{host}}/api/auth/info
 ```
 
 **是否认证**：
@@ -143,7 +143,7 @@ POST
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/auth/nonce
+http://{{host}}/api/auth/nonce
 ```
 
 **是否认证**：
@@ -185,7 +185,7 @@ POST
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/auth/token
+http://{{host}}/api/auth/token
 ```
 
 **是否认证**：
@@ -233,7 +233,7 @@ GET
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/power/index
+http://{{host}}/api/power/index
 ```
 
 **是否认证**：
@@ -272,24 +272,23 @@ http://{{host}}/api/v1/power/index
 
 **返回参数：**
 
-| 参数名      | 参数类型 | 参数说明       |
-| ----------- | -------- | -------------- |
-| global      | Object   | 全局数据       |
-| <Object>    |          |                |
-| total_power | String   | 做市资金池     |
-| total_mine  | String   | 激励资金池地址 |
-| total_burn  | String   | 流动性挖矿地址 |
-| </Object>   |          |                |
-| my          | Object   | 个人数据       |
-| <Object>    |          |                |
-| total_power | String   | 做市质押       |
-| mine_power  | String   | 指数账户       |
-| share_power | String   | 钱包地址       |
-| balance     | String   | 用户余额       |
-| vip_level   | String   | 做市收益       |
-| team_num    | Integer  | 做市亏损       |
-| direct_num  | Integer  | 算力收益       |
-| </Object>   |          |                |
+| 参数名      | 参数类型 | 参数说明   |
+| ----------- | -------- | ---------- |
+| global      | Object   | 全局数据   |
+| <Object>    |          |            |
+| total_power | String   | 总算力     |
+| total_mine  | String   | 总挖矿产出 |
+| </Object>   |          |            |
+| my          | Object   | 个人数据   |
+| <Object>    |          |            |
+| total_power | String   | 个人总算力 |
+| mine_power  | String   | 矿池算力   |
+| share_power | String   | 分享算力   |
+| balance     | String   | 用户余额   |
+| vip_level   | String   | 节点等级   |
+| team_num    | Integer  | 团队人数   |
+| direct_num  | Integer  | 直邀人数   |
+| </Object>   |          |            |
 
 #### 领取收益
 
@@ -300,7 +299,7 @@ POST
 **请求地址：**
 
 ```
-http://{{host}}/api/v1/power/profit
+http://{{host}}/api/power/profit
 ```
 
 **是否认证**：
