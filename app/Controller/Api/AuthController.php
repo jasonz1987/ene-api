@@ -199,6 +199,8 @@ class AuthController extends AbstractController
                 }
             }
 
+            Db::commit();
+
             $token = $this->authService->createToken($user);
 
             return [
