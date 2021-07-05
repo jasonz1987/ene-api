@@ -192,7 +192,8 @@ class AuthController extends AbstractController
             // 生成TOKEN
             if ($request->has('address')) {
                 if (!$user->source_address) {
-                    $this->getSource($address, $source);
+                    $source_address = strtolower($request->input('source'));
+                    $this->getSource($source_address, $source);
                     $this->insertChildren($user, $source);
                     $user->source_address = $source->address;
                     $user->save();
