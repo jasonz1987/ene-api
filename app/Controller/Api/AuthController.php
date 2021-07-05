@@ -315,7 +315,7 @@ class AuthController extends AbstractController
         }
 
         $result[] = [
-            'user_id'    => $source->uid,
+            'user_id'    => $source->id,
             'child_id'   => $user->id,
             'level'      => 1,
             'created_at' => Carbon::now(),
