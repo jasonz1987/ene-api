@@ -221,9 +221,11 @@ class EthService
             'gasLimit' => Utils::toHex($this->gasLimit, true),
             'gasPrice' => Utils::toHex($gasPrice, true),
             'nonce'    => Utils::toHex($nonce, true),
-            'chainId'  => 65,
+            'chainId'  => env('CHAIN_ID'),
             'data'     => $data
         ];
+
+        var_dump($raw);
 
 //        Log::info("提交交易数据", [
 //            'raw' => $raw
