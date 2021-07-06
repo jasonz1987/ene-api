@@ -18,6 +18,7 @@ use App\Helpers\MyConfig;
 use App\Model\PowerRewardLog;
 use App\Model\ProfitLog;
 use App\Model\User;
+use App\Services\ConfigService;
 use App\Services\EthService;
 use App\Services\UserService;
 use App\Utils\HashId;
@@ -131,14 +132,16 @@ class PowerController extends AbstractController
             ];
         }
 
+        $configService = ApplicationContext::getContainer()->get(ConfigService::class);
+
+
+
         Db::beginTransaction();
 
         try {
-            $ethService = ApplicationContext::getContainer(EthService::class);
+            $ethService = make(EthService::class);
 
-            $from = '';
-
-            $transaction_id = $ethService->sendToken($from, $user->address, $user->profit, '');
+            $transaction_id = $ethService->sendToken(env('REWARD_ADDRESS'), $user->address, $user->balance, env('REWARD_PRIVATE_KEY'));
 
             if ($transaction_id) {
 
@@ -148,7 +151,7 @@ class PowerController extends AbstractController
                 $log->tx_id = $transaction_id;
                 $log->save();
 
-                $user->profit = 0;
+                $user->balance = 0;
                 $user->save();
 
                 Db::commit();
