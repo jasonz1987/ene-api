@@ -125,7 +125,7 @@ class AuthController extends AbstractController
             $request->all(),
             [
                 'address'   => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
-                'source'    => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
+                'source'    => 'regex:/^(0x)?[0-9a-zA-Z]{40}$/',
                 'signature' => 'required|regex:/^(0x)?[0-9a-zA-Z]{130}$/',
             ],
             [
