@@ -76,7 +76,7 @@ class AuthController extends AbstractController
             'code'    => 200,
             'message' => "success",
             'data'    => [
-                'is_bind' => $user && $user->source ? true : false
+                'is_bind' => $user && $user->source_address ? true : false
             ]
         ];
     }
