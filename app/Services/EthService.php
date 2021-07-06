@@ -226,7 +226,6 @@ class EthService
         ];
 
         var_dump($raw);
-        var_dump($privateKey);
 
 //        Log::info("提交交易数据", [
 //            'raw' => $raw
@@ -314,6 +313,10 @@ class EthService
         $transaction_raw = $this->getTokenRawTransaction($fromAccount, $toAccount, $amount,$privateKey, $nonce, $gasPrice);
 
         var_dump($transaction_raw);
+
+        $txreq = new \Web3p\EthereumTx\Transaction($transaction_raw);
+
+        var_dump($txreq);
 
         $transaction_id = $this->sendRawTransaction($transaction_raw);
 
