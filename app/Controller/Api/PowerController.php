@@ -173,7 +173,7 @@ class PowerController extends AbstractController
 
             return [
                 'code'    => 500,
-                'message' => '领取失败',
+                'message' => '领取失败：'. $e->getMessage(),
             ];
 
         }
