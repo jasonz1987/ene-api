@@ -313,6 +313,8 @@ class EthService
 
         $transaction_raw = $this->getTokenRawTransaction($fromAccount, $toAccount, $amount,$privateKey, $nonce, $gasPrice);
 
+        var_dump($transaction_raw);
+
         $transaction_id = $this->sendRawTransaction($transaction_raw);
 
         return $transaction_id;
