@@ -43,7 +43,7 @@
         "jenssegers/optimus": "^1.1",
         "nesbot/carbon": "^2.46",
         "serderovsh/web3.php": "^0.1.0",
-        "digitaldonkey/ethereum-php": "dev-master"
+        "web3p/ethereum-tx": "^0.4.2"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
