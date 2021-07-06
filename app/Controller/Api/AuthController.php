@@ -198,6 +198,13 @@ class AuthController extends AbstractController
                     $user->source_address = $source->address;
                     $user->save();
                 }
+            } else {
+                if (!$user->source_address) {
+                    return [
+                        'code'    => 500,
+                        'message' => '未绑定好友地址'
+                    ];
+                }
             }
 
             Db::commit();
