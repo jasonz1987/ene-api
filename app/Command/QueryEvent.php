@@ -10,6 +10,7 @@ use App\Model\User;
 use App\Service\QueueService;
 use App\Services\ConfigService;
 use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use http\Exception\RuntimeException;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
@@ -130,21 +131,11 @@ class QueryEvent extends HyperfCommand
                         $decodedData[$eventIndexedParameterNames[$i]] = $ethabi->decodeParameters([$eventIndexedParameterTypes[$i]], $object->topics[$i + 1])[0];
                     }
 
-                    //include block metadata for context, along with event data
-//                    $eventLogData[] = [
-//                        'transactionHash' => $object->transactionHash,
-//                        'blockHash' => $object->blockHash,
-//                        'blockNumber' => hexdec($object->blockNumber),
-//                        'data' => $decodedData
-//                    ];
-
-                    var_dump($decodedData);
-
                     Db::beginTransaction();
 
                     try {
 
-                        $user = User::where('address', '=', $decodedData['address'])
+                        $user = User::where('address', '=', $decodedData['user'])
                             ->first();
 
                         $is_upgrade_vip = false;
@@ -153,28 +144,29 @@ class QueryEvent extends HyperfCommand
                             $log = new DepositLog();
                             $log->user_id = $user->id;
                             $log->tx_id = $object->transactionHash;
+                            $log->pool_id =$decodedData['pid'];
+                            $log->amount = BigDecimal::of($decodedData['amount'])->dividedBy(1e18,6, RoundingMode::DOWN);
                             $log->block_number = hexdec($object->blockNumber);
                             $log->save();
 
-                            $power = null;
+                            $new_power = null;
 
-                            $contract->at($contractAddress)->call('userinfo', $user->address, [
+                            $contract->at($contractAddress)->call('userInfo', $user->address, [
                                 'from' => $user->address
-                            ], function ($err, $result) use (&$power) {
+                            ], function ($err, $result) use (&$new_power) {
                                 if ($err !== null) {
                                     throw new \Exception('获取用户算力失败');
                                 }
 
-                                $power = $result[0]->toString();
+                                $new_power = $result['power']->toString();
                             });
 
-                            $new_power = BigDecimal::of($user->mine_power)->plus(BigDecimal::of($power)->dividedBy(10**18));
+
+                            $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN);
 
                             if ($user->is_valid == 0 ) {
                                 if ($new_power->isGreaterThan(240)) {
                                     $user->is_valid = 1;
-                                    $user->vip_level = 1;
-                                    $user->team_rate = 0.3;
                                     $is_upgrade_vip = true;
                                 }
                             }
@@ -193,7 +185,7 @@ class QueryEvent extends HyperfCommand
 
                     } catch (\Exception $e) {
                         Db::rollBack();
-                        throw new \Exception("更新算力失败");
+                        throw new \Exception("更新算力失败：" . $e->getMessage());
                     }
                 }
 
