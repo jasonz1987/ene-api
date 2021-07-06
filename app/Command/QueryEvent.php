@@ -138,6 +138,8 @@ class QueryEvent extends HyperfCommand
 //                        'data' => $decodedData
 //                    ];
 
+                    var_dump($decodedData);
+
                     Db::beginTransaction();
 
                     try {
