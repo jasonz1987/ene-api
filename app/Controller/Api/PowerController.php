@@ -134,7 +134,12 @@ class PowerController extends AbstractController
 
         $configService = ApplicationContext::getContainer()->get(ConfigService::class);
 
-
+        if (!$configService->setWithdrawLimit($user->id)) {
+            return [
+                'code'    => 500,
+                'message' => '操作过于频繁，请稍后再试',
+            ];
+        }
 
         Db::beginTransaction();
 
