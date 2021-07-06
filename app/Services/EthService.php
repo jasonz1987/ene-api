@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Helpers\MyConfig;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
-use Illuminate\Support\Facades\Log;
 use phpseclib\Math\BigInteger;
 use Web3\Contract;
 use Web3\Contracts\Ethabi;
@@ -155,9 +154,9 @@ class EthService
             'data'     => ''
         ];
 
-        Log::info("提交交易数据", [
-            'raw' => $raw
-        ]);
+//        Log::info("提交交易数据", [
+//            'raw' => $raw
+//        ]);
 
         $txreq = new \Web3p\EthereumTx\Transaction($raw);
 
@@ -226,9 +225,9 @@ class EthService
             'data'     => $data
         ];
 
-        Log::info("提交交易数据", [
-            'raw' => $raw
-        ]);
+//        Log::info("提交交易数据", [
+//            'raw' => $raw
+//        ]);
 
         $txreq = new \Web3p\EthereumTx\Transaction($raw);
 
