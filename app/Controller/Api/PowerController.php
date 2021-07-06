@@ -64,14 +64,21 @@ class PowerController extends AbstractController
 
         // 获取直邀用户数量
 
+        $children = $user->children()->with('user')->get();
+
+        $direct_num  = $userService->getDirectChildrenNum($children);
+
         // 获取团队有效用户数量
+        $team_num = $userService->getTeamNum($user);
+
+        $global_power = $this->getGlobalPower();
 
         return [
             'status_code' => 200,
             'message'     => "",
             'data'        => [
                 'global' => [
-                    'total_power' => MyNumber::formatPower(0),
+                    'total_power' => MyNumber::formatPower($global_power),
                     'total_mine' => MyNumber::formatCpu($total_mine),
                 ],
                 'my'     => [
@@ -81,11 +88,36 @@ class PowerController extends AbstractController
                     'team_power'  => MyNumber::formatPower($team_power),
                     'balance'      => MyNumber::formatCpu($user->balance),
                     'vip_level'   => $user->vip_level,
-                    'direct_num'  => 0,
-                    'team_num'    => 0,
+                    'direct_num'  => $direct_num,
+                    'team_num'    => $team_num,
                 ]
             ]
         ];
+    }
+
+    public function getGlobalPower() {
+
+        $userService = ApplicationContext::getContainer()->get(UserService::class);
+
+        // 获取所有的用户
+        $users = \App\Models\User::where('is_valid', '=', 1)
+            ->where('mine_power', '>', 0)
+            ->get();
+
+        $global_power = BigDecimal::zero();
+
+        foreach ($users as $user) {
+            // 获取分享算力
+            $share_power = $userService->getSharePower($user);
+            // 获取团队算力
+            $team_power = $userService->getTeamPower($user);
+
+            $total_power = BigDecimal::of($user->mine_power)->plus($share_power)->plus($team_power);
+
+            $global_power = $global_power->plus($total_power);
+        }
+
+        return $global_power;
     }
 
     public function profit(RequestInterface $request)

@@ -261,7 +261,7 @@ http://{{host}}/api/power/index
             "mine_power": "0.111",
             "share_power": "0xbb2225273a96cb229f8a128b1b59a3f0f6477837",
             "team_power": "0.111",
-            "profit": 0,
+            "balance": 0,
             "vip_level": 0,
             "team_nums": 0,
             "direct_nums": 0
