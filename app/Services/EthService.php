@@ -226,6 +226,7 @@ class EthService
         ];
 
         var_dump($raw);
+        var_dump($privateKey);
 
 //        Log::info("提交交易数据", [
 //            'raw' => $raw
