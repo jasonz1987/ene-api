@@ -300,6 +300,8 @@ class UserService
     protected function getParents($collection, $user_id, $root_id, $is_valid = false) {
         $parent = $this->getParent($collection, $user_id);
 
+        $parents = [];
+
         while ($parent && $parent->parent_id &&  $parent->parent_id != $root_id) {
             if ($is_valid) {
                 if ($parent->user->is_valid) {
@@ -323,6 +325,8 @@ class UserService
      */
     protected function getParents2($collection, $user_id, $is_valid = false) {
         $parent = $this->getParent($collection, $user_id);
+
+        $parents = [];
 
         while ($parent) {
             if ($is_valid) {
