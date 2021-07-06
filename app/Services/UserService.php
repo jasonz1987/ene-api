@@ -87,7 +87,7 @@ class UserService
             if ($max_level >= $user->vip_level) {
                 $rate = 0.01;
             } else {
-                $rate = $this->getTeamLevelRate($user->level);
+                $rate = $this->getTeamLevelRate($user->vip_level);
             }
 
             // 计算总算李
@@ -96,48 +96,6 @@ class UserService
 
         return $total_power;
 
-    }
-
-    /**
-     * 更新用户的团队等级比例
-     *
-     * @param $user
-     */
-    public function updateParentTeamLevel($user) {
-        // 获取用户的父级
-        $parents = $user->parents()
-            ->with('user', 'user.children')
-            ->orderBy('level', 'asc')
-            ->get();
-
-        $min_level = 0;
-
-        // TODO 推算平级
-        foreach ($parents as $parent) {
-
-            $new_level = $this->getUserTeamLevel($user, $parent->user->vip_level);
-
-            if ($new_level > $parent->user->vip_level) {
-                $parent->user->vip_level = $new_level;
-            }
-
-            if ($parent->user->vip_level == 0) {
-                // 获取团队下所有的有效用户
-                $count = $parent->user->children()
-                    ->with('user')
-                    ->sum(function($item){
-                        if ($item->user->is_valid == 1) {
-                            return 1;
-                        }
-                        return 0;
-                    });
-
-                if ($count >= 299) {
-                    $parent->user->vip_level = 1;
-                    $min_level = 1;
-                }
-            }
-        }
     }
 
     protected function getUserTeamLevel($user, $level) {
@@ -192,7 +150,7 @@ class UserService
      */
     public function getDirectChildrenNum($collection) {
         $direct_num = $collection
-            ->where('level', '=', 1)
+            ->where('vip_level', '=', 1)
             ->sum(function ($item){
                 if ($item->user->is_valid) {
                     return 1;
@@ -254,6 +212,8 @@ class UserService
 
         foreach ($collection as $k=>$v) {
             if (!$this->isHasChildren($collection, $v->user_id)) {
+                $tree = [];
+
                 if ($is_valid) {
                     if ($v->user->is_valid) {
                         $tree[0] = $v;
@@ -265,7 +225,10 @@ class UserService
                     $tree = array_merge($tree, $parents);
                 }
 
-                $trees[] = array_reverse($tree);
+                if ($tree) {
+                    $trees[] = array_reverse($tree);
+
+                }
             }
         }
 

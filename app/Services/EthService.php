@@ -199,8 +199,6 @@ class EthService
      */
     public function getTokenRawTransaction($fromAccount, $toAccount, $amount, $privateKey, $nonce, $gasPrice)
     {
-//        $gasPrice = (string)(floor($gasPrice * 1.4));
-
             $abi = new Ethabi([
                 'address'      => new Address,
                 'bool'         => new Boolean,
@@ -211,8 +209,10 @@ class EthService
                 'uint'         => new Uinteger
             ]);
 
-            $data = '0xa9059cbb' . str_replace('0x', '', $abi->encodeParameter('address', strtolower($toAccount))) . str_replace('0x', '', $abi->encodeParameter('uint256', $amount));
+            var_dump($gasPrice);
+            var_dump($amount);
 
+            $data = '0xa9059cbb' . str_replace('0x', '', $abi->encodeParameter('address', strtolower($toAccount))) . str_replace('0x', '', $abi->encodeParameter('uint256', $amount));
         $raw = [
             'from'     => $fromAccount,
             'to'       => $this->contractAddress,
@@ -221,7 +221,7 @@ class EthService
             'gasLimit' => Utils::toHex($this->gasLimit, true),
             'gasPrice' => Utils::toHex($gasPrice, true),
             'nonce'    => Utils::toHex($nonce, true),
-            'chainId'  => env('CHAIN_ID'),
+            'chainId'  => (int)(env('CHAIN_ID')),
             'data'     => $data
         ];
 
@@ -306,17 +306,11 @@ class EthService
             throw new \Exception("获取gasPrice失败");
         }
 
-        $amount = BigDecimal::of($amount)->toScale(6, RoundingMode::DOWN)->toFloat();
+        $amount = Utils::toWei((string)$amount, 'ether');
 
-        $amount = Utils::toWei((string)$amount, 'mwei');
-
-        $transaction_raw = $this->getTokenRawTransaction($fromAccount, $toAccount, $amount,$privateKey, $nonce, $gasPrice);
-
+        $transaction_raw = $this->getTokenRawTransaction($fromAccount, $toAccount, $amount, $privateKey, $nonce, $gasPrice);
         var_dump($transaction_raw);
 
-        $txreq = new \Web3p\EthereumTx\Transaction($transaction_raw);
-
-        var_dump($txreq);
 
         $transaction_id = $this->sendRawTransaction($transaction_raw);
 
