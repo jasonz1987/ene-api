@@ -39,7 +39,7 @@ class EthService
 
     public function __construct()
     {
-        $this->web3 = new Web3(new HttpProvider(new HttpRequestManager(config('global.okt_provider_server'), 10)));
+        $this->web3 = new Web3(new HttpProvider(new HttpRequestManager(env('RPC_PROVIDER'), 10)));
     }
 
     /**
