@@ -100,7 +100,7 @@ class PowerController extends AbstractController
         $userService = ApplicationContext::getContainer()->get(UserService::class);
 
         // 获取所有的用户
-        $users = \App\Models\User::where('is_valid', '=', 1)
+        $users = User::where('is_valid', '=', 1)
             ->where('mine_power', '>', 0)
             ->get();
 
