@@ -65,7 +65,7 @@ class PowerController extends AbstractController
 
         // 获取直邀用户数量
 
-        $children = $user->children()->with('user')->get();
+        $children = $user->children()->with('child')->get();
 
         $direct_num  = $userService->getDirectChildrenNum($children);
 
