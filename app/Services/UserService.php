@@ -21,7 +21,7 @@ class UserService
      * @param $user
      */
     public function getSharePower($user) {
-        $children_collection = $user->children()->with('user')->get();
+        $children_collection = $user->children()->with('child')->get();
 
         $total_power = BigDecimal::zero();
 
@@ -42,10 +42,10 @@ class UserService
                 foreach($new_tree as $k=>$v) {
                     $rate = $levels[$k];
                     // 烧伤
-                    if (BigDecimal::of($user->mine_power)->isGreaterThan($v->user->mine_power)) {
+                    if (BigDecimal::of($user->mine_power)->isGreaterThan($v->child->mine_power)) {
                         $power = BigDecimal::of($user->mine_power);
                     } else {
-                        $power = BigDecimal::of($v->user->mine_power);
+                        $power = BigDecimal::of($v->child->mine_power);
                     }
 
                     $power_add = $power->multipliedBy($rate);
@@ -76,11 +76,11 @@ class UserService
             $power = BigDecimal::zero();
 
             foreach ($tree as $k=>$v) {
-                if ($v->user->vip_level > $max_level) {
-                    $max_level = $v->user->vip_level;
+                if ($v->child->vip_level > $max_level) {
+                    $max_level = $v->child->vip_level;
                 }
 
-                $power = $power->plus($v->user->mine_power);
+                $power = $power->plus($v->child->mine_power);
             }
 
             // 平级
@@ -100,14 +100,14 @@ class UserService
 
     protected function getUserTeamLevel($user, $level) {
         $collection  = $user->children()
-            ->with('user')
+            ->with('child')
             ->get();
 
         if ($level == 0) {
             // 获取团队下所有的有效用户
             $count = $collection
                 ->sum(function($item){
-                    if ($item->user->is_valid == 1) {
+                    if ($item->child->is_valid == 1) {
                         return 1;
                     }
                     return 0;
@@ -127,7 +127,7 @@ class UserService
 
             foreach ($trees as $tree) {
                 foreach ($tree as $k=>$v) {
-                    if ($v->user->vip_level == $level) {
+                    if ($v->child->vip_level == $level) {
                         $count ++;
                         continue;
                     }
@@ -150,9 +150,9 @@ class UserService
      */
     public function getDirectChildrenNum($collection) {
         $direct_num = $collection
-            ->where('vip_level', '=', 1)
+            ->where('level', '=', 1)
             ->sum(function ($item){
-                if ($item->user->is_valid) {
+                if ($item->child->is_valid == 1) {
                     return 1;
                 }
 
@@ -215,7 +215,7 @@ class UserService
                 $tree = [];
 
                 if ($is_valid) {
-                    if ($v->user->is_valid) {
+                    if ($v->child->is_valid == 1) {
                         $tree[0] = $v;
                     }
                 }
@@ -227,7 +227,6 @@ class UserService
 
                 if ($tree) {
                     $trees[] = array_reverse($tree);
-
                 }
             }
         }
@@ -244,7 +243,7 @@ class UserService
      * @return array
      */
     public function getParentTree($user) {
-        $children_collection = $user->children()->with('user')->get();
+        $children_collection = $user->children()->with('child')->get();
 
         $tree = $this->getParents2($children_collection, $user->id, true);
 
@@ -267,7 +266,7 @@ class UserService
 
         while ($parent && $parent->parent_id &&  $parent->parent_id != $root_id) {
             if ($is_valid) {
-                if ($parent->user->is_valid) {
+                if ($parent->child->is_valid == 1) {
                     $parents[] = $parent;
                 }
             }
@@ -293,7 +292,7 @@ class UserService
 
         while ($parent) {
             if ($is_valid) {
-                if ($parent->user->is_valid) {
+                if ($parent->child->is_valid == 1) {
                     $parents[] = $parent;
                 }
             }
@@ -322,11 +321,11 @@ class UserService
      * @return mixed
      */
     public function getTeamNum($user) {
-        $collection = $user->children()->with('user')->get();
+        $collection = $user->children()->with('child')->get();
 
         $num = $collection
             ->sum(function ($item){
-                if ($item->user->is_valid == 1) {
+                if ($item->child->is_valid == 1) {
                     return 1;
                 }
 
@@ -348,7 +347,7 @@ class UserService
             return false;
         }
 
-        $collection = $user->children()->with('user')->get();
+        $collection = $user->children()->with('child')->get();
 
         $trees = $this->getTrees($collection, $user->id, true);
 
@@ -356,7 +355,7 @@ class UserService
 
         foreach ($trees as $tree) {
             foreach ($tree as $k=>$v) {
-                if ($v->user->vip_level >= $user->vip_level) {
+                if ($v->child->vip_level >= $user->vip_level) {
                     $count++;
                     break;
                 }
