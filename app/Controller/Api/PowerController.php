@@ -73,7 +73,7 @@ class PowerController extends AbstractController
         if ($user->vip_level == 0) {
             $team_num = $userService->getTeamNum($user);
         } else {
-            $team_num = $userService->getTeamNum($user);
+            $team_num = $userService->getTeamNodes($user);
         }
 
         $global_power = $this->getGlobalPower();
