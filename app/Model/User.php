@@ -44,10 +44,10 @@ class User extends Model implements JwtSubjectInterface
     }
 
     public function children() {
-        return $this->hasMany(InvitationLog::class, 'id', 'user_id');
+        return $this->hasMany(InvitationLog::class, 'user_id', 'id');
     }
 
     public function parents() {
-        return $this->hasMany(InvitationLog::class, 'id', 'child_id');
+        return $this->hasMany(InvitationLog::class, 'child_id', 'id');
     }
 }
