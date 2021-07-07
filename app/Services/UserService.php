@@ -64,13 +64,17 @@ class UserService
      * @param $user
      */
     public function getTeamPower($user) {
+        $total_power = BigDecimal::zero();
+
+        if ($user->vip_level == 0 || $user->is_valid == 0) {
+            return $total_power;
+        }
 
         $collection = $user->children()->with('child')->get();
 
         // 获取该用户下的所有几条线
         $trees = $this->getTrees($collection, $user->id, true);
 
-        $total_power = BigDecimal::zero();
 
         foreach ($trees as $tree) {
             $max_level = 0;
