@@ -42,7 +42,7 @@ class UserService
                 foreach($new_tree as $k=>$v) {
                     $rate = $levels[$k];
                     // 烧伤
-                    if (BigDecimal::of($user->mine_power)->isGreaterThan($v->child->mine_power)) {
+                    if (BigDecimal::of($user->mine_power)->isLessThan($v->child->mine_power)) {
                         $power = BigDecimal::of($user->mine_power);
                     } else {
                         $power = BigDecimal::of($v->child->mine_power);
@@ -367,6 +367,29 @@ class UserService
         }
 
         return false;
+    }
+
+    public function getTeamNodes($user) {
+        if ($user->vip_level == 5) {
+            return 0;
+        }
+
+        $collection = $user->children()->with('child')->get();
+
+        $trees = $this->getTrees($collection, $user->id, true);
+
+        $count = 0;
+
+        foreach ($trees as $tree) {
+            foreach ($tree as $k=>$v) {
+                if ($v->child->vip_level >= $user->vip_level) {
+                    $count++;
+                    break;
+                }
+            }
+        }
+
+        return $count;
     }
 
 }

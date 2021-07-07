@@ -70,12 +70,16 @@ class PowerController extends AbstractController
         $direct_num  = $userService->getDirectChildrenNum($children);
 
         // 获取团队有效用户数量
-        $team_num = $userService->getTeamNum($user);
+        if ($user->vip_level == 0) {
+            $team_num = $userService->getTeamNum($user);
+        } else {
+            $team_num = $userService->getTeamNum($user);
+        }
 
         $global_power = $this->getGlobalPower();
 
         return [
-            'status_code' => 200,
+            'code' => 200,
             'message'     => "",
             'data'        => [
                 'global' => [
