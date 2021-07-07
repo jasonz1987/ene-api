@@ -37,15 +37,16 @@ class UserService
 
             foreach ($trees as $tree) {
 
-                $new_tree = array_slice($tree, 0, $direct_num - 1);
+                // 根据推荐数量获取对应的层级
+                $new_tree = array_slice($tree, 0, $direct_num);
 
                 foreach($new_tree as $k=>$v) {
                     $rate = $levels[$k];
                     // 烧伤
-                    if (BigDecimal::of($user->mine_power)->isLessThan($v->child->mine_power)) {
+                    if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
                         $power = BigDecimal::of($user->mine_power);
                     } else {
-                        $power = BigDecimal::of($v->child->mine_power);
+                        $power = BigDecimal::of($v->mine_power);
                     }
 
                     $power_add = $power->multipliedBy($rate);
@@ -64,7 +65,7 @@ class UserService
      */
     public function getTeamPower($user) {
 
-        $collection = $user->children()->with('user')->get();
+        $collection = $user->children()->with('child')->get();
 
         // 获取该用户下的所有几条线
         $trees = $this->getTrees($collection, $user->id, true);
@@ -76,11 +77,11 @@ class UserService
             $power = BigDecimal::zero();
 
             foreach ($tree as $k=>$v) {
-                if ($v->child->vip_level > $max_level) {
-                    $max_level = $v->child->vip_level;
+                if ($v->vip_level > $max_level) {
+                    $max_level = $v->vip_level;
                 }
 
-                $power = $power->plus($v->child->mine_power);
+                $power = $power->plus($v->mine_power);
             }
 
             // 平级
@@ -179,7 +180,7 @@ class UserService
             return [];
         }
 
-        return array_slice($rate, 0, $num-1);
+        return array_slice($rate, 0, $num);
     }
 
     /**
@@ -195,7 +196,7 @@ class UserService
             return 0;
         }
 
-        return $rate[$level];
+        return $rate[$level-1];
     }
 
 
@@ -211,18 +212,20 @@ class UserService
         $trees = [];
 
         foreach ($collection as $k=>$v) {
-            if (!$this->isHasChildren($collection, $v->user_id)) {
+            if (!$this->isHasChildren($collection, $v->child_id)) {
                 $tree = [];
 
                 if ($is_valid) {
                     if ($v->child->is_valid == 1) {
-                        $tree[0] = $v;
+                        $tree[0] = $v->child;
                     }
                 }
 
-                $parents = $this->getParents($collection,$v->parent_id,$root_id, $is_valid);
-                if ($parents) {
-                    $tree = array_merge($tree, $parents);
+                if ($v->parent_id) {
+                    $parents = $this->getParents($collection, $v->parent_id, $root_id, $is_valid);
+                    if ($parents) {
+                        $tree = array_merge($tree, $parents);
+                    }
                 }
 
                 if ($tree) {
@@ -264,12 +267,19 @@ class UserService
 
         $parents = [];
 
-        while ($parent && $parent->parent_id &&  $parent->parent_id != $root_id) {
+        while ($parent && $parent->parent_id) {
             if ($is_valid) {
                 if ($parent->child->is_valid == 1) {
-                    $parents[] = $parent;
+                    $parents[] = $parent->child;
                 }
+            } else {
+                $parents[] = $parent->child;
             }
+
+            if ($parent->parent_id == $root_id) {
+                break;
+            }
+
             $parent = $this->getParent($collection, $parent->parent_id);
         }
 
@@ -302,8 +312,9 @@ class UserService
         return $parents;
     }
 
-    protected function getParent($collection, $parent_id) {
-        $filtered = $collection->where('child_id', '=', $parent_id)->first();
+    protected function getParent($collection, $user_id) {
+        $filtered = $collection->where('child_id', '=', $user_id)
+            ->first();
 
         return $filtered;
     }
