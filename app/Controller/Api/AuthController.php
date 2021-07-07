@@ -322,6 +322,7 @@ class AuthController extends AbstractController
                 'user_id'    => $v->user_id,
                 'child_id'   => $user->id,
                 'level'      => $v->level + 1,
+                'parent_id'  => $v->parent_id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ];
@@ -331,6 +332,7 @@ class AuthController extends AbstractController
             'user_id'    => $source->id,
             'child_id'   => $user->id,
             'level'      => 1,
+            'parent_id'  => $source->parent ? $source->parent->id : null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ];

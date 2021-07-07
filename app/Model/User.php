@@ -50,4 +50,8 @@ class User extends Model implements JwtSubjectInterface
     public function parents() {
         return $this->hasMany(InvitationLog::class, 'child_id', 'id');
     }
+
+    public function parent() {
+        return $this->belongsTo(User::class, 'address', 'source_address');
+    }
 }
