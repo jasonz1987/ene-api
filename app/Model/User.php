@@ -52,6 +52,6 @@ class User extends Model implements JwtSubjectInterface
     }
 
     public function parent() {
-        return $this->belongsTo(User::class, 'address', 'source_address');
+        return $this->belongsTo(User::class, 'source_address', 'address');
     }
 }
