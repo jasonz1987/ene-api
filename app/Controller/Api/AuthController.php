@@ -190,10 +190,27 @@ class AuthController extends AbstractController
             }
 
             // 生成TOKEN
-            if ($request->has('address')) {
+            if ($request->has('source')) {
                 if (!$user->source_address) {
                     $source_address = strtolower($request->input('source'));
-                    $this->getSource($source_address, $source);
+                    // 查询原地址是否存在
+                    $source = User::where('address', '=', $source_address)
+                        ->first();
+
+                    if (!$source) {
+                        return [
+                            'code'    => 500,
+                            'message' => '源地址不存在',
+                        ];
+                    }
+
+                    if ($source->is_valid == 0) {
+                        return [
+                            'code'    => 500,
+                            'message' => '源地址不是有效账号',
+                        ];
+                    }
+
                     $this->insertChildren($user, $source);
                     $user->source_address = $source->address;
                     $user->save();
@@ -229,84 +246,6 @@ class AuthController extends AbstractController
             ];
         }
 
-    }
-
-    public function bind(RequestInterface $request)
-    {
-        $validator = $this->validationFactory->make(
-            $request->all(),
-            [
-                'source' => 'required',
-            ],
-            [
-                'source.required' => 'id is required',
-            ]
-        );
-
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return [
-                'code'    => 400,
-                'message' => $errorMessage,
-            ];
-        }
-
-        $user = Context::get('user');
-
-        if ($user->source_address) {
-            return [
-                'code'    => 500,
-                'message' => '请勿重复绑定',
-            ];
-        }
-
-        $this->getSource($request->input('source'), $source);
-
-        Db::beginTransaction();
-
-        try {
-            $user->source_address = $source->address;
-            $user->save();
-
-            $this->insertChildren($user, $source);
-            $this->userService->updateSharePower($source);
-
-            Db::commit();
-
-            return [
-                'code'    => 200,
-                'message' => '绑定成功',
-            ];
-
-        } catch (\Exception $e) {
-            Db::rollBack();
-
-            return [
-                'code'    => 500,
-                'message' => '绑定失败',
-            ];
-        }
-    }
-
-    protected function getSource($address, &$source)
-    {
-        // 查询原地址是否存在
-        $source = User::where('address', '=', $address)
-            ->first();
-
-        if (!$source) {
-            return [
-                'code'    => 500,
-                'message' => '源地址不存在',
-            ];
-        }
-
-        if ($source->is_valid == 0) {
-            return [
-                'code'    => 500,
-                'message' => '源地址不是有效账号',
-            ];
-        }
     }
 
     protected function insertChildren($user, $source)
