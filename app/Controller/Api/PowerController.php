@@ -27,6 +27,7 @@ use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\Carbon;
 use Hyperf\DbConnection\Db;
+use Hyperf\Guzzle\ClientFactory;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -150,28 +151,55 @@ class PowerController extends AbstractController
         try {
             $ethService = make(EthService::class);
 
-            $transaction_id = $ethService->sendToken(env('REWARD_ADDRESS'), $user->address, $user->balance, env('REWARD_PRIVATE_KEY'));
+            $gasPrice = $ethService->getGasPrice();
 
-            if ($transaction_id) {
+            $clientFactory  = ApplicationContext::getContainer()->get(ClientFactory::class);
 
-                $log = new ProfitLog();
-                $log->user_id = $user->id;
-                $log->profit = $user->profit;
-                $log->tx_id = $transaction_id;
-                $log->save();
+            $options = [];
+            // $client 为协程化的 GuzzleHttp\Client 对象
+            $client = $clientFactory->create($options);
 
-                $user->balance = 0;
-                $user->save();
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, $user->balance, $gasPrice);
 
-                Db::commit();
+            $response = $client->request('GET', $url);
 
-                // 提交查询任务
+            $code =  $response->getStatusCode(); // 200
+
+            if ($code == 200) {
+                $body =  $response->getBody();
+
+                $body = json_decode($body, true);
+
+                if ($body['code'] == 200) {
+
+                    $log = new ProfitLog();
+                    $log->user_id = $user->id;
+                    $log->amount = $user->balance;
+                    $log->tx_id = $body['data']['txId'];
+                    $log->save();
+
+                    $user->balance = 0;
+                    $user->save();
+
+                    Db::commit();
+
+                    return [
+                        'code'    => 200,
+                        'message' => '领取成功',
+                    ];
+                } else {
+                    return [
+                        'code'    => 500,
+                        'message' => '领取失败，发送交易失败：' . $body['message'],
+                    ];
+                }
+
+            } else {
                 return [
-                    'code'    => 200,
-                    'message' => '领取成功',
+                    'code'    => 500,
+                    'message' => '领取失败,请求接口错误',
                 ];
             }
-
         } catch (\Exception $e) {
             Db::rollBack();
 
