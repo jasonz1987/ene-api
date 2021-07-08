@@ -166,7 +166,9 @@ class PowerController extends AbstractController
             $code =  $response->getStatusCode(); // 200
 
             if ($code == 200) {
-                $body =  $response->getBody();
+                $body =  $response->getBody()->getContents();
+
+                var_dump($body);
 
                 $body = json_decode($body, true);
 
