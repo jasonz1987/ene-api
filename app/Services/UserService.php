@@ -103,50 +103,6 @@ class UserService
 
     }
 
-    protected function getUserTeamLevel($user, $level) {
-        $collection  = $user->children()
-            ->with('child')
-            ->get();
-
-        if ($level == 0) {
-            // 获取团队下所有的有效用户
-            $count = $collection
-                ->sum(function($item){
-                    if ($item->child->is_valid == 1) {
-                        return 1;
-                    }
-                    return 0;
-                });
-
-            if ($count >= 300) {
-                return 1;
-            } else {
-                return 0 ;
-            }
-
-        } else {
-            // 获取该用户下的所有几条线
-            $trees = $this->getTrees($collection, $user->id, true);
-
-            $count = 0;
-
-            foreach ($trees as $tree) {
-                foreach ($tree as $k=>$v) {
-                    if ($v->child->vip_level == $level) {
-                        $count ++;
-                        continue;
-                    }
-                }
-            }
-
-            if ($count >=3 ) {
-                return $level + 1;
-            } else {
-                return $level;
-            }
-        }
-    }
-
     /**
      * 获取直邀的有效用户
      *
@@ -370,7 +326,7 @@ class UserService
 
         foreach ($trees as $tree) {
             foreach ($tree as $k=>$v) {
-                if ($v->child->vip_level >= $user->vip_level) {
+                if ($v->vip_level >= $user->vip_level) {
                     $count++;
                     break;
                 }
@@ -397,7 +353,7 @@ class UserService
 
         foreach ($trees as $tree) {
             foreach ($tree as $k=>$v) {
-                if ($v->child->vip_level >= $user->vip_level) {
+                if ($v->vip_level >= $user->vip_level) {
                     $count++;
                     break;
                 }
