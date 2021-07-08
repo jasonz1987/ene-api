@@ -159,7 +159,13 @@ class PowerController extends AbstractController
             // $client 为协程化的 GuzzleHttp\Client 对象
             $client = $clientFactory->create($options);
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)(BigDecimal::of($user->balance)->toScale(6, RoundingMode::DOWN)), $gasPrice);
+            $amount = BigDecimal::of($user->balance);
+
+            $fee = $amount->multipliedBy(0.02);
+
+            $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
+
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice);
 
             $response = $client->request('GET', $url);
 
@@ -176,7 +182,8 @@ class PowerController extends AbstractController
 
                     $log = new ProfitLog();
                     $log->user_id = $user->id;
-                    $log->amount = $user->balance;
+                    $log->amount = $real_amount;
+                    $log->fee = $fee;
                     $log->tx_id = $body['data']['txId'];
                     $log->save();
 
