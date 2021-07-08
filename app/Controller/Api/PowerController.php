@@ -159,7 +159,7 @@ class PowerController extends AbstractController
             // $client 为协程化的 GuzzleHttp\Client 对象
             $client = $clientFactory->create($options);
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, $user->balance, $gasPrice);
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)(BigDecimal::of($user->balance)->toScale(6, RoundingMode::DOWN)), $gasPrice);
 
             $response = $client->request('GET', $url);
 
