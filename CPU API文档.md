@@ -328,3 +328,49 @@ http://{{host}}/api/power/profit
 | ------ | -------- | -------- |
 | tx_id  | String   | 交易ID   |
 
+
+
+#### 收益明细
+
+**请求方式：**
+
+GET
+
+**请求地址：**
+
+```
+http://{{host}}/api/power/profit/logs
+```
+
+**是否认证**：
+
+是
+
+**请求参数：**
+
+分页参数page,per_page
+
+**返回结果：**
+
+```json
+{
+    "status_code": 200,
+    "message": "",
+    "data": [
+      {
+        "id": 126213411233,
+        "amount": "100.0000",
+        "created_at": "2021-01-01 10:00:00"
+      }
+    ]
+}
+```
+
+**返回参数：**
+
+| 参数名     | 参数类型 | 参数说明 |
+| ---------- | -------- | -------- |
+| Id         | String   | ID       |
+| amount     | String   | 双       |
+| created_at | Datetime | 创建时间 |
+

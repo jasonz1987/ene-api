@@ -220,4 +220,57 @@ class PowerController extends AbstractController
         }
     }
 
+
+
+    public function profitLogs(RequestInterface $request) {
+        $validator = $this->validationFactory->make(
+            $request->all(),
+            [
+                'page'     => 'integer | min: 1',
+                'per_page' => 'integer | min: 1',
+            ],
+            [
+                'page.integer'     => 'page must be integer',
+                'per_page.integer' => 'per_page must be integer'
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first();
+            return [
+                'code'    => 400,
+                'message' => $errorMessage,
+            ];
+        }
+
+        $user = Context::get('user');
+
+        $logs = ProfitLog::where('user_id', '=', $user->id)
+            ->orderBy('id', 'desc')
+            ->paginate((int)$request->input('per_page', 10),['*'], 'page', (int)$request->input('page'));
+
+        return [
+            'code'    => 200,
+            'message' => '',
+            'data'    => $this->formatLogs($logs),
+            'page'    => $this->getPage($logs)
+        ];
+    }
+
+    protected function formatLogs($logs)
+    {
+        $result = [];
+
+        foreach ($logs as $log) {
+            $result[] = [
+                'id'           => HashId::encode($log->id),
+                'amount'          => MyNumber::formatCpu($log->amount),
+                'created_at'   => Carbon::parse($log->created_at)->toDateTimeString(),
+            ];
+        }
+
+        return $result;
+    }
+
+
 }
