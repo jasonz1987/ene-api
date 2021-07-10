@@ -95,8 +95,9 @@ class PowerController extends AbstractController
                     'vip_level'   => $user->vip_level,
                     'direct_num'  => $direct_num,
                     'team_num'    => $team_num,
-                    'reward_address'  => env('REWARD_ADDRESS')
-                ]
+                ],
+                'fee_address'  => env('REWARD_ADDRESS'),
+                'fee_rate'  => 1.5
             ]
         ];
     }
@@ -130,6 +131,25 @@ class PowerController extends AbstractController
 
     public function profit(RequestInterface $request)
     {
+
+        $validator = $this->validationFactory->make(
+            $request->all(),
+            [
+                'tx_id' => 'required',
+            ],
+            [
+                'tx_id' => 'txId is required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errorMessage = $validator->errors()->first();
+            return [
+                'code'    => 400,
+                'message' => $errorMessage,
+            ];
+        }
+
         $user = Context::get('user');
 
         if ($user->profit <= 0) {
