@@ -50,6 +50,7 @@ class PowerController extends AbstractController
         $userService = ApplicationContext::getContainer()->get(UserService::class);
 
         // 获取全网总算力
+        $collection = $user->children()->with('child')->get();
 
         // 累计产出
         $total_mine = User::sum('profit');
@@ -57,24 +58,22 @@ class PowerController extends AbstractController
         // 获取挖矿算力
         $mine_power = $user->mine_power;
         // 获取分享算力
-        $share_power = $userService->getSharePower($user);
+        $share_power = $userService->getSharePower($user, $collection);
         // 获取团队算力
-        $team_power = $userService->getTeamPower($user);
+        $team_power = $userService->getTeamPower($user, $collection);
 
         // 累计个人算力
         $total_power = BigDecimal::of($mine_power)->plus($share_power)->plus($team_power);
 
         // 获取直邀用户数量
 
-        $children = $user->children()->with('child')->get();
-
-        $direct_num  = $userService->getDirectChildrenNum($children);
+        $direct_num  = $userService->getDirectChildrenNum($collection);
 
         // 获取团队有效用户数量
         if ($user->vip_level == 0) {
-            $team_num = $userService->getTeamNum($user);
+            $team_num = $userService->getTeamNum($user, $collection);
         } else {
-            $team_num = $userService->getTeamNodes($user);
+            $team_num = $userService->getTeamNodes($user, $collection);
         }
 
         $global_power = $this->getGlobalPower();

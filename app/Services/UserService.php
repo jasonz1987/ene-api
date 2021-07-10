@@ -20,22 +20,23 @@ class UserService
      *
      * @param $user
      */
-    public function getSharePower($user) {
+    public function getSharePower($user, $collection = null) {
         $total_power = BigDecimal::zero();
 
         if ($user->is_valid == 0) {
             return $total_power;
         }
 
-        $children_collection = $user->children()->with('child')->get();
-
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
 
         // 获取直邀的有效用户
-        $direct_num = $this->getDirectChildrenNum($children_collection);
+        $direct_num = $this->getDirectChildrenNum($collection);
 
         if ($direct_num > 0 && $direct_num <= 10) {
 
-            $trees = $this->getTrees($children_collection, $user->id, true);
+            $trees = $this->getTrees($collection, $user->id, true);
 
             // 获取奖励的代数和比例
             $levels = $this->getShareRate($direct_num);
@@ -68,14 +69,16 @@ class UserService
      *
      * @param $user
      */
-    public function getTeamPower($user) {
+    public function getTeamPower($user, $collection = null) {
         $total_power = BigDecimal::zero();
 
         if ($user->vip_level == 0 || $user->is_valid == 0) {
             return $total_power;
         }
 
-        $collection = $user->children()->with('child')->get();
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
 
         // 获取该用户下的所有几条线
         $trees = $this->getTrees($collection, $user->id, true);
@@ -296,8 +299,10 @@ class UserService
      * @param $user
      * @return mixed
      */
-    public function getTeamNum($user) {
-        $collection = $user->children()->with('child')->get();
+    public function getTeamNum($user, $collection = null) {
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
 
         $num = $collection
             ->sum(function ($item){
@@ -345,12 +350,14 @@ class UserService
         return false;
     }
 
-    public function getTeamNodes($user) {
+    public function getTeamNodes($user, $collection = null) {
         if ($user->vip_level == 5) {
             return 0;
         }
 
-        $collection = $user->children()->with('child')->get();
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
 
         $trees = $this->getTrees($collection, $user->id, true);
 
