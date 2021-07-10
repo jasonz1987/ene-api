@@ -21,9 +21,14 @@ class UserService
      * @param $user
      */
     public function getSharePower($user) {
+        $total_power = BigDecimal::zero();
+
+        if ($user->is_valid == 0) {
+            return $total_power;
+        }
+
         $children_collection = $user->children()->with('child')->get();
 
-        $total_power = BigDecimal::zero();
 
         // 获取直邀的有效用户
         $direct_num = $this->getDirectChildrenNum($children_collection);
