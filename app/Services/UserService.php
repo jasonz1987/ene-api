@@ -213,10 +213,12 @@ class UserService
      * @param bool $is_valid
      * @return array
      */
-    public function getParentTree($user) {
-        $children_collection = $user->children()->with('child')->get();
+    public function getParentTree($user, $collection = null) {
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
 
-        $tree = $this->getParents2($children_collection, $user->id, true);
+        $tree = $this->getParents2($collection, $user->id, true);
 
         return $tree;
     }
@@ -271,8 +273,10 @@ class UserService
         while ($parent) {
             if ($is_valid) {
                 if ($parent->child->is_valid == 1) {
-                    $parents[] = $parent;
+                    $parents[] = $parent->child;
                 }
+            } else {
+                $parents[] = $parent->child;
             }
             $parent = $this->getParent($collection, $parent->parent_id);
         }
@@ -323,12 +327,14 @@ class UserService
      * @param $level
      * @return mixed
      */
-    public function getTeamNewLevel($user) {
+    public function getTeamNewLevel($user, $collection = null) {
         if ($user->vip_level == 5) {
             return false;
         }
 
-        $collection = $user->children()->with('child')->get();
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
 
         $trees = $this->getTrees($collection, $user->id, true);
 

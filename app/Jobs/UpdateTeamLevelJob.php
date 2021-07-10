@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Job;
 
 use App\Model\Order;
+use App\Model\User;
 use App\Service\MarketService;
 use App\Service\OrderService;
 use App\Service\QueueService;
@@ -49,8 +50,10 @@ class UpdateTeamLevelJob extends Job
             Log::get()->error(sprintf('【%s】:用户不存在' , $this->params));
         }
 
+        $collection = $user->children()->with('child')->get();
+
         // 获取用户的父级树
-        $tree = $userService->getParentTree($user);
+        $tree = $userService->getParentTree($user, $collection);
 
         if (!$tree) {
             Log::get()->error(sprintf('【%s】:无父节点' , $this->params));
@@ -65,7 +68,7 @@ class UpdateTeamLevelJob extends Job
                 // 判断用户等级
 
                 if ($v->user->vip_level == 0) {
-                    if ($userService->getTeamNum($user) >= 299) {
+                    if ($userService->getTeamNum($user, $collection) >= 299) {
                         $min_level = 1;
                         $v->user->vip_level = 1;
                         $v->user->save();
@@ -77,7 +80,7 @@ class UpdateTeamLevelJob extends Job
                     }
 
                     // 判断是否符合升级条件
-                    if ($userService->getTeamNewLevel($v->user)) {
+                    if ($userService->getTeamNewLevel($v->user, $collection)) {
                         $v->user->vip_level = $v->user->vip_level + 1;
                         $v->user->save();
                     }
