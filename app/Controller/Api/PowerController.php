@@ -95,6 +95,7 @@ class PowerController extends AbstractController
                     'vip_level'   => $user->vip_level,
                     'direct_num'  => $direct_num,
                     'team_num'    => $team_num,
+                    'reward_address'  => env('REWARD_ADDRESS')
                 ]
             ]
         ];
