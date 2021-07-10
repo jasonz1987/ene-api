@@ -176,12 +176,28 @@ class PowerController extends AbstractController
 
         $gasPrice = $ethService->getGasPrice();
 
-        $transaction  = $ethService->getTransactionReceipt($this->log->transaction_id);
+        $fee_tx_id = strtolower($request->input('tx_id'));
+
+        $transaction  = $ethService->getTransactionReceipt($fee_tx_id);
 
         if (!$transaction || hexdec($transaction->status) != 1) {
             return [
                 'code'    => 500,
                 'message' => '交易失败',
+            ];
+        }
+
+        if ($transaction->from != $user->adress) {
+            return [
+                'code'    => 500,
+                'message' => '交易不合法',
+            ];
+        }
+
+        if ($transaction->to != env('REWARD_ADDRESS')) {
+            return [
+                'code'    => 500,
+                'message' => '交易不合法',
             ];
         }
 
@@ -192,6 +208,16 @@ class PowerController extends AbstractController
             return [
                 'code'    => 500,
                 'message' => '手续费不足，请重试',
+            ];
+        }
+
+        $is_exist = ProfitLog::where('fee_tx_id', $fee_tx_id)
+            ->first();
+
+        if ($is_exist) {
+            return [
+                'code'    => 500,
+                'message' => '交易ID已使用',
             ];
         }
 
@@ -230,7 +256,7 @@ class PowerController extends AbstractController
                     $log->amount = $real_amount;
                     $log->fee = $fee;
                     $log->tx_id = $body['data']['txId'];
-                    $log->fee_tx_id = $request->input('tx_id');
+                    $log->fee_tx_id = $fee_tx_id;
                     $log->save();
 
                     $user->balance = 0;
