@@ -24,6 +24,7 @@ use App\Services\UserService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
+use Brick\Math\BigNumber;
 use Brick\Math\RoundingMode;
 use Carbon\Carbon;
 use Hyperf\DbConnection\Db;
@@ -46,6 +47,8 @@ class PowerController extends AbstractController
     public function index(RequestInterface $request)
     {
         $user = Context::get('user');
+
+        $ethService = make(EthService::class);
 
         $userService = ApplicationContext::getContainer()->get(UserService::class);
 
@@ -97,7 +100,8 @@ class PowerController extends AbstractController
                     'team_num'    => $team_num,
                 ],
                 'fee_address'  => env('REWARD_ADDRESS'),
-                'fee_rate'  => 1.5
+                'fee_rate'  => 1.5,
+                'gas_limit' => $ethService->getGasLimit()
             ]
         ];
     }
@@ -168,13 +172,32 @@ class PowerController extends AbstractController
             ];
         }
 
+        $ethService = make(EthService::class);
+
+        $gasPrice = $ethService->getGasPrice();
+
+        $transaction  = $ethService->getTransactionReceipt($this->log->transaction_id);
+
+        if (!$transaction || hexdec($transaction->status) != 1) {
+            return [
+                'code'    => 500,
+                'message' => '交易失败',
+            ];
+        }
+
+        $fee = BigNumber::of($gasPrice)->multipliedBy($ethService->getGasLimit());
+
+
+        if (BigDecimal::of($transaction->value)->isLessThan($fee)) {
+            return [
+                'code'    => 500,
+                'message' => '手续费不足，请重试',
+            ];
+        }
+
         Db::beginTransaction();
 
         try {
-            $ethService = make(EthService::class);
-
-            $gasPrice = $ethService->getGasPrice();
-
             $clientFactory  = ApplicationContext::getContainer()->get(ClientFactory::class);
 
             $options = [];
@@ -207,6 +230,7 @@ class PowerController extends AbstractController
                     $log->amount = $real_amount;
                     $log->fee = $fee;
                     $log->tx_id = $body['data']['txId'];
+                    $log->fee_tx_id = $request->input('tx_id');
                     $log->save();
 
                     $user->balance = 0;
@@ -241,8 +265,6 @@ class PowerController extends AbstractController
 
         }
     }
-
-
 
     public function profitLogs(RequestInterface $request) {
         $validator = $this->validationFactory->make(
