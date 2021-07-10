@@ -272,5 +272,16 @@ class PowerController extends AbstractController
         return $result;
     }
 
+    protected function getPage($logs)
+    {
+        return [
+            'total'        => $logs->total(),
+            'count'        => $logs->count(),
+            'per_page'     => $logs->perPage(),
+            'current_page' => $logs->currentPage(),
+            'total_pages'  => ceil($logs->total() / $logs->perPage()),
+        ];
+    }
+
 
 }

@@ -371,6 +371,6 @@ http://{{host}}/api/power/profit/logs
 | 参数名     | 参数类型 | 参数说明 |
 | ---------- | -------- | -------- |
 | Id         | String   | ID       |
-| amount     | String   | 双       |
+| amount     | String   | 数量     |
 | created_at | Datetime | 创建时间 |
 
