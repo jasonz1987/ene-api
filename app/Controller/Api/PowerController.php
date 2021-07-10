@@ -112,10 +112,12 @@ class PowerController extends AbstractController
         $global_power = BigDecimal::zero();
 
         foreach ($users as $user) {
+            $collection = $user->children()->with('child')->get();
+
             // 获取分享算力
-            $share_power = $userService->getSharePower($user);
+            $share_power = $userService->getSharePower($user, $collection);
             // 获取团队算力
-            $team_power = $userService->getTeamPower($user);
+            $team_power = $userService->getTeamPower($user, $collection);
 
             $total_power = BigDecimal::of($user->mine_power)->plus($share_power)->plus($team_power);
 
