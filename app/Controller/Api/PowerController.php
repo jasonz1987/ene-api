@@ -196,7 +196,7 @@ class PowerController extends AbstractController
             ];
         }
 
-        if ($transaction->to != env('REWARD_ADDRESS')) {
+        if ($transaction->to != strtolower(env('REWARD_ADDRESS'))) {
             return [
                 'code'    => 500,
                 'message' => '交易不合法',
