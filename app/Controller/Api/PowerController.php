@@ -139,10 +139,11 @@ class PowerController extends AbstractController
         $validator = $this->validationFactory->make(
             $request->all(),
             [
-                'tx_id' => 'required',
+                'tx_id' => 'required|regex:/^(0x)?[0-9a-zA-Z]{64}$/',
             ],
             [
-                'tx_id' => 'txId is required',
+                'tx_id.required' => '请提供交易ID',
+                'tx_id.regex' => '交易ID不合法',
             ]
         );
 

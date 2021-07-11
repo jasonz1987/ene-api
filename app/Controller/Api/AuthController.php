@@ -55,7 +55,8 @@ class AuthController extends AbstractController
                 'address' => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
             ],
             [
-                'address' => 'address is required',
+                'address.required' => '请输入钱包地址',
+                'address.regex' => '钱包地址格式不正确',
             ]
         );
 
@@ -74,7 +75,7 @@ class AuthController extends AbstractController
 
         return [
             'code'    => 200,
-            'message' => "success",
+            'message' => "成功",
             'data'    => [
                 'is_bind' => $user && $user->source_address ? true : false
             ]
@@ -89,7 +90,8 @@ class AuthController extends AbstractController
                 'address' => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
             ],
             [
-                'address' => 'address is required',
+                'address.required' => '请输入钱包地址',
+                'address.regex' => '钱包地址格式不正确',
             ]
         );
 
@@ -129,12 +131,12 @@ class AuthController extends AbstractController
                 'signature' => 'required|regex:/^(0x)?[0-9a-zA-Z]{130}$/',
             ],
             [
-                'address.required'   => 'address is required',
-                'signature.required' => 'signature is required',
-                'address.regex'      => 'address format error',
-                'signature.regex'    => 'signature format error',
-                'source.required'    => 'source is required',
-                'source.regex'       => 'source format error',
+                'address.required'   => '请输入钱包地址',
+                'signature.required' => '请输入签名',
+                'address.regex'      => '钱包地址不合法',
+                'signature.regex'    => '签名格式不合法',
+                'source.required'    => '请输入好友钱包地址',
+                'source.regex'       => '好友钱包地址不正确',
             ]
         );
 
