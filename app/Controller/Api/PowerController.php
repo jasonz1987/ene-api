@@ -203,15 +203,15 @@ class PowerController extends AbstractController
             ];
         }
 
-        $fee = BigNumber::of($gasPrice)->multipliedBy($ethService->getGasLimit());
-
-
-        if (BigDecimal::of($transaction->value)->isLessThan($fee)) {
-            return [
-                'code'    => 500,
-                'message' => '手续费不足，请重试',
-            ];
-        }
+//        $fee = BigNumber::of($gasPrice)->multipliedBy($ethService->getGasLimit());
+//
+//
+//        if (BigDecimal::of($transaction->value)->isLessThan($fee)) {
+//            return [
+//                'code'    => 500,
+//                'message' => '手续费不足，请重试',
+//            ];
+//        }
 
         $is_exist = ProfitLog::where('fee_tx_id', $fee_tx_id)
             ->first();
