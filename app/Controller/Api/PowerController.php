@@ -189,12 +189,18 @@ class PowerController extends AbstractController
             ];
         }
 
+        var_dump($transaction->from);
+        var_dump($user->adress);
+
         if ($transaction->from != $user->adress) {
             return [
                 'code'    => 500,
                 'message' => '交易不合法',
             ];
         }
+
+        var_dump($transaction->to);
+        var_dump(strtolower(env('REWARD_ADDRESS')));
 
         if ($transaction->to != strtolower(env('REWARD_ADDRESS'))) {
             return [
