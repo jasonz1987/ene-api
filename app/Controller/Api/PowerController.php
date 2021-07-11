@@ -180,6 +180,8 @@ class PowerController extends AbstractController
 
         $transaction  = $ethService->getTransactionReceipt($fee_tx_id);
 
+        var_dump($transaction);
+
         if (!$transaction || hexdec($transaction->status) != 1) {
             return [
                 'code'    => 500,
