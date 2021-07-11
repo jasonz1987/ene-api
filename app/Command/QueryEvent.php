@@ -165,7 +165,7 @@ class QueryEvent extends HyperfCommand
                             $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN);
 
                             if ($user->is_valid == 0 ) {
-                                if ($new_power->isGreaterThan(1)) {
+                                if ($new_power->isGreaterThan(240)) {
                                     $user->is_valid = 1;
                                     $is_upgrade_vip = true;
                                 }
