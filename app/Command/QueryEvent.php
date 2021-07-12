@@ -162,7 +162,7 @@ class QueryEvent extends HyperfCommand
                             });
 
 
-                            $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN);
+                            $new_power = BigDecimal::of($new_power)->plus(BigDecimal::of($user->old_mine_power))->dividedBy(1e18,6, RoundingMode::DOWN);
 
                             if ($user->is_valid == 0 ) {
                                 if ($new_power->isGreaterThan(240)) {
