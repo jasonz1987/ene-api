@@ -34,7 +34,11 @@ class UserService
         // 获取直邀的有效用户
         $direct_num = $this->getDirectChildrenNum($collection);
 
-        if ($direct_num > 0 && $direct_num <= 10) {
+        if ($direct_num > 0) {
+
+            if ($direct_num > 10) {
+                $direct_num = 10;
+            }
 
             $trees = $this->getTrees($collection, $user->id, true);
 
