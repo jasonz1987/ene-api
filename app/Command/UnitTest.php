@@ -57,7 +57,7 @@ class UnitTest extends HyperfCommand
         $user = User::find(38);
         $collection = $user->children()->with('child')->get();
 
-        $direct_num = $this->getDirectChildrenNum($collection);
+        $direct_num = $userService->getDirectChildrenNum($collection);
 
         if ($direct_num > 0) {
 
