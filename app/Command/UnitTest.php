@@ -74,6 +74,8 @@ class UnitTest extends HyperfCommand
 
             var_dump($levels);
 
+            $users = [];
+
             foreach ($trees as $kk=>$tree) {
 
                 var_dump("树：".$kk);
@@ -85,17 +87,20 @@ class UnitTest extends HyperfCommand
                     var_dump("层级：".$k);
                     var_dump("用户ID:" .$v->id);
 
-                    $rate = $levels[$k];
-                    // 烧伤
-                    if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
-                        $power = BigDecimal::of($user->mine_power);
-                    } else {
-                        $power = BigDecimal::of($v->mine_power);
-                    }
+                    if (!isset($users[$v->id])) {
+                        $rate = $levels[$k];
+                        // 烧伤
+                        if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
+                            $power = BigDecimal::of($user->mine_power);
+                        } else {
+                            $power = BigDecimal::of($v->mine_power);
+                        }
 
-                    $power_add = $power->multipliedBy($rate);
-                    var_dump("算力:".$power_add);
-                    $total_power = $total_power->plus($power_add);
+                        $power_add = $power->multipliedBy($rate);
+                        var_dump("算力:".$power_add);
+                        $total_power = $total_power->plus($power_add);
+                        $users[$v->id] = $v->id;
+                    }
                 }
             }
 
