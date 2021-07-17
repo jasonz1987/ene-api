@@ -107,7 +107,7 @@ class UnitTest extends HyperfCommand
 //        }
 
         $total_power = BigDecimal::zero();
-        $user = User::find(38);
+        $user = User::find(54);
         $collection = $user->children()->with('child')->get();
 
         // 获取该用户下的所有几条线
@@ -120,12 +120,16 @@ class UnitTest extends HyperfCommand
             $power = BigDecimal::zero();
 
             foreach ($tree as $k=>$v) {
+
+                var_dump("用户ID：" . $v->id);
                 if ($v->vip_level > $max_level) {
                     $max_level = $v->vip_level;
                 }
 
                 if (!isset($users[$v->id])) {
                     $power = $power->plus($v->mine_power);
+                    var_dump("算力：" . $v->mine_power);
+
                     $users[$v->id] = $v->id;
                 }
             }
@@ -136,6 +140,8 @@ class UnitTest extends HyperfCommand
             } else {
                 $rate = $userService->getTeamLevelRate($user->vip_level);
             }
+
+            var_dump("比率：" . $rate);
 
             // 计算总算李
             $total_power = $total_power->plus($power->multipliedBy($rate));
