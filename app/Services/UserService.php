@@ -106,6 +106,7 @@ class UserService
 
                 if (!isset($users[$v->id])) {
                     $power = $power->plus($v->mine_power);
+                    $users[$v->id] = $user->id;
                 }
             }
 
