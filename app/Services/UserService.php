@@ -45,22 +45,30 @@ class UserService
             // 获取奖励的代数和比例
             $levels = $this->getShareRate($direct_num);
 
+            $users = [];
+
             foreach ($trees as $tree) {
 
                 // 根据推荐数量获取对应的层级
                 $new_tree = array_slice($tree, 0, $direct_num);
 
                 foreach($new_tree as $k=>$v) {
-                    $rate = $levels[$k];
-                    // 烧伤
-                    if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
-                        $power = BigDecimal::of($user->mine_power);
-                    } else {
-                        $power = BigDecimal::of($v->mine_power);
+
+                    if (!isset($users[$v->id])) {
+                        $rate = $levels[$k];
+                        // 烧伤
+                        if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
+                            $power = BigDecimal::of($user->mine_power);
+                        } else {
+                            $power = BigDecimal::of($v->mine_power);
+                        }
+
+                        $power_add = $power->multipliedBy($rate);
+                        $total_power = $total_power->plus($power_add);
+
+                        $users[$v->id] = $v->id;
                     }
 
-                    $power_add = $power->multipliedBy($rate);
-                    $total_power = $total_power->plus($power_add);
                 }
             }
         }
