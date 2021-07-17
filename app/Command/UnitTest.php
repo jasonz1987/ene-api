@@ -84,10 +84,9 @@ class UnitTest extends HyperfCommand
                 $new_tree = array_slice($tree, 0, $direct_num);
 
                 foreach($new_tree as $k=>$v) {
-                    var_dump("层级：".$k);
-                    var_dump("用户ID:" .$v->id);
-
                     if (!isset($users[$v->id])) {
+                        var_dump("层级：".$k);
+                        var_dump("用户ID:" .$v->id);
                         $rate = $levels[$k];
                         // 烧伤
                         if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
