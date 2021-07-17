@@ -180,7 +180,7 @@ class UserService
      * @param bool $is_valid
      * @return array
      */
-    protected function getTrees($collection,$root_id, $is_valid = false) {
+    public function getTrees($collection,$root_id, $is_valid = false) {
         $trees = [];
 
         foreach ($collection as $k=>$v) {

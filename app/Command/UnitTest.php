@@ -10,6 +10,7 @@ use App\Model\User;
 use App\Service\QueueService;
 use App\Services\ConfigService;
 use App\Services\EthService;
+use App\Services\UserService;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use http\Exception\RuntimeException;
@@ -49,14 +50,14 @@ class UnitTest extends HyperfCommand
 
     public function handle()
     {
-        $ethService = make(EthService::class);
+        $userService = make(UserService::class);
 
-        $transaction_id = $ethService->sendToken('0xCF3A497eD4f1204b3E94Ff89A628567a5b18aC90', '0x742499427a41087532dF277A0B9581F90cA2e78F', 10, '8e93cc10a39a7bdcd6c2ea8535083ded724b3d1a85d30837b206e7b633a83b46');
+        // 获取全网总算力
+        $user = User::find(38);
+        $collection = $user->children()->with('child')->get();
+        $trees =  $userService->getTrees($collection, $user->id, true);
 
+        var_dump($trees);
 
-
-//        $txreq = new \Web3p\EthereumTx\Transaction('0xa9059cbb000000000000000000000000558a9ed5f4c6dc2f357451f323dca25ce6eea22f00000000000000000000000000000000000000000000000000000000000f4240');
-//
-//        var_dump($txreq);
     }
 }
