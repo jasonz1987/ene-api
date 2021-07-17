@@ -51,60 +51,97 @@ class UnitTest extends HyperfCommand
     public function handle()
     {
         $userService = make(UserService::class);
-        $total_power = BigDecimal::zero();
 
-        // 获取全网总算力
+//        $total_power = BigDecimal::zero();
+//        // 获取全网总算力
+//        $user = User::find(38);
+//        $collection = $user->children()->with('child')->get();
+//
+//        $direct_num = $userService->getDirectChildrenNum($collection);
+//
+//        if ($direct_num > 0) {
+//
+//            if ($direct_num > 10) {
+//                $direct_num = 10;
+//            }
+//
+//            var_dump($direct_num);
+//
+//            $trees = $userService->getTrees($collection, $user->id, true);
+//
+//            // 获取奖励的代数和比例
+//            $levels = $userService->getShareRate($direct_num);
+//
+//            var_dump($levels);
+//
+//            $users = [];
+//
+//            foreach ($trees as $kk=>$tree) {
+//
+//                var_dump("树：".$kk);
+//
+//                // 根据推荐数量获取对应的层级
+//                $new_tree = array_slice($tree, 0, $direct_num);
+//
+//                foreach($new_tree as $k=>$v) {
+//                    if (!isset($users[$v->id])) {
+//                        var_dump("层级：".$k);
+//                        var_dump("用户ID:" .$v->id);
+//                        $rate = $levels[$k];
+//                        // 烧伤
+//                        if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
+//                            $power = BigDecimal::of($user->mine_power);
+//                        } else {
+//                            $power = BigDecimal::of($v->mine_power);
+//                        }
+//
+//                        $power_add = $power->multipliedBy($rate);
+//                        var_dump("算力:".$power_add);
+//                        $total_power = $total_power->plus($power_add);
+//                        $users[$v->id] = $v->id;
+//                    }
+//                }
+//            }
+//
+//            var_dump($total_power);
+//        }
+
+        $total_power = BigDecimal::zero();
         $user = User::find(38);
         $collection = $user->children()->with('child')->get();
 
-        $direct_num = $userService->getDirectChildrenNum($collection);
+        // 获取该用户下的所有几条线
+        $trees = $userService->getTrees($collection, $user->id, true);
 
-        if ($direct_num > 0) {
+        $users = [];
 
-            if ($direct_num > 10) {
-                $direct_num = 10;
-            }
+        foreach ($trees as $tree) {
+            $max_level = 0;
+            $power = BigDecimal::zero();
 
-            var_dump($direct_num);
+            foreach ($tree as $k=>$v) {
+                if ($v->vip_level > $max_level) {
+                    $max_level = $v->vip_level;
+                }
 
-            $trees = $userService->getTrees($collection, $user->id, true);
-
-            // 获取奖励的代数和比例
-            $levels = $userService->getShareRate($direct_num);
-
-            var_dump($levels);
-
-            $users = [];
-
-            foreach ($trees as $kk=>$tree) {
-
-                var_dump("树：".$kk);
-
-                // 根据推荐数量获取对应的层级
-                $new_tree = array_slice($tree, 0, $direct_num);
-
-                foreach($new_tree as $k=>$v) {
-                    if (!isset($users[$v->id])) {
-                        var_dump("层级：".$k);
-                        var_dump("用户ID:" .$v->id);
-                        $rate = $levels[$k];
-                        // 烧伤
-                        if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
-                            $power = BigDecimal::of($user->mine_power);
-                        } else {
-                            $power = BigDecimal::of($v->mine_power);
-                        }
-
-                        $power_add = $power->multipliedBy($rate);
-                        var_dump("算力:".$power_add);
-                        $total_power = $total_power->plus($power_add);
-                        $users[$v->id] = $v->id;
-                    }
+                if (!isset($users[$v->id])) {
+                    $power = $power->plus($v->mine_power);
+                    $users[$v->id] = $v->id;
                 }
             }
 
-            var_dump($total_power);
+            // 平级
+            if ($max_level >= $user->vip_level) {
+                $rate = 0.01;
+            } else {
+                $rate = $userService->getTeamLevelRate($user->vip_level);
+            }
+
+            // 计算总算李
+            $total_power = $total_power->plus($power->multipliedBy($rate));
         }
+
+        var_dump($total_power);
 
     }
 }

@@ -95,7 +95,6 @@ class UserService
         // 获取该用户下的所有几条线
         $trees = $this->getTrees($collection, $user->id, true);
 
-
         foreach ($trees as $tree) {
             $max_level = 0;
             $power = BigDecimal::zero();
@@ -169,7 +168,7 @@ class UserService
      * @param $level
      * @return float|int
      */
-    protected function getTeamLevelRate($level) {
+    public function getTeamLevelRate($level) {
         $rate = [0.06, 0.1, 0.14, 0.18, 0.22];
 
         if ($level == 0) {
