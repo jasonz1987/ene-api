@@ -142,7 +142,7 @@ class UserService
      * @return array|float[]
      */
     protected function getShareRate($num) {
-        $rate = [0.3, 0.2, 0.15, 0.1, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3];
+        $rate = [0.3, 0.2, 0.15, 0.1, 0.5, 0.03, 0.03, 0.03, 0.03, 0.03];
 
         if ($num > 10) {
             return $rate;
