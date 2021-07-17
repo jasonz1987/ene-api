@@ -51,13 +51,56 @@ class UnitTest extends HyperfCommand
     public function handle()
     {
         $userService = make(UserService::class);
+        $total_power = BigDecimal::zero();
 
         // 获取全网总算力
         $user = User::find(38);
         $collection = $user->children()->with('child')->get();
-        $trees =  $userService->getTrees($collection, $user->id, true);
 
-        var_dump($trees);
+        $direct_num = $this->getDirectChildrenNum($collection);
+
+        if ($direct_num > 0) {
+
+            if ($direct_num > 10) {
+                $direct_num = 10;
+            }
+
+            var_dump($direct_num);
+
+            $trees = $userService->getTrees($collection, $user->id, true);
+
+            // 获取奖励的代数和比例
+            $levels = $userService->getShareRate($direct_num);
+
+            var_dump($levels);
+
+            foreach ($trees as $kk=>$tree) {
+
+                var_dump("树：".$kk);
+
+                // 根据推荐数量获取对应的层级
+                $new_tree = array_slice($tree, 0, $direct_num);
+
+                foreach($new_tree as $k=>$v) {
+                    var_dump("层级：".$k);
+                    var_dump("用户ID:" .$v->id);
+
+                    $rate = $levels[$k];
+                    // 烧伤
+                    if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
+                        $power = BigDecimal::of($user->mine_power);
+                    } else {
+                        $power = BigDecimal::of($v->mine_power);
+                    }
+
+                    $power_add = $power->multipliedBy($rate);
+                    var_dump("算力:".$power_add);
+                    $total_power = $total_power->plus($power_add);
+                }
+            }
+
+            var_dump($total_power);
+        }
 
     }
 }

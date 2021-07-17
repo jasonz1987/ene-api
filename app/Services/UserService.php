@@ -141,7 +141,7 @@ class UserService
      * @param $num
      * @return array|float[]
      */
-    protected function getShareRate($num) {
+    public function getShareRate($num) {
         $rate = [0.3, 0.2, 0.15, 0.1, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03];
 
         if ($num > 10) {
