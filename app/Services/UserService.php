@@ -104,7 +104,9 @@ class UserService
                     $max_level = $v->vip_level;
                 }
 
-                $power = $power->plus($v->mine_power);
+                if (!isset($users[$v->id])) {
+                    $power = $power->plus($v->mine_power);
+                }
             }
 
             // 平级
