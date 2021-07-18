@@ -72,7 +72,7 @@ class UnitTest extends HyperfCommand
 
             $new_power = $result['power']->toString();
 
-            var_dump(BigDecimal::of($new_power)->dividedBy(10**18, 6, RoundingMode::DOWN));
+            var_dump((string)BigDecimal::of($new_power)->dividedBy(10**18, 6, RoundingMode::DOWN));
         });
 
 
