@@ -72,7 +72,7 @@ class PowerMine extends HyperfCommand
             ];
         }
 
-        $redis->set("global_power", $total_power, 300);
+        $redis->set("global_power", (string)$total_power, 300);
 
         foreach ($new_users as $k => $v) {
 

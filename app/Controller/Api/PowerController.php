@@ -136,7 +136,7 @@ class PowerController extends AbstractController
             $global_power = $global_power->plus($total_power);
         }
 
-        $redis->set("global_power", $global_power, 300);
+        $redis->set("global_power", (string)$global_power, 300);
 
         return $global_power;
     }
