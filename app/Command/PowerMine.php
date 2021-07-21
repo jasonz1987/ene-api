@@ -12,6 +12,7 @@ use Brick\Math\RoundingMode;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
+use Hyperf\Redis\Redis;
 use Psr\Container\ContainerInterface;
 use function Swoole\Coroutine\batch;
 
@@ -41,6 +42,8 @@ class PowerMine extends HyperfCommand
     public function handle()
     {
         $userService = $this->container->get(UserService::class);
+        $redis = $this->container->get(Redis::class);
+
         // 获取所有的用户
         $users = User::where('mine_power')
             ->get();
@@ -68,6 +71,8 @@ class PowerMine extends HyperfCommand
                 'total_power' => $total_power
             ];
         }
+
+        $redis->set("global_power", $total_power, 300);
 
         foreach ($new_users as $k => $v) {
 

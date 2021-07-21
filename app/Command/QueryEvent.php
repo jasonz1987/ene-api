@@ -15,6 +15,7 @@ use http\Exception\RuntimeException;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
+use Hyperf\Redis\Redis;
 use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerInterface;
 use Web3\Contract;
@@ -176,6 +177,9 @@ class QueryEvent extends HyperfCommand
                         }
 
                         Db::commit();
+
+                        $redis = $this->container->get(Redis::class);
+                        $redis->del("global_power");
 
                         if ($is_upgrade_vip) {
                             // 更新上级的节点等级

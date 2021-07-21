@@ -30,6 +30,7 @@ use Carbon\Carbon;
 use Hyperf\DbConnection\Db;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
@@ -109,6 +110,11 @@ class PowerController extends AbstractController
     public function getGlobalPower() {
 
         $userService = ApplicationContext::getContainer()->get(UserService::class);
+        $redis = ApplicationContext::getContainer()->get(Redis::class);
+
+        if($redis->get("global_power")) {
+            return $redis->get("global_power");
+        }
 
         // 获取所有的用户
         $users = User::where('is_valid', '=', 1)
@@ -129,6 +135,8 @@ class PowerController extends AbstractController
 
             $global_power = $global_power->plus($total_power);
         }
+
+        $redis->set("global_power", $global_power, 300);
 
         return $global_power;
     }
