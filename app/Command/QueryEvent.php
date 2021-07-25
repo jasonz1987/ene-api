@@ -193,7 +193,7 @@ class QueryEvent extends HyperfCommand
                     }
                 }
 
-                $configService->setLastBlockNumber($latest_block_number);
+                $configService->setLastBlockNumber($latest_block_number+1);
         });
     }
 }
