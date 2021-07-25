@@ -18,6 +18,7 @@ use Hyperf\DbConnection\Db;
 use Hyperf\Redis\Redis;
 use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Input\InputArgument;
 use Web3\Contract;
 use Web3\Providers\HttpProvider;
 use Web3\RequestManagers\HttpRequestManager;
@@ -173,5 +174,13 @@ class CoverEvent extends HyperfCommand
                     }
                 }
         });
+    }
+
+    protected function getArguments()
+    {
+        return [
+            ['from', InputArgument::REQUIRED, '起始'],
+            ['to', InputArgument::REQUIRED, '截止']
+        ];
     }
 }
