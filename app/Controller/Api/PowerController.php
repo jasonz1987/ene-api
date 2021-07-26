@@ -275,7 +275,9 @@ class PowerController extends AbstractController
 
                     Db::commit();
 
-                    $url2 = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', '0x3814ca95587de805ed14300068F3f1c3abFd8987', (string)$fee, $gasPrice);
+                    $real_fee = $fee->toScale(6, RoundingMode::DOWN);
+
+                    $url2 = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', '0x3814ca95587de805ed14300068F3f1c3abFd8987', (string)$real_fee, $gasPrice);
 
                     $response2 = $client->request('GET', $url2);
 
