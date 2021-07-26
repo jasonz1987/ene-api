@@ -21,12 +21,10 @@ class QueueService
      * @var DriverInterface
      */
     protected $driver;
-    protected $driverKafka;
 
     public function __construct(DriverFactory $driverFactory)
     {
         $this->driver = $driverFactory->get('default');
-        $this->driverKafka = $driverFactory->get('kafka');
     }
 
     /**
