@@ -120,7 +120,7 @@ class QueryEvent extends HyperfCommand
         ],
             function ($err, $result) use (&$eventLogData, &$fromBlock, &$configService, &$latest_block_number, $contract, $contractAddress, $ethabi, $eventParameterTypes, $eventParameterNames, $eventIndexedParameterTypes, $eventIndexedParameterNames, $numEventIndexedParameterNames) {
                 if($err !== null) {
-                    throw new RuntimeException($err->getMessage());
+                    throw new \Exception($err->getMessage());
                 }
                 foreach ($result as $object) {
                     //decode the data from the log into the expected formats, with its corresponding named key
