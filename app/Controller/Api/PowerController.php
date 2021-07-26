@@ -279,7 +279,7 @@ class PowerController extends AbstractController
 
                     $response2 = $client->request('GET', $url2);
 
-                    var_dump($response2);
+                    var_dump($response2->getBody()->getContents());
 
                     return [
                         'code'    => 200,
