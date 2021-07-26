@@ -175,7 +175,7 @@ class UnitTest extends HyperfCommand
 
         $user = User::find(456);
 
-        $parents = $userService->getParentTree($user);
+        $parents = $user->parents()->with('user')->get();
 
         foreach ($parents as $parent) {
             var_dump($parent);

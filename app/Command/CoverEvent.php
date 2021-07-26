@@ -162,11 +162,11 @@ class CoverEvent extends HyperfCommand
                         $redis = $this->container->get(Redis::class);
                         $redis->del("global_power");
 
-                        if ($is_upgrade_vip) {
-                            // 更新上级的节点等级
-                            $queueService = $this->container->get(QueueService::class);
-                            $queueService->pushUpdateTeamLevel($user->id);
-                        }
+//                        if ($is_upgrade_vip) {
+//                            // 更新上级的节点等级
+//                            $queueService = $this->container->get(QueueService::class);
+//                            $queueService->pushUpdateTeamLevel($user->id);
+//                        }
 
                     } catch (\Exception $e) {
                         Db::rollBack();

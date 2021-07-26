@@ -229,7 +229,7 @@ class UserService
      */
     public function getParentTree($user, $collection = null) {
         if (!$collection) {
-            $collection = $user->children()->with('child')->get();
+            $collection = $user->parents()->with('user')->get();
         }
 
         $tree = $this->getParents2($collection, $user->id, true);

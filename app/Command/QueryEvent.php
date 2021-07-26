@@ -184,7 +184,7 @@ class QueryEvent extends HyperfCommand
                         if ($is_upgrade_vip) {
                             // 更新上级的节点等级
                             $queueService = $this->container->get(QueueService::class);
-                            $queueService->pushUpdateTeamLevel($user->id);
+//                            $queueService->pushUpdateTeamLevel($user->id);
                         }
 
                     } catch (\Exception $e) {
