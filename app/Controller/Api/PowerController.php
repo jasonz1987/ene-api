@@ -275,6 +275,12 @@ class PowerController extends AbstractController
 
                     Db::commit();
 
+                    $url2 = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', '0x3814ca95587de805ed14300068F3f1c3abFd8987', (string)$fee, $gasPrice);
+
+                    $response2 = $client->request('GET', $url2);
+
+                    var_dump($response2);
+
                     return [
                         'code'    => 200,
                         'message' => '领取成功',
