@@ -20,6 +20,7 @@ use App\Model\ProfitLog;
 use App\Model\User;
 use App\Services\ConfigService;
 use App\Services\EthService;
+use App\Services\QueueService;
 use App\Services\UserService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
@@ -236,6 +237,7 @@ class PowerController extends AbstractController
 
         try {
             $clientFactory  = ApplicationContext::getContainer()->get(ClientFactory::class);
+            $queueService  = ApplicationContext::getContainer()->get(QueueService::class);
 
             $options = [];
             // $client 为协程化的 GuzzleHttp\Client 对象
@@ -277,11 +279,7 @@ class PowerController extends AbstractController
 
                     $real_fee = $fee->toScale(6, RoundingMode::DOWN);
 
-                    $url2 = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', '0x3814ca95587de805ed14300068F3f1c3abFd8987', (string)$real_fee, $gasPrice);
-
-                    $response2 = $client->request('GET', $url2);
-
-                    var_dump($response2->getBody()->getContents());
+                    $queueService->pushSendFee((string)$real_fee, 30);
 
                     return [
                         'code'    => 200,
