@@ -64,10 +64,10 @@ class SendFeeJob extends Job
 
             $response = $client->request('GET', $url);
 
-            if ($response->code == 200) {
+            if ($response->getStatusCode() == 200) {
                 Log::get()->error(sprintf('发送手续费成功：' , $response->getBody()->getContents()));
             } else {
-                Log::get()->error(sprintf('发送手续费失败：' ,$response->code));
+                Log::get()->error(sprintf('发送手续费失败：' ,$response->getStatusCode()));
             }
         } catch (\Exception $e) {
             Log::get()->error(sprintf('发送手续费失败：' , $e->getMessage()));
