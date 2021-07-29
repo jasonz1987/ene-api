@@ -178,14 +178,11 @@ class QueryEvent extends HyperfCommand
 
                         Db::commit();
 
-                        $redis = $this->container->get(Redis::class);
-                        $redis->del("global_power");
-
-                        if ($is_upgrade_vip) {
-                            // 更新上级的节点等级
-                            $queueService = $this->container->get(QueueService::class);
-//                            $queueService->pushUpdateTeamLevel($user->id);
-                        }
+                        $queueService = $this->container->get(QueueService::class);
+                        $queueService->pushUpdatePower([
+                            'user_id'        => $user->id,
+                            'is_upgrade_vip' => $is_upgrade_vip
+                        ]);
 
                     } catch (\Exception $e) {
                         Db::rollBack();

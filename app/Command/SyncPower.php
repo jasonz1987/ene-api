@@ -57,7 +57,6 @@ class SyncPower extends HyperfCommand
             ->where('mine_power', '>', 0)
             ->get();
 
-
         foreach ($users as $user) {
             $collection = $user->children()->with('child')->get();
 
@@ -69,8 +68,6 @@ class SyncPower extends HyperfCommand
             $user->share_power = $share_power;
             $user->team_power = $team_power;
             $user->save();
-
-            usleep(100000);
         }
 
     }

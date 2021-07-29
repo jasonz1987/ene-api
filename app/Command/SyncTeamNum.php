@@ -65,8 +65,6 @@ class SyncTeamNum extends HyperfCommand
 
             $user->team_valid_num = $team_num;
             $user->save();
-
-            usleep(100000);
         }
 
     }

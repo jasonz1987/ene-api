@@ -18,6 +18,7 @@ use Hyperf\AsyncQueue\Job;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\DbConnection\Db;
 use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
 use function Swoole\Coroutine\batch;
 
@@ -44,6 +45,7 @@ class UpdatePowerJob extends Job
         }
 
         $userService = ApplicationContext::getContainer()->get(UserService::class);
+        $redis = ApplicationContext::getContainer()->get(Redis::class);
 
         $user = User::find($this->params['user_id']);
 
@@ -80,6 +82,8 @@ class UpdatePowerJob extends Job
             }
 
             Db::commit();
+
+            $redis->del("global_power");
 
         } catch (\Exception $e) {
             Db::rollBack();
