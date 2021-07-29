@@ -60,6 +60,8 @@ class PowerController extends AbstractController
         // 累计产出
         $total_mine = User::sum('profit');
 
+        $total_mine = round($total_mine/50) * 50;
+
         // 获取挖矿算力
         $mine_power = $user->mine_power;
         // 获取分享算力
