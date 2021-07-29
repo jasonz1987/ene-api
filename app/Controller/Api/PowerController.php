@@ -104,8 +104,8 @@ class PowerController extends AbstractController
                     'team_num'    => $team_num,
                 ],
                 'fee_address'  => env('REWARD_ADDRESS'),
-                'fee_rate'  => 1.5,
-                'gas_limit' => $ethService->getGasLimit()
+                'fee_rate'  => 2,
+                'gas_limit' => 100000
             ]
         ];
     }
@@ -251,7 +251,7 @@ class PowerController extends AbstractController
 
             $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice);
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice*1.2);
 
             $response = $client->request('GET', $url);
 

@@ -83,11 +83,13 @@ class UpdatePowerJob extends Job
 
             Db::commit();
 
+            Log::get()->info(sprintf('更新算力成功:%s' , json_encode($this->params)));
+
             $redis->del("global_power");
 
         } catch (\Exception $e) {
             Db::rollBack();
-            Log::get()->error(sprintf('更新算力失败' , $e->getMessage()));
+            Log::get()->error(sprintf('更新算力失败:%s' , $e->getMessage()));
         }
     }
 }
