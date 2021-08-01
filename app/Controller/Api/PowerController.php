@@ -168,7 +168,7 @@ class PowerController extends AbstractController
 
         $user = Context::get('user');
 
-        if ($user->profit <= 0) {
+        if ($user->profit <= 0.000001) {
             return [
                 'code'    => 500,
                 'message' => '暂无可领取收益',
