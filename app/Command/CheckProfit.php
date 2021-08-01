@@ -63,12 +63,8 @@ class CheckProfit extends HyperfCommand
 
             $transaction = $ethService->getTransactionReceipt($log->tx_id);
 
-            var_dump($transaction);
-
-            break;
-
             if ($transaction) {
-                if ($transaction->status == 1) {
+                if (hexdec($transaction->status) == 1) {
                     $log->status = 1;
                     $log->save();
                 } else {
