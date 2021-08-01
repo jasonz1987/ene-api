@@ -20,6 +20,7 @@ class CreateProfitLogsTable extends Migration
             $table->decimal('real_amount', 40, 20, true)->default(0)->comment('数量');
             $table->dateTime('confirmed_at')->nullable()->comment('确认时间');
             $table->tinyInteger('status')->default(0)->comment('状态');
+            $table->string('error')->nullable()->comment('错误');
             $table->timestamps();
         });
     }
