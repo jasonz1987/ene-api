@@ -8,5 +8,8 @@ return [
         (new Crontab())->setType('command')->setName('QueryEvent')->setRule('* * * * *')->setCallback([
             'command' => 'query:event',
         ]),
+        (new Crontab())->setType('command')->setName('CheckProfit')->setRule('* * * * *')->setCallback([
+            'command' => 'check:profit',
+        ]),
     ],
 ];
