@@ -92,6 +92,9 @@ class QueryEvent extends HyperfCommand
         $this->info("缓存区块");
         $this->info($cache_block_number);
 
+        \App\Utils\Log::get()->info(sprintf("最新区块:%s", $latest_block_number));
+        \App\Utils\Log::get()->info(sprintf("缓存区块:%s", $cache_block_number));
+
         $eventParameterNames = [];
         $eventParameterTypes = [];
         $eventIndexedParameterNames = [];
