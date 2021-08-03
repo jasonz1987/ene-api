@@ -123,9 +123,13 @@ class QueryEvent extends HyperfCommand
         ],
             function ($err, $result) use (&$eventLogData, &$fromBlock, &$configService, &$latest_block_number, $contract, $contractAddress, $ethabi, $eventParameterTypes, $eventParameterNames, $eventIndexedParameterTypes, $eventIndexedParameterNames, $numEventIndexedParameterNames) {
                 if($err !== null) {
+                    \App\Utils\Log::get()->error(sprintf("扫描失败:%s", $err->getMessage()));
                     throw new \Exception($err->getMessage());
                 }
                 foreach ($result as $object) {
+
+                    \App\Utils\Log::get()->info(sprintf("扫描的交易:%s", $object->transactionHash));
+
                     //decode the data from the log into the expected formats, with its corresponding named key
                     $decodedData = array_combine($eventParameterNames, $ethabi->decodeParameters($eventParameterTypes, $object->data));
 
@@ -189,6 +193,7 @@ class QueryEvent extends HyperfCommand
 
                     } catch (\Exception $e) {
                         Db::rollBack();
+                        \App\Utils\Log::get()->error(sprintf("更新算力失败:%s",  $e->getMessage));
                         throw new \Exception("更新算力失败：" . $e->getMessage());
                     }
                 }
