@@ -11,5 +11,8 @@ return [
         (new Crontab())->setType('command')->setName('CheckProfit')->setRule('* * * * *')->setCallback([
             'command' => 'check:profit',
         ]),
+        (new Crontab())->setType('command')->setName('CheckEvent')->setRule('*/5 * * * *')->setCallback([
+            'command' => 'check:event',
+        ]),
     ],
 ];

@@ -64,7 +64,6 @@ class CheckEvent extends HyperfCommand
 
         $eventName = 'Deposit';
 
-
         $this->info("【检查进程】缓存区块");
         $this->info($cache_block_number);
 
@@ -103,8 +102,6 @@ class CheckEvent extends HyperfCommand
                     \App\Utils\Log::get()->error(sprintf("【检查进程】扫描失败:%s", $err->getMessage()));
                     throw new \Exception($err->getMessage());
                 }
-
-                var_dump($result);
 
                 \App\Utils\Log::get()->info(sprintf("【检查进程】扫描的交易数:%s", count($result)));
 
