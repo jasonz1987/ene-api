@@ -245,11 +245,11 @@ class UnitTest extends HyperfCommand
             $rate = 0;
 
             // 平级
-            if ($tree->vip_level == $child->child->vip_level) {
+            if ($child->child->vip_level == $user->vip_level) {
                 $rate = 0.01;
-            } else if ($tree->vip_level <  $child->child->vip_level) {
-                $rate1 = $userService->getTeamLevelRate( $child->child->vip_level);
-                $rate2 = $userService->getTeamLevelRate($tree->vip_level);
+            } else if ($child->child->vip_level <  $user->vip_level) {
+                $rate1 = $userService->getTeamLevelRate($user->vip_level);
+                $rate2 = $userService->getTeamLevelRate($child->child->vip_level);
                 $rate = $rate1 - $rate2;
             }
 
