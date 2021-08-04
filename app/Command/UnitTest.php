@@ -158,8 +158,6 @@ class UnitTest extends HyperfCommand
 //
 //            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
-            $this->info(microtime(true));
-
             // 获取奖励的代数和比例
             $levels = $userService->getShareRate($direct_num);
 
@@ -174,7 +172,6 @@ class UnitTest extends HyperfCommand
                 // 根据推荐数量获取对应的层级
 //                $new_tree = array_slice($tree, 0, $direct_num);
 
-
                     if (!isset($users[$v->child->id])) {
                         $rate = $levels[$k];
                         // 烧伤
@@ -187,7 +184,7 @@ class UnitTest extends HyperfCommand
                         $power_add = $power->multipliedBy($rate);
                         $total_power = $total_power->plus($power_add);
 
-                        $users[$v->chidl->id] = $v->chidl->id;
+                        $users[$v->child->id] = $v->child->id;
                     }
             }
 
