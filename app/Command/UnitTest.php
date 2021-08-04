@@ -65,12 +65,12 @@ class UnitTest extends HyperfCommand
 
         $collection = $user->children()->with('child')->get();
 
-        $this->info("耗时：%s ms", (microtime(true) - $startTime) * 1000);
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         // 获取直邀的有效用户
         $direct_num = $userService->getDirectChildrenNum($collection);
 
-        $this->info("耗时：%s ms", (microtime(true) - $startTime) * 1000);
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         if ($direct_num > 0) {
 
@@ -80,12 +80,12 @@ class UnitTest extends HyperfCommand
 
             $trees = $userService->getTrees($collection, $user->id, true);
 
-            $this->info("耗时：%s ms", (microtime(true) - $startTime) * 1000);
+            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
             // 获取奖励的代数和比例
             $levels = $userService->getShareRate($direct_num);
 
-            $this->info("耗时：%s ms", (microtime(true) - $startTime) * 1000);
+            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
             $users = [];
 
@@ -116,7 +116,7 @@ class UnitTest extends HyperfCommand
 
             var_dump($total_power);
 
-            $this->info("耗时：%s ms", (microtime(true) - $startTime) * 1000);
+            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         }
 
