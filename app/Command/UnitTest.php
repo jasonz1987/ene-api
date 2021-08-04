@@ -51,6 +51,11 @@ class UnitTest extends HyperfCommand
 
     public function handle()
     {
+        $this->getSharePower();
+        $this->getSharePower2();
+    }
+
+    protected function getSharePower() {
         $userService = make(UserService::class);
 
         $startTime = microtime(true);
@@ -119,8 +124,78 @@ class UnitTest extends HyperfCommand
             $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         }
-
     }
+
+    protected function getSharePower2() {
+        $userService = make(UserService::class);
+
+        $startTime = microtime(true);
+
+        $user = User::find(38);
+
+        $total_power = BigDecimal::zero();
+
+        if ($user->is_valid == 0) {
+            return $total_power;
+        }
+
+        $collection = $user->children()->with('child')->get();
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        // 获取直邀的有效用户
+        $direct_num = $userService->getDirectChildrenNum($collection);
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        if ($direct_num > 0) {
+
+            if ($direct_num > 10) {
+                $direct_num = 10;
+            }
+
+//            $trees = $userService->getTrees($collection, $user->id, true);
+//
+//            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+            // 获取奖励的代数和比例
+            $levels = $userService->getShareRate($direct_num);
+
+            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+            $users = [];
+
+            $new_collection  = $collection->where('level', '<=', $direct_num);
+
+            foreach ($new_collection as $k=>$v) {
+
+                // 根据推荐数量获取对应的层级
+//                $new_tree = array_slice($tree, 0, $direct_num);
+
+
+                    if (!isset($users[$v->child->id])) {
+                        $rate = $levels[$k];
+                        // 烧伤
+                        if (BigDecimal::of($v->child->mine_power)->isLessThan($v->child->mine_power)) {
+                            $power = BigDecimal::of($user->child->mine_power);
+                        } else {
+                            $power = BigDecimal::of($v->child->mine_power);
+                        }
+
+                        $power_add = $power->multipliedBy($rate);
+                        $total_power = $total_power->plus($power_add);
+
+                        $users[$v->chidl->id] = $v->chidl->id;
+                    }
+            }
+
+            var_dump($total_power);
+
+            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        }
+    }
+
 
     protected function getArguments()
     {
