@@ -115,6 +115,8 @@ class QueryEvent extends HyperfCommand
         $eventSignature = $contract->getEthabi()->encodeEventSignature($events[$eventName]);
         $ethabi = $contract->getEthabi();
 
+        \App\Utils\Log::get()->info("开始扫描...");
+
         $web3->getEth()->getLogs([
             'fromBlock' => '0x' . dechex($cache_block_number),
             'toBlock' => '0x' . dechex($latest_block_number),
@@ -126,6 +128,9 @@ class QueryEvent extends HyperfCommand
                     \App\Utils\Log::get()->error(sprintf("扫描失败:%s", $err->getMessage()));
                     throw new \Exception($err->getMessage());
                 }
+
+                \App\Utils\Log::get()->info(sprintf("扫描的交易数:%s", count($result)));
+
                 foreach ($result as $object) {
 
                     \App\Utils\Log::get()->info(sprintf("扫描的交易:%s", $object->transactionHash));
