@@ -220,6 +220,7 @@ class UnitTest extends HyperfCommand
         $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         // 获取直邀用户
+        $children = $collection->where('level', '=', 1)->all();
         $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
 
         var_dump($uids);
@@ -237,10 +238,14 @@ class UnitTest extends HyperfCommand
 
             var_dump($trees);
 
-        foreach ($trees as $tree) {
-            $child = $collection->where('child_id', '=', $tree->user_id)->first();
+        foreach ($children as $child) {
+            $tree = $trees->where('user_id', '=', $child->child_id)->first();
 
-            $power = BigDecimal::of($tree->team_power)->plus($child->child->mine_power);
+            if ($tree) {
+                $power = BigDecimal::of($tree->team_power)->plus($child->child->mine_power);
+            } else {
+                $power = BigDecimal::of($child->child->mine_power);
+            }
 
             var_dump($child->child->id);
             var_dump((string)$power);
@@ -258,7 +263,6 @@ class UnitTest extends HyperfCommand
 
             if ($rate > 0) {
                 $real_power = $power->multipliedBy($rate);
-
                 var_dump((string)$real_power);
                 // 计算总算李
                 $total_power = $total_power->plus($real_power);
