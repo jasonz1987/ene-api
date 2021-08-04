@@ -229,6 +229,7 @@ class UnitTest extends HyperfCommand
         $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
             ->selectRaw('SUM(users.mine_power) as team_power, user_id, mine_power, vip_level')
             ->whereIn('user_id', $uids)
+            ->where('is_valid', '=', 1)
             ->groupBy('user_id')
             ->get();
 
