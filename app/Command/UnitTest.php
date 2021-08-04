@@ -237,7 +237,7 @@ class UnitTest extends HyperfCommand
         foreach ($trees as $tree) {
             $child = $collection->where('child_id', '=', $tree->user_id)->first();
 
-            $power = BigDecimal::of($tree->team_power)->plus($tree->mine_power);
+            $power = BigDecimal::of($tree->team_power)->plus($child->child->mine_power);
 
             var_dump($child->child->id);
             var_dump((string)$power);
