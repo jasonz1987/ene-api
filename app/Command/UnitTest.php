@@ -226,7 +226,7 @@ class UnitTest extends HyperfCommand
         $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
 
-        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs')
+        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
             ->selectRaw('SUM(users.mine_power) as team_power, user_id, mine_power, vip_level')
             ->whereIn('user_id', $uids)
             ->groupBy('user_id')
