@@ -237,6 +237,9 @@ class UnitTest extends HyperfCommand
         foreach ($trees as $tree) {
             $power = BigDecimal::of($tree->team_power)->plus($tree->mine_power);
 
+            var_dump($tree->user_id);
+            var_dump((string)$power);
+
             // 平级
             if ($tree->vip_level == $user->vip_level) {
                 $rate = 0.01;
@@ -244,8 +247,13 @@ class UnitTest extends HyperfCommand
                 $rate = $userService->getTeamLevelRate($user->vip_level);
             }
 
+            $real_power = $power->multipliedBy($rate);
+
+            var_dump((string)$real_power);
+
+
             // 计算总算李
-            $total_power = $total_power->plus($power->multipliedBy($rate));
+            $total_power = $total_power->plus($real_power);
         }
 
         var_dump($total_power);
