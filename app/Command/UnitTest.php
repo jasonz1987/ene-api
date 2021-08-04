@@ -173,7 +173,7 @@ class UnitTest extends HyperfCommand
 //                $new_tree = array_slice($tree, 0, $direct_num);
 
                     if (!isset($users[$v->child->id])) {
-                        $rate = $levels[$k];
+                        $rate = $levels[$v->level - 1];
                         // 烧伤
                         if (BigDecimal::of($user->mine_power)->isLessThan($v->child->mine_power)) {
                             $power = BigDecimal::of($user->mine_power);
