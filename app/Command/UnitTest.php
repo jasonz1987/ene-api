@@ -51,7 +51,7 @@ class UnitTest extends HyperfCommand
 
     public function handle()
     {
-        $this->getSharePower();
+//        $this->getSharePower();
         $this->getSharePower2();
     }
 
@@ -165,7 +165,7 @@ class UnitTest extends HyperfCommand
 
             $users = [];
 
-            $new_collection  = $collection->where('level', '<=', $direct_num);
+            $new_collection  = $collection->where('level', '<=', $direct_num)->all();
 
             foreach ($new_collection as $k=>$v) {
 
@@ -175,8 +175,8 @@ class UnitTest extends HyperfCommand
                     if (!isset($users[$v->child->id])) {
                         $rate = $levels[$k];
                         // 烧伤
-                        if (BigDecimal::of($v->child->mine_power)->isLessThan($v->child->mine_power)) {
-                            $power = BigDecimal::of($user->child->mine_power);
+                        if (BigDecimal::of($user->mine_power)->isLessThan($v->child->mine_power)) {
+                            $power = BigDecimal::of($user->mine_power);
                         } else {
                             $power = BigDecimal::of($v->child->mine_power);
                         }
