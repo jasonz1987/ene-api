@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\Model\InvitationLog;
 use Brick\Math\BigDecimal;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\Inject;
@@ -125,12 +126,64 @@ class UserService
         return $total_power;
     }
 
+
     /**
      * 获取用户的团队算力
      *
      * @param $user
      */
     public function getTeamPower($user, $collection = null) {
+        $total_power = BigDecimal::zero();
+
+        if ($user->vip_level == 0 || $user->is_valid == 0) {
+            return $total_power;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
+
+        $children = $collection->where('level', '=', 1)->all();
+        $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+            ->selectRaw('SUM(users.mine_power) as team_power, user_id')
+            ->whereIn('user_id', $uids)
+            ->where('is_valid', '=', 1)
+            ->groupBy('user_id')
+            ->get();
+
+        foreach ($children as $child) {
+            $tree = $trees->where('user_id', '=', $child->child_id)->first();
+
+            if ($tree) {
+                $power = BigDecimal::of($tree->team_power)->plus($child->child->mine_power);
+            } else {
+                $power = BigDecimal::of($child->child->mine_power);
+            }
+
+            $rate = 0;
+
+            // 平级
+            if ($child->child->vip_level == $user->vip_level) {
+                $rate = 0.01;
+            } else if ($child->child->vip_level <  $user->vip_level) {
+                $rate1 = $this->getTeamLevelRate($user->vip_level);
+                $rate2 = $this->getTeamLevelRate($child->child->vip_level);
+                $rate = $rate1 - $rate2;
+            }
+
+            if ($rate > 0) {
+                $real_power = $power->multipliedBy($rate);
+                // 计算总算李
+                $total_power = $total_power->plus($real_power);
+            }
+        }
+
+        return $total_power;
+    }
+
+    public function getTeamPower2($user, $collection = null) {
         $total_power = BigDecimal::zero();
 
         if ($user->vip_level == 0 || $user->is_valid == 0) {
