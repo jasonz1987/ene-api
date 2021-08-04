@@ -223,8 +223,6 @@ class UnitTest extends HyperfCommand
         $children = $collection->where('level', '=', 1)->all();
         $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
 
-        var_dump($uids);
-
         $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
@@ -235,8 +233,6 @@ class UnitTest extends HyperfCommand
             ->get();
 
         $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
-
-            var_dump($trees);
 
         foreach ($children as $child) {
             $tree = $trees->where('user_id', '=', $child->child_id)->first();
