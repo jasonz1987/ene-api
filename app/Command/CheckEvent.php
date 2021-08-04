@@ -125,6 +125,8 @@ class CheckEvent extends HyperfCommand
                     foreach ($logs as $log) {
                         $reverse = array_flip($hashes);
 
+                        var_dump($reverse);
+
                         $object = $result[$reverse[$log->tx_id]];
 
                         //decode the data from the log into the expected formats, with its corresponding named key
