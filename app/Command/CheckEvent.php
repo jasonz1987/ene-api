@@ -104,6 +104,8 @@ class CheckEvent extends HyperfCommand
                     throw new \Exception($err->getMessage());
                 }
 
+                var_dump($result);
+
                 \App\Utils\Log::get()->info(sprintf("【检查进程】扫描的交易数:%s", count($result)));
 
                 $hashes = [];
@@ -113,6 +115,8 @@ class CheckEvent extends HyperfCommand
                 }
 
                 if (count($hashes) > 0) {
+                    var_dump($hashes);
+
                     $logs = DepositLog::whereNotIn('tx_id', array_values($hashes))
                         ->get();
 
