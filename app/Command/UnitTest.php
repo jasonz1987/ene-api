@@ -6,6 +6,7 @@ namespace App\Command;
 
 use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
 use App\Model\DepositLog;
+use App\Model\InvitationLog;
 use App\Model\User;
 use App\Service\QueueService;
 use App\Services\ConfigService;
@@ -54,7 +55,7 @@ class UnitTest extends HyperfCommand
 //        $this->getSharePower();
 //        $this->getSharePower2();
         $user = User::find(38);
-        $this->getTeamPower($user);
+        $this->getTeamPower2($user);
     }
 
     protected function getSharePower() {
@@ -202,7 +203,10 @@ class UnitTest extends HyperfCommand
      *
      * @param $user
      */
-    protected function getTeamPower($user, $collection = null) {
+    protected function getTeamPower2($user, $collection = null) {
+        $userService = make(UserService::class);
+        $startTime = microtime(true);
+
         $total_power = BigDecimal::zero();
 
         if ($user->vip_level == 0 || $user->is_valid == 0) {
@@ -213,41 +217,45 @@ class UnitTest extends HyperfCommand
             $collection = $user->children()->with('child')->get();
         }
 
-        // 获取该用户下的所有几条线
-        $trees = $this->getTrees($collection, $user->id, true);
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        // 获取直邀用户
+
+        $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+
+        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs')
+            ->selectRaw('SUM(users.mine_power) as team_power, user_id, mine_power, vip_level')
+            ->whereIn('user_id', $uids)
+            ->groupBy('user_id')
+            ->get();
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         foreach ($trees as $tree) {
-            $max_level = 0;
-            $power = BigDecimal::zero();
-
-            foreach ($tree as $k=>$v) {
-                if ($v->vip_level > $max_level) {
-                    $max_level = $v->vip_level;
-                }
-
-                if (!isset($users[$v->id])) {
-                    $power = $power->plus($v->mine_power);
-                    $users[$v->id] = $user->id;
-                }
-            }
+            $power = BigDecimal::of($tree->team_power)->plus($tree->mine_power);
 
             // 平级
-            if ($max_level >= $user->vip_level) {
+            if ($tree->vip_level == $user->vip_level) {
                 $rate = 0.01;
-            } else {
-                $rate = $this->getTeamLevelRate($user->vip_level);
+            } else if ($tree->vip_level < $user->vip_level) {
+                $rate = $userService->getTeamLevelRate($user->vip_level);
             }
 
             // 计算总算李
             $total_power = $total_power->plus($power->multipliedBy($rate));
         }
 
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
         return $total_power;
 
     }
 
 
-    protected function getTeamPower2() {
+    protected function getTeamPower($user, $collection = null) {
 
         $total_power = BigDecimal::zero();
 
