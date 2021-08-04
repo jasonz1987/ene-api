@@ -62,10 +62,12 @@ class SendFeeJob extends Job
 
             $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', '0x3814ca95587de805ed14300068F3f1c3abFd8987', $fee, $gasPrice);
 
+            Log::get()->info(sprintf('发送手续费URL：%s' , $url));
+
             $response = $client->request('GET', $url);
 
             if ($response->getStatusCode() == 200) {
-                Log::get()->error(sprintf('发送手续费成功：%s' , $response->getBody()->getContents()));
+                Log::get()->info(sprintf('发送手续费成功：%s' , $response->getBody()->getContents()));
             } else {
                 Log::get()->error(sprintf('发送手续费失败：%s' ,$response->getStatusCode()));
             }
