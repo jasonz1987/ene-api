@@ -121,7 +121,7 @@ class CheckEvent extends HyperfCommand
 
                     foreach ($result as $k=>$object) {
 
-                        if (in_array($logs, $object->transactionHash)) {
+                        if (in_array($object->transactionHash,$logs)) {
                             unset($result[$k]);
                         }
                     }
