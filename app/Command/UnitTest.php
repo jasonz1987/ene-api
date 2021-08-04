@@ -222,8 +222,9 @@ class UnitTest extends HyperfCommand
         // 获取直邀用户
         $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
 
-        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+        var_dump($uids);
 
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
             ->selectRaw('SUM(users.mine_power) as team_power, user_id')
@@ -262,10 +263,10 @@ class UnitTest extends HyperfCommand
             }
         }
 
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
         var_dump((string)$total_power);
 
-
-        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
         return $total_power;
 
