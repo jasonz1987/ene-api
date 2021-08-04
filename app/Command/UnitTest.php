@@ -158,6 +158,8 @@ class UnitTest extends HyperfCommand
 //
 //            $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
+            $this->info(microtime(true));
+
             // 获取奖励的代数和比例
             $levels = $userService->getShareRate($direct_num);
 
