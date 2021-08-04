@@ -54,7 +54,7 @@ class UnitTest extends HyperfCommand
     {
 //        $this->getSharePower();
 //        $this->getSharePower2();
-        $user = User::find(38);
+        $user = User::find($this->input->getArgument('uid'));
         $this->getTeamPower2($user);
     }
 
@@ -327,7 +327,7 @@ class UnitTest extends HyperfCommand
     protected function getArguments()
     {
         return [
-            ['address', InputArgument::OPTIONAL, '地址']
+            ['uid', InputArgument::REQUIRED, '用户ID']
         ];
     }
 }
