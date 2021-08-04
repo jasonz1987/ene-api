@@ -111,23 +111,24 @@ class CheckEvent extends HyperfCommand
                 $hashes = [];
 
                 foreach ($result as $k=>$object) {
-                    $hashes[$k] = $object->transactionHash;
+                    $hashes[] = $object->transactionHash;
                 }
 
                 if (count($hashes) > 0) {
-                    var_dump($hashes);
 
-                    $logs = DepositLog::whereNotIn('tx_id', array_values($hashes))
-                        ->get();
+                    $logs = DepositLog::whereIn('tx_id', $hashes)
+                        ->pluck('tx_id')->toArray();
 
-                    \App\Utils\Log::get()->info(sprintf("【检查进程】过滤后的交易数:%s", count($logs)));
+                    foreach ($result as $k=>$object) {
 
-                    foreach ($logs as $log) {
-                        $reverse = array_flip($hashes);
+                        if (in_array($logs, $object->transactionHash)) {
+                            unset($result[$k]);
+                        }
+                    }
 
-                        var_dump($reverse);
+                    \App\Utils\Log::get()->info(sprintf("【检查进程】过滤后的交易数:%s", count($result)));
 
-                        $object = $result[$reverse[$log->tx_id]];
+                    foreach ($result as $object) {
 
                         //decode the data from the log into the expected formats, with its corresponding named key
                         $decodedData = array_combine($eventParameterNames, $ethabi->decodeParameters($eventParameterTypes, $object->data));
