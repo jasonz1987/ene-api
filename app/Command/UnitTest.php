@@ -235,6 +235,8 @@ class UnitTest extends HyperfCommand
 
         $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
 
+            var_dump($trees);
+
         foreach ($trees as $tree) {
             $child = $collection->where('child_id', '=', $tree->user_id)->first();
 
