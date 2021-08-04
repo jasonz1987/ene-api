@@ -119,7 +119,7 @@ class CheckEvent extends HyperfCommand
                     \App\Utils\Log::get()->info(sprintf("【检查进程】过滤后的交易数:%s", count($logs)));
 
                     foreach ($logs as $log) {
-                        $reverse = array_reverse($hashes);
+                        $reverse = array_flip($hashes);
 
                         $object = $result[$reverse[$log->tx_id]];
 
