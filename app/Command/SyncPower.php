@@ -55,7 +55,7 @@ class SyncPower extends HyperfCommand
 
         $users = User::where('is_valid', '=', 1)
             ->where('mine_power', '>', 0)
-            ->where('id', '=', 479)
+            ->where('id', '=', $this->input->getArguments('uid'))
             ->get();
 
         foreach ($users as $user) {
