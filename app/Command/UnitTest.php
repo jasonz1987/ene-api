@@ -245,7 +245,9 @@ class UnitTest extends HyperfCommand
             if ($tree->vip_level == $user->vip_level) {
                 $rate = 0.01;
             } else if ($tree->vip_level < $user->vip_level) {
-                $rate = $userService->getTeamLevelRate($user->vip_level);
+                $rate1 = $userService->getTeamLevelRate($user->vip_level);
+                $rate2 = $userService->getTeamLevelRate($tree->vip_level);
+                $rate = $rate1 - $rate2;
             }
 
             $real_power = $power->multipliedBy($rate);
