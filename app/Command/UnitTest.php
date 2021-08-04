@@ -296,6 +296,8 @@ class UnitTest extends HyperfCommand
             $total_power = $total_power->plus($power->multipliedBy($rate));
         }
 
+        var_dump($total_power);
+
         return $total_power;
 
     }
