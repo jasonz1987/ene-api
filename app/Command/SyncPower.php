@@ -55,7 +55,7 @@ class SyncPower extends HyperfCommand
 
         $users = User::where('is_valid', '=', 1)
             ->where('mine_power', '>', 0)
-            ->where('id', '=', 38)
+            ->where('id', '=', 479)
             ->get();
 
         foreach ($users as $user) {
@@ -69,11 +69,18 @@ class SyncPower extends HyperfCommand
             var_dump($share_power);
             var_dump($team_power);
 
-//            $user->share_power = $share_power;
-//            $user->team_power = $team_power;
-//            $user->save();
+            $user->share_power = $share_power;
+            $user->team_power = $team_power;
+            $user->save();
         }
 
+    }
+
+    protected function getArguments()
+    {
+        return [
+            ['uid', InputArgument::REQUIRED, '用户ID'],
+        ];
     }
 
 

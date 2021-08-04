@@ -52,7 +52,9 @@ class UnitTest extends HyperfCommand
     public function handle()
     {
 //        $this->getSharePower();
-        $this->getSharePower2();
+//        $this->getSharePower2();
+        $user = User::find(38);
+        $this->getTeamPower($user);
     }
 
     protected function getSharePower() {
@@ -243,6 +245,53 @@ class UnitTest extends HyperfCommand
         return $total_power;
 
     }
+
+
+    protected function getTeamPower2() {
+
+        $total_power = BigDecimal::zero();
+
+        if ($user->vip_level == 0 || $user->is_valid == 0) {
+            return $total_power;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
+
+        // 获取该用户下的所有几条线
+        $trees = $this->getTrees($collection, $user->id, true);
+
+        foreach ($trees as $tree) {
+            $max_level = 0;
+            $power = BigDecimal::zero();
+
+            foreach ($tree as $k=>$v) {
+                if ($v->vip_level > $max_level) {
+                    $max_level = $v->vip_level;
+                }
+
+                if (!isset($users[$v->id])) {
+                    $power = $power->plus($v->mine_power);
+                    $users[$v->id] = $user->id;
+                }
+            }
+
+            // 平级
+            if ($max_level >= $user->vip_level) {
+                $rate = 0.01;
+            } else {
+                $rate = $this->getTeamLevelRate($user->vip_level);
+            }
+
+            // 计算总算李
+            $total_power = $total_power->plus($power->multipliedBy($rate));
+        }
+
+        return $total_power;
+
+    }
+
 
 
     protected function getArguments()
