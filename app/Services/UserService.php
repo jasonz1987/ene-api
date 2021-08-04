@@ -76,7 +76,7 @@ class UserService
         return $total_power;
     }
 
-    public function getSharePower($user, $collection) {
+    public function getSharePower($user, $collection = null) {
         $total_power = BigDecimal::zero();
 
         if ($user->is_valid == 0) {
