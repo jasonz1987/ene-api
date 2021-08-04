@@ -256,7 +256,7 @@ class UnitTest extends HyperfCommand
             $total_power = $total_power->plus($real_power);
         }
 
-        var_dump($total_power);
+        var_dump((string)$total_power);
 
 
         $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
