@@ -54,7 +54,7 @@ class UnitTest extends HyperfCommand
     {
 //        $this->getSharePower();
 //        $this->getSharePower2();
-        $user = User::find(38);
+        $user = User::find(39);
         $this->getTeamPower2($user);
     }
 
