@@ -20,7 +20,7 @@ class UserService
      *
      * @param $user
      */
-    public function getSharePower($user, $collection = null) {
+    public function getSharePower2($user, $collection = null) {
         $total_power = BigDecimal::zero();
 
         if ($user->is_valid == 0) {
@@ -69,6 +69,55 @@ class UserService
                         $users[$v->id] = $v->id;
                     }
 
+                }
+            }
+        }
+
+        return $total_power;
+    }
+
+    public function getSharePower($user, $collection) {
+        $total_power = BigDecimal::zero();
+
+        if ($user->is_valid == 0) {
+            return $total_power;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
+
+        // 获取直邀的有效用户
+        $direct_num = $this->getDirectChildrenNum($collection);
+
+        if ($direct_num > 0) {
+
+            if ($direct_num > 10) {
+                $direct_num = 10;
+            }
+
+            // 获取奖励的代数和比例
+            $levels = $this->getShareRate($direct_num);
+
+            $users = [];
+
+            $new_collection  = $collection->where('level', '<=', $direct_num)->all();
+
+            foreach ($new_collection as $k=>$v) {
+
+                if (!isset($users[$v->child->id])) {
+                    $rate = $levels[$v->level - 1];
+                    // 烧伤
+                    if (BigDecimal::of($user->mine_power)->isLessThan($v->child->mine_power)) {
+                        $power = BigDecimal::of($user->mine_power);
+                    } else {
+                        $power = BigDecimal::of($v->child->mine_power);
+                    }
+
+                    $power_add = $power->multipliedBy($rate);
+                    $total_power = $total_power->plus($power_add);
+
+                    $users[$v->child->id] = $v->child->id;
                 }
             }
         }
