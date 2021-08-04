@@ -241,6 +241,8 @@ class UnitTest extends HyperfCommand
             var_dump($tree->user_id);
             var_dump((string)$power);
 
+            $rate = 0;
+
             // 平级
             if ($tree->vip_level == $user->vip_level) {
                 $rate = 0.01;
@@ -250,13 +252,13 @@ class UnitTest extends HyperfCommand
                 $rate = $rate1 - $rate2;
             }
 
-            $real_power = $power->multipliedBy($rate);
+            if ($rate > 0) {
+                $real_power = $power->multipliedBy($rate);
 
-            var_dump((string)$real_power);
-
-
-            // 计算总算李
-            $total_power = $total_power->plus($real_power);
+                var_dump((string)$real_power);
+                // 计算总算李
+                $total_power = $total_power->plus($real_power);
+            }
         }
 
         var_dump((string)$total_power);
