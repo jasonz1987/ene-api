@@ -55,7 +55,8 @@ class UnitTest extends HyperfCommand
 //        $this->getSharePower();
 //        $this->getSharePower2();
         $user = User::find($this->input->getArgument('uid'));
-        $this->getTeamPower2($user);
+//        $this->getTeamPower2($user);
+        $this->updateParentsLevel($user, 1);
     }
 
     protected function getSharePower() {
@@ -320,6 +321,61 @@ class UnitTest extends HyperfCommand
 
         return $total_power;
 
+    }
+
+
+    protected function updateParentsLevel($user, $level)
+    {
+        $parents = $user->parents()->with('user')->get();
+
+        Db::beginTransaction();
+
+        if ($parents->count() > 0) {
+            foreach ($parents as $parent) {
+                $this->info("用户ID:" . $parent->user->id);
+                $this->info("用户原等级:". $parent->user->vip_level);
+
+                if ($parent->user->vip_level > $level) {
+                    $this->info("无需升级");
+                    continue;
+                }
+
+                if ($parent->user->vip_level >= 5) {
+                    $this->info("最大等级");
+                    continue;
+                }
+
+                $collection = $parent->user->children()->with('child')->get();
+
+                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+                // 获取
+                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+                    ->selectRaw('count(1) as count, user_id')
+                    ->whereIn('user_id', $uids)
+                    ->where('vip_level', '=', $level)
+                    ->groupBy('user_id')
+                    ->get();
+
+                $count = 0;
+
+                foreach ($trees as $tree) {
+                    if ($tree->count > 0) {
+                        $count ++;
+                    }
+                }
+
+                $this->info("符合条件的部门:" . $count);
+
+                if ($count >= 3) {
+                    $this->info("升级！！");
+                    $parent->user->vip_level = $level + 1;
+                    $parent->user->save();
+                    $this->updateParentsLevel($parent->user, $parent->user->vip_level);
+                    break;
+                }
+            }
+        }
     }
 
 
