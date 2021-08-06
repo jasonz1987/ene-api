@@ -174,28 +174,33 @@ class QueryEvent extends HyperfCommand
                                 $new_power = $result['power']->toString();
                             });
 
+                            if ($new_power) {
+                                $log->status = 1;
+                                $log->save();
 
-                            $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
+                                $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
 
-                            if ($user->is_valid == 0 ) {
-                                if ($new_power->isGreaterThanOrEqualTo(240)) {
-                                    $user->is_valid = 1;
-                                    $is_upgrade_vip = true;
+                                if ($user->is_valid == 0 ) {
+                                    if ($new_power->isGreaterThanOrEqualTo(240)) {
+                                        $user->is_valid = 1;
+                                        $is_upgrade_vip = true;
+                                    }
                                 }
-                            }
 
-                            $user->mine_power = $new_power;
-                            $user->save();
+                                $user->mine_power = $new_power;
+                                $user->save();
+                            }
                         }
 
                         Db::commit();
 
-                        $queueService = $this->container->get(QueueService::class);
-                        $queueService->pushUpdatePower([
-                            'user_id'        => $user->id,
-                            'is_upgrade_vip' => $is_upgrade_vip
-                        ]);
-
+                        if ($log->status == 1) {
+                            $queueService = $this->container->get(QueueService::class);
+                            $queueService->pushUpdatePower([
+                                'user_id'        => $user->id,
+                                'is_upgrade_vip' => $is_upgrade_vip
+                            ]);
+                        }
                     } catch (\Exception $e) {
                         Db::rollBack();
                         \App\Utils\Log::get()->error(sprintf("更新算力失败:%s",  $e->getMessage));

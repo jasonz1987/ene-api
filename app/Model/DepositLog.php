@@ -26,5 +26,9 @@ class DepositLog extends Model
      */
     protected $casts = [];
 
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
 
 }
