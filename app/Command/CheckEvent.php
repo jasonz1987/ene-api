@@ -187,12 +187,13 @@ class CheckEvent extends HyperfCommand
 
                             Db::commit();
 
-                            $queueService = $this->container->get(QueueService::class);
-                            $queueService->pushUpdatePower([
-                                'user_id'        => $user->id,
-                                'is_upgrade_vip' => $is_upgrade_vip
-                            ]);
-
+                            if ($log->status == 1) {
+                                $queueService = $this->container->get(QueueService::class);
+                                $queueService->pushUpdatePower([
+                                    'user_id'        => $user->id,
+                                    'is_upgrade_vip' => $is_upgrade_vip
+                                ]);
+                            }
                         } catch (\Exception $e) {
                             Db::rollBack();
                             \App\Utils\Log::get()->error(sprintf("【检查进程】更新算力失败:%s",  $e->getMessage));
