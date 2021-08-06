@@ -53,10 +53,10 @@ class UnitTest extends HyperfCommand
     public function handle()
     {
 //        $this->getSharePower();
-//        $this->getSharePower2();
         $user = User::find($this->input->getArgument('uid'));
-//        $this->getTeamPower2($user);
-        $this->updateParentsLevel($user, 1);
+//        $this->getSharePower2($user);
+        $this->getTeamPower2($user);
+//        $this->updateParentsLevel($user, 1);
     }
 
     protected function getSharePower() {
@@ -130,12 +130,10 @@ class UnitTest extends HyperfCommand
         }
     }
 
-    protected function getSharePower2() {
+    protected function getSharePower2($user) {
         $userService = make(UserService::class);
 
         $startTime = microtime(true);
-
-        $user = User::find(38);
 
         $total_power = BigDecimal::zero();
 
