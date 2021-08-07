@@ -77,7 +77,7 @@ class SyncPower extends HyperfCommand
             });
 
             if ($new_power) {
-                $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($log->user->old_mine_power));
+                $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
                 $this->info(sprintf("新算力: %s", $new_power));
 
 //                $user->mine_power = $new_power;
@@ -90,6 +90,8 @@ class SyncPower extends HyperfCommand
 //                        'is_upgrade_vip' => $is_upgrade_vip
 //                    ]);
 //                }
+            } else {
+                $this->error("获取算力失败");
             }
 
 //            $collection = $user->children()->with('child')->get();
