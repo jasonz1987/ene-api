@@ -106,72 +106,75 @@ class CoverEvent extends HyperfCommand
                 }
                 foreach ($result as $object) {
 
-                    var_dump($object);
+                    $decodedData = array_combine($eventParameterNames, $ethabi->decodeParameters($eventParameterTypes, $object->data));
 
-                    //decode the data from the log into the expected formats, with its corresponding named key
-//                    $decodedData = array_combine($eventParameterNames, $ethabi->decodeParameters($eventParameterTypes, $object->data));
-//
-//                    //decode the indexed parameter data
-//                    for ($i = 0; $i < $numEventIndexedParameterNames; $i++) {
-//                        //topics[0] is the event signature, so we start from $i + 1 for the indexed parameter data
-//                        $decodedData[$eventIndexedParameterNames[$i]] = $ethabi->decodeParameters([$eventIndexedParameterTypes[$i]], $object->topics[$i + 1])[0];
-//                    }
-//
-//                    Db::beginTransaction();
-//
-//                    try {
-//
-//                        $user = User::where('address', '=', $decodedData['user'])
-//                            ->first();
-//
-//                        $is_upgrade_vip = false;
-//
-//                        if ($user) {
-//                            $log = new DepositLog();
-//                            $log->user_id = $user->id;
-//                            $log->tx_id = $object->transactionHash;
-//                            $log->pool_id = $decodedData['pid'];
-//                            $log->amount = BigDecimal::of($decodedData['amount'])->dividedBy(1e18, 6, RoundingMode::DOWN);
-//                            $log->block_number = hexdec($object->blockNumber);
-//                            $log->save();
-//
-//                            $new_power = null;
-//
-//                            $contract->at($contractAddress)->call('userInfo', $user->address, [
-//                                'from' => $user->address
-//                            ], function ($err, $result) use (&$new_power) {
-//                                if ($err !== null) {
-//                                    throw new \Exception('获取用户算力失败');
-//                                }
-//
-//                                $new_power = $result['power']->toString();
-//                            });
-//
-//                            $new_power = BigDecimal::of($new_power)->dividedBy(1e18, 6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
-//
-//                            if ($user->is_valid == 0) {
-//                                if ($new_power->isGreaterThan(240)) {
-//                                    $user->is_valid = 1;
-//                                    $is_upgrade_vip = true;
-//                                }
-//                            }
-//
-//                            $user->mine_power = $new_power;
-//                            $user->save();
-//                        }
-//
-//                        Db::commit();
-//
-//                        $queueService = $this->container->get(QueueService::class);
-//                        $queueService->pushUpdatePower([
-//                            'user_id'        => $user->id,
-//                            'is_upgrade_vip' => $is_upgrade_vip
-//                        ]);
-//
-//                    } catch (\Exception $e) {
-//                        Db::rollBack();
-//                        throw new \Exception("更新算力失败：" . $e->getMessage());
-//                    }
+                    //decode the indexed parameter data
+                    for ($i = 0; $i < $numEventIndexedParameterNames; $i++) {
+                        //topics[0] is the event signature, so we start from $i + 1 for the indexed parameter data
+                        $decodedData[$eventIndexedParameterNames[$i]] = $ethabi->decodeParameters([$eventIndexedParameterTypes[$i]], $object->topics[$i + 1])[0];
+                    }
+
+                    Db::beginTransaction();
+
+                    try {
+
+                        $user = User::where('address', '=', $decodedData['user'])
+                            ->first();
+
+                        $is_upgrade_vip = false;
+
+                        if ($user) {
+                            $log = new DepositLog();
+                            $log->user_id = $user->id;
+                            $log->tx_id = $object->transactionHash;
+                            $log->pool_id = $decodedData['pid'];
+                            $log->amount = BigDecimal::of($decodedData['amount'])->dividedBy(1e18, 6, RoundingMode::DOWN);
+                            $log->block_number = hexdec($object->blockNumber);
+                            $log->save();
+
+                            $new_power = null;
+
+                            $contract->at($contractAddress)->call('userInfo', $user->address, [
+                                'from' => $user->address
+                            ], function ($err, $result) use (&$new_power) {
+                                if ($err !== null) {
+                                    throw new \Exception('获取用户算力失败');
+                                }
+
+                                $new_power = $result['power']->toString();
+                            });
+
+                            if ($new_power) {
+                                $log->status = 1;
+                                $log->save();
+
+                                $new_power = BigDecimal::of($new_power)->dividedBy(1e18, 6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
+
+                                if ($user->is_valid == 0) {
+                                    if ($new_power->isGreaterThan(240)) {
+                                        $user->is_valid = 1;
+                                        $is_upgrade_vip = true;
+                                    }
+                                }
+
+                                $user->mine_power = $new_power;
+                                $user->save();
+                            }
+                        }
+
+                        Db::commit();
+
+                        if ($log->status == 1) {
+                            $queueService = $this->container->get(QueueService::class);
+                            $queueService->pushUpdatePower([
+                                'user_id'        => $user->id,
+                                'is_upgrade_vip' => $is_upgrade_vip
+                            ]);
+                        }
+                    } catch (\Exception $e) {
+                        Db::rollBack();
+                        throw new \Exception("更新算力失败：" . $e->getMessage());
+                    }
                 }
             });
     }
