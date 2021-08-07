@@ -59,7 +59,8 @@ class SyncPower extends HyperfCommand
 
         $contract = new Contract($web3->provider, $abi);
 
-        $users = User::all();
+        $users = User::orderBy('id', 'desc')
+            ->get();
 
         foreach ($users as $user) {
 
@@ -80,16 +81,30 @@ class SyncPower extends HyperfCommand
                 $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
                 $this->info(sprintf("新算力: %s", $new_power));
 
-//                $user->mine_power = $new_power;
-//                $user->save();
-//
-//                if ($log->status == 1) {
-//                    $queueService = $this->container->get(\App\Services\QueueService::class);
-//                    $queueService->pushUpdatePower([
-//                        'user_id'        => $log->user->id,
-//                        'is_upgrade_vip' => $is_upgrade_vip
-//                    ]);
-//                }
+                if(!($new_power->isEqualTo($user->mine_power))){
+
+                    $this->alert(sprintf("需要更新"));
+
+                    $user->mine_power = $new_power;
+                    $user->save();
+
+                    $is_upgrade_vip = false;
+
+                    if ($user->is_valid == 0) {
+                        if ($new_power->isGreaterThanOrEqualTo(240)) {
+                            $this->alert(sprintf("需要升级"));
+                            $is_upgrade_vip = true;
+                        }
+                    }
+
+                    $queueService = $this->container->get(\App\Services\QueueService::class);
+                    $queueService->pushUpdatePower([
+                        'user_id'        => $user->id,
+                        'is_upgrade_vip' => $is_upgrade_vip
+                    ]);
+                }
+
+
             } else {
                 $this->error("获取算力失败");
             }
