@@ -498,10 +498,6 @@ class UserService
     }
 
     public function getTeamNodes($user, $collection = null) {
-        $startTime = microtime(true);
-
-        $this->info(sprintf("当前用户等级：%s", $user->vip_level));
-
         if ($user->vip_level == 0) {
             return 0;
         }
