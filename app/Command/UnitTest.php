@@ -54,8 +54,9 @@ class UnitTest extends HyperfCommand
     {
 //        $this->getSharePower();
         $user = User::find($this->input->getArgument('uid'));
-        $this->getSharePower2($user);
-        $this->getTeamPower2($user);
+//        $this->getSharePower2($user);
+//        $this->getTeamPower2($user);
+        $this->getTeamNodes2($user);
 //        $this->updateParentsLevel($user, 1);
     }
 
@@ -375,6 +376,50 @@ class UnitTest extends HyperfCommand
             }
         }
     }
+
+    protected function getTeamNodes2($user, $collection = null) {
+        $startTime = microtime(true);
+
+        $this->info(sprintf("当前用户等级：%s", $user->vip_level));
+
+        if ($user->vip_level == 5 || $user->vip_level == 0) {
+            return 0;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        // 获取直邀用户
+        $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+            ->selectRaw('count(1) as count, user_id')
+            ->whereIn('user_id', $uids)
+            ->where('vip_level', '=', $user->vip_level)
+            ->groupBy('user_id')
+            ->get();
+
+        $count = 0;
+
+        foreach ($trees as $tree) {
+            if ($tree->count > 0) {
+                $count ++;
+            }
+        }
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        $this->info(sprintf("节点：%s", $count));
+
+        return $count;
+
+    }
+
 
 
 
