@@ -404,6 +404,8 @@ class UnitTest extends HyperfCommand
             ->groupBy('user_id')
             ->get();
 
+        var_dump($trees);
+
         $count = 0;
 
         foreach ($trees as $tree) {
