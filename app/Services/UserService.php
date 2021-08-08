@@ -497,7 +497,7 @@ class UserService
         return $count;
     }
 
-    protected function getTeamNodes($user, $collection = null) {
+    public function getTeamNodes($user, $collection = null) {
         $startTime = microtime(true);
 
         $this->info(sprintf("当前用户等级：%s", $user->vip_level));
