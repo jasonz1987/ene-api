@@ -472,7 +472,7 @@ class UserService
         return false;
     }
 
-    public function getTeamNodes($user, $collection = null) {
+    public function getTeamNodes2($user, $collection = null) {
         if ($user->vip_level == 5) {
             return 0;
         }
@@ -496,5 +496,41 @@ class UserService
 
         return $count;
     }
+
+    protected function getTeamNodes($user, $collection = null) {
+        $startTime = microtime(true);
+
+        $this->info(sprintf("当前用户等级：%s", $user->vip_level));
+
+        if ($user->vip_level == 0) {
+            return 0;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->get();
+        }
+
+        // 获取直邀用户
+        $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+            ->selectRaw('count(1) as count, user_id')
+            ->whereIn('user_id', $uids)
+            ->where('vip_level', '=', $user->vip_level)
+            ->groupBy('user_id')
+            ->get();
+
+        $count = 0;
+
+        foreach ($trees as $tree) {
+            if ($tree->count > 0) {
+                $count ++;
+            }
+        }
+
+        return $count;
+
+    }
+
 
 }

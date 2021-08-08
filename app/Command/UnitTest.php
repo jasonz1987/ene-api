@@ -382,7 +382,7 @@ class UnitTest extends HyperfCommand
 
         $this->info(sprintf("当前用户等级：%s", $user->vip_level));
 
-        if ($user->vip_level == 5 || $user->vip_level == 0) {
+        if ($user->vip_level == 0) {
             return 0;
         }
 
@@ -403,8 +403,6 @@ class UnitTest extends HyperfCommand
             ->where('vip_level', '=', $user->vip_level)
             ->groupBy('user_id')
             ->get();
-
-        var_dump($trees);
 
         $count = 0;
 
