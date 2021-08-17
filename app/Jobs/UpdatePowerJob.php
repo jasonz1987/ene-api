@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Model\Order;
+use App\Model\InvitationLog;
 use App\Model\User;
-use App\Service\MarketService;
-use App\Service\OrderService;
-use App\Service\QueueService;
-use App\Service\SymbolService;
 use App\Services\UserService;
 use App\Utils\Log;
 use Brick\Math\BigDecimal;
@@ -76,6 +72,13 @@ class UpdatePowerJob extends Job
 
                 if ($this->params['is_upgrade_vip']) {
                     $parent->user->team_valid_num = $parent->user->team_num + 1;
+                    if ($parent->user->vip_level == 0) {
+                        if ($parent->user->team_valid_num >= 30) {
+                            $parent->user->vip_level = 1;
+                            $parent->user->save();
+                            $this->updateParentsLevel($parent->user, 1);
+                        }
+                    }
                 }
 
                 $parent->user->save();
@@ -90,6 +93,54 @@ class UpdatePowerJob extends Job
         } catch (\Exception $e) {
             Db::rollBack();
             Log::get()->error(sprintf('更新算力失败:%s' , $e->getMessage()));
+        }
+    }
+
+    protected function updateParentsLevel($user, $level)
+    {
+        $parents = $user->parents()->with('user')->get();
+
+        if ($parents->count() > 0) {
+            foreach ($parents as $parent) {
+
+                if ($parent->user->vip_level > $level) {
+                    continue;
+                }
+
+                if ($parent->user->vip_level >= 5) {
+                    continue;
+                }
+
+                $collection = $parent->user->children()->with('child')->get();
+
+                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+                // 获取
+                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+                    ->selectRaw('count(1) as count, user_id')
+                    ->whereIn('user_id', $uids)
+                    ->where('vip_level', '=', $level)
+                    ->groupBy('user_id')
+                    ->get();
+
+                $count = 0;
+
+                foreach ($trees as $tree) {
+                    if ($tree->count > 0) {
+                        $count++;
+                    }
+                    if ($count >= 3) {
+                        break;
+                    }
+                }
+
+                if ($count >= 3) {
+                    $parent->user->vip_level = $level + 1;
+                    $parent->user->save();
+                    $this->updateParentsLevel($parent->user, $parent->user->vip_level);
+                    break;
+                }
+            }
         }
     }
 }
