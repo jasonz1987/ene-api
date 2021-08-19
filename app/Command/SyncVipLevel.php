@@ -52,27 +52,11 @@ class SyncVipLevel extends HyperfCommand
 
     public function handle()
     {
-        $userService = make(UserService::class);
-
-//        $users = User::where('is_valid', '=', 1)
-//            ->where('vip_level1', '=', 0)
-//            ->get();
-//
-//
-//        foreach ($users as $user) {
-//            if ($user->team_valid_num >= 30) {
-//                $user->vip_level1 = 1;
-//                $user->save();
-//            }
-//        }
-
         $users = User::where('is_valid', '=', 1)
-            ->where('vip_level1', '=', 4)
+            ->where('vip_level1', '=', $this->input->getArgument('level'))
             ->get();
 
-
         foreach ($users as $user) {
-            // 获取 部门有效节点
             if($this->isNewLevel($user)) {
                 $user->vip_level1 += 1;
                 $user->save();
@@ -130,6 +114,11 @@ class SyncVipLevel extends HyperfCommand
         return false;
     }
 
-
+    protected function getArguments()
+    {
+        return [
+            ['level', InputArgument::REQUIRED, '等级']
+        ];
+    }
 
 }
