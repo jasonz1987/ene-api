@@ -60,7 +60,7 @@ class UnitTest extends HyperfCommand
 //        $this->getTeamNodes2($user);
 //        $this->updateParentsLevel($user, 1);
 //        $this->updateTokenAddress();
-        $this->updateParentsLevel($user, 1);
+        $this->getUserLevel($user);
     }
 
 //    protected function updateParentsLevel($user, $level)
@@ -722,6 +722,43 @@ class UnitTest extends HyperfCommand
             }
         }
     }
+
+
+    protected function getUserLevel($user)
+    {
+
+                $collection = $user->children()->with('child')->get();
+
+                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+                // 获取
+                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+                    ->selectRaw('count(1) as count, user_id')
+                    ->whereIn('user_id', $uids)
+                    ->where('vip_level', '=', $user->vip_level)
+                    ->groupBy('user_id')
+                    ->get();
+
+                $count = 0;
+
+                foreach ($trees as $tree) {
+                    if ($tree->count > 0) {
+                        $count ++;
+                    }
+                    if ($count >= 3) {
+                        break;
+                    }
+                }
+
+                $this->info("符合条件的部门:" . $count);
+
+                if ($count >= 3) {
+                    $this->info("升级！");
+                } else {
+                    $this->info("未升级！");
+                }
+    }
+
 
     protected function getTeamNodes2($user, $collection = null) {
         $startTime = microtime(true);
