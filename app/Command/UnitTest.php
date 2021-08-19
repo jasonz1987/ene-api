@@ -729,7 +729,9 @@ class UnitTest extends HyperfCommand
 
                 $collection = $user->children()->with('child')->get();
 
-                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+                $children = $collection->where('level', '=', 1)->get();
+
+                $uids = $children->pluck('child_id')->toArray();
 
                 // 获取
                 $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
@@ -742,6 +744,12 @@ class UnitTest extends HyperfCommand
                 $count = 0;
 
                 foreach ($trees as $tree) {
+                    $child = $children->where('child_id', '=', $tree->user_id)->first();
+
+                    if ($child->child->vip_level == $user->vip_level) {
+                        $count ++;
+                    }
+
                     if ($tree->count > 0) {
                         $count ++;
                     }
