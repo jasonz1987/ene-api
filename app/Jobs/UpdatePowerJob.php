@@ -122,23 +122,25 @@ class UpdatePowerJob extends Job
                 $uids[] = $child->child_id;
             }
 
-            // 获取
-            $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
-                ->selectRaw('count(1) as count, user_id')
-                ->whereIn('user_id', $uids)
-                ->where('vip_level', '=', $user->vip_level)
-                ->groupBy('user_id')
-                ->get();
+            if ($uids) {
 
-            foreach ($trees as $tree) {
-                if ($tree->count > 0) {
-                    $count++;
-                }
-                if ($count >= 3) {
-                    return true;
+                // 获取
+                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+                    ->selectRaw('count(1) as count, user_id')
+                    ->whereIn('user_id', $uids)
+                    ->where('vip_level', '=', $user->vip_level)
+                    ->groupBy('user_id')
+                    ->get();
+
+                foreach ($trees as $tree) {
+                    if ($tree->count > 0) {
+                        $count++;
+                    }
+                    if ($count >= 3) {
+                        return true;
+                    }
                 }
             }
-
         }
 
         return false;

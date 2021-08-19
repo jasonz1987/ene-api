@@ -506,26 +506,37 @@ class UserService
             $collection = $user->children()->with('child')->get();
         }
 
-        // 获取直邀用户
-        $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
-
-        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
-            ->selectRaw('count(1) as count, user_id')
-            ->whereIn('user_id', $uids)
-            ->where('vip_level', '=', $user->vip_level)
-            ->groupBy('user_id')
-            ->get();
+        $children = $collection->where('level', '=', 1)->all();
 
         $count = 0;
+        $uids = [];
 
-        foreach ($trees as $tree) {
-            if ($tree->count > 0) {
+        foreach ($children as $child) {
+            if ($child->child->vip_level == $user->vip_level) {
                 $count ++;
+                continue;
+            }
+
+            $uids[] = $child->child_id;
+        }
+
+        if ($uids) {
+            $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+                ->selectRaw('count(1) as count, user_id')
+                ->whereIn('user_id', $uids)
+                ->where('vip_level', '=', $user->vip_level)
+                ->groupBy('user_id')
+                ->get();
+
+
+            foreach ($trees as $tree) {
+                if ($tree->count > 0) {
+                    $count ++;
+                }
             }
         }
 
         return $count;
-
     }
 
 
