@@ -80,17 +80,21 @@ class SyncVipLevel extends HyperfCommand
         }
     }
 
-    protected function getUserNewLevel($user)
-    {
-            if ($user->vip_level1 == 5) {
-                return false;
+    protected function isNewLevel($user) {
+
+        if( $user->vip_level1 == 5) {
+            return false;
+        }
+
+        if ($user->vip_level1 == 0) {
+            if ($user->team_valid_num >= 30) {
+                return true;
             }
-
+        } else {
             $collection = $user->children()->with('child')->get();
-
             $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
 
-            // 获取每个直邀下面的有效节点
+            // 获取
             $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
                 ->selectRaw('count(1) as count, user_id')
                 ->whereIn('user_id', $uids)
@@ -102,15 +106,19 @@ class SyncVipLevel extends HyperfCommand
 
             foreach ($trees as $tree) {
                 if ($tree->count > 0) {
-                    $count ++;
+                    $count++;
                 }
                 if ($count >= 3) {
-                    return true;
                     break;
                 }
             }
 
-            return false;
+            if ($count >= 3) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
