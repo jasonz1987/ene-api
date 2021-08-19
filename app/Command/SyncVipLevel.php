@@ -117,8 +117,6 @@ class SyncVipLevel extends HyperfCommand
                 ->groupBy('user_id')
                 ->get();
 
-            $count = 0;
-
             foreach ($trees as $tree) {
                 if ($tree->count > 0) {
                     $count++;
