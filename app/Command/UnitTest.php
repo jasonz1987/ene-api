@@ -727,9 +727,25 @@ class UnitTest extends HyperfCommand
     protected function getUserLevel($user)
     {
 
-                $collection = $user->children()->with('child')->get();
+                $children = $user->children()->with('child')->where('level', '=', 1)->get();
 
-                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+                $count = 0;
+                $uids = [];
+
+                foreach ($children as $child) {
+                    if ($child->child->vip_level == $user->vip_level) {
+                        $count ++;
+                        continue;
+                    }
+
+                    if ($count >= 3) {
+                        $this->info("升级1！");
+                        break;
+                    }
+
+                    $uids[] = $child->child_id;
+                }
+
 
                 // 获取
                 $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
@@ -739,19 +755,12 @@ class UnitTest extends HyperfCommand
                     ->groupBy('user_id')
                     ->get();
 
-                $count = 0;
-
                 foreach ($trees as $tree) {
-                    $child = $collection->where('level','=',1)->where('child_id', '=', $tree->user_id)->first();
-
-                    if ($child->child->vip_level == $user->vip_level) {
-                        $count ++;
-                    }
-
                     if ($tree->count > 0) {
                         $count ++;
                     }
                     if ($count >= 3) {
+                        $this->info("升级2！");
                         break;
                     }
                 }
@@ -759,7 +768,7 @@ class UnitTest extends HyperfCommand
                 $this->info("符合条件的部门:" . $count);
 
                 if ($count >= 3) {
-                    $this->info("升级！");
+                    $this->info("升级3！");
                 } else {
                     $this->info("未升级！");
                 }
