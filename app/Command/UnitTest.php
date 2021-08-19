@@ -55,9 +55,95 @@ class UnitTest extends HyperfCommand
 //        $this->getSharePower();
         $user = User::find($this->input->getArgument('uid'));
 //        $this->getSharePower2($user);
-        $this->getTeamPower2($user);
+//        $this->buildTrees($user);
+//        $this->getTeamPower4($user);
 //        $this->getTeamNodes2($user);
 //        $this->updateParentsLevel($user, 1);
+//        $this->updateTokenAddress();
+        $this->updateParentsLevel($user, 1);
+    }
+
+//    protected function updateParentsLevel($user, $level)
+//    {
+//        $parents = $user->parents()->with('user')->get();
+//
+//        if ($parents->count() > 0) {
+//            foreach ($parents as $parent) {
+//
+//                if ($parent->user->vip_level > $level) {
+//                    continue;
+//                }
+//
+//                if ($parent->user->vip_level >= 5) {
+//                    continue;
+//                }
+//
+//                $collection = $parent->user->children()->with('child')->get();
+//
+//                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+//
+//                // 获取
+//                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+//                    ->selectRaw('count(1) as count, user_id')
+//                    ->whereIn('user_id', $uids)
+//                    ->where('vip_level', '=', $level)
+//                    ->groupBy('user_id')
+//                    ->get();
+//
+//                $count = 0;
+//
+//                foreach ($trees as $tree) {
+//                    if ($tree->count > 0) {
+//                        $count++;
+//                    }
+//                    if ($count >= 3) {
+//                        break;
+//                    }
+//                }
+//
+//                var_dump('用户ID：' . $parent->user->id);
+//                var_dump('用户VIP等级:' . $parent->user->vip_level);
+//                var_dump('节点数：' . $count);
+//
+//                if ($count >= 3) {
+//                    var_dump("需要升级");
+//                    $parent->user->vip_level = $level + 1;
+////                    $parent->user->save();
+//                    $this->updateParentsLevel($parent->user, $parent->user->vip_level);
+//                    break;
+//                }
+//            }
+//        }
+//    }
+
+
+    protected function updateTokenAddress() {
+        $web3 = new Web3(new HttpProvider(new HttpRequestManager(env('RPC_PROVIDER'), 10)));
+        $abi = '[{"inputs":[{"internalType":"address","name":"_cpuTokenAddress","type":"address"},{"internalType":"address","name":"_usdtTokenAddress","type":"address"},{"internalType":"address","name":"_usdtCpuLpAddress","type":"address"},{"internalType":"address","name":"_feeAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Withdraw","type":"event"},{"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"},{"internalType":"address","name":"_usdtPairAddress","type":"address"}],"name":"addPool","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"getBurnAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"getDepositCpu","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"getEquivalentUsdt","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getFeeAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"}],"name":"getPoolDeposit","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTotalBurn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"poolInfo","outputs":[{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"usdtPairAddress","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"poolUserInfo","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"depositTime","type":"uint256"},{"internalType":"bool","name":"isExist","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_burnAddress","type":"address"}],"name":"updateBurnAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_feeAddress","type":"address"}],"name":"updateFeeAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_feeRate","type":"uint256"},{"internalType":"uint256","name":"_feeRatePercent","type":"uint256"}],"name":"updateFeeRate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"address","name":"_tokenAddress","type":"address"},{"internalType":"address","name":"_usdtPairAddress","type":"address"}],"name":"updatePool","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userInfo","outputs":[{"internalType":"uint256","name":"power","type":"uint256"},{"internalType":"bool","name":"isExist","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"payable","type":"function"}]';
+        $contractAddress = env('CPU_SWAP_CONTRACT_ADDRESS');
+
+        $contract = new Contract($web3->provider, $abi);
+
+        $contract->at($contractAddress)->call('getFeeAddress', [
+            'from' => '0x388B239d133b2517e85f3B523517Dc8e65F25146'
+        ], function ($err, $result) use (&$new_power) {
+            if ($err !== null) {
+                throw new \Exception('获取地址失败');
+            }
+            var_dump($result);
+        });
+
+//        $contract->at($contractAddress)->send('updateFeeAddress', '0x450f9f661365BBEf3C49927402D5F4fa9cfb2462', [
+//            'from' => '0x388B239d133b2517e85f3B523517Dc8e65F25146',
+//            'gas' => '0x200b20'
+//        ], function ($err, $result) {
+//            if ($err !== null) {
+//                throw $err;
+//            }
+//            if ($result) {
+//                echo "\nTransaction has made:) id: " . $result . "\n";
+//            }
+//        });
     }
 
     protected function getSharePower() {
@@ -272,6 +358,266 @@ class UnitTest extends HyperfCommand
 
         return $total_power;
 
+    }
+
+
+    protected function getTeamPower3($user, $collection = null) {
+        $userService = make(UserService::class);
+        $startTime = microtime(true);
+
+        $total_power = BigDecimal::zero();
+
+        if ($user->vip_level == 0 || $user->is_valid == 0) {
+            return $total_power;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
+        }
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        // 获取直邀用户
+        $trees = $this->buildTrees($user, $collection);
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        $total_power = BigDecimal::zero();
+
+        $children = [];
+
+        foreach ($trees as $tree) {
+
+            if (count($tree) <= 1) continue;
+
+            $max_level = 0;
+
+            $child = null;
+
+            $diff_power = BigDecimal::zero();
+
+            foreach ($tree as $k=>$v) {
+                if ($k == 0) continue;
+
+                if ($v->child->vip_level > 0) {
+                    if ($max_level < $v->child->vip_level) {
+                        $max_level = $v->child->vip_level;
+                    }
+
+                    if ($v->child->vip_level > $user->vip_level) {
+                        break;
+                    }
+
+                    $child = $v;
+
+                    if ($v->child_id != $child->child_id && $v->child->vip_level >= $child->vip_level) {
+                        $diff_power = BigDecimal::of($v->child->mine_power)->plus($v->child->team_mine_power);
+                        break;
+                    }
+                }
+            }
+
+            // 全部为0的情况
+            if ($max_level == 0) {
+                $child = $tree[1];
+            }
+
+            if ($child) {
+
+                if (isset($children[$child->child_id])) {
+                    if ($diff_power->isGreaterThan(0)) {
+                        $children[$child->child_id]['diff'] = $children[$child->child_id]['diff']->plus($diff_power);
+                    }
+                } else {
+                    $children[$child->child_id] = [
+                        'child'  => $child,
+                        'diff'   => $diff_power
+                    ];
+                }
+            }
+        }
+
+        foreach ($children as $k=>$v) {
+            if ($v['child']->child->vip_level == $user->vip_level) {
+                $rate = 0.01;
+            } else if ($v['child']->child->vip_level <  $user->vip_level) {
+                $rate1 = $userService->getTeamLevelRate($user->vip_level);
+                $rate2 = $userService->getTeamLevelRate($child->child->vip_level);
+                $rate = $rate1 - $rate2;
+            }
+
+            if ($rate > 0) {
+                $team_power = BigDecimal::of($v['child']->child->mine_power)->plus($v['child']->child->team_mine_power)->minus($v['diff']);
+
+                $real_power = $team_power->multipliedBy($rate);
+//                    var_dump((string)$real_power);
+                // 计算总算李
+                $total_power = $total_power->plus($real_power);
+            }
+        }
+
+        var_dump((string)$total_power);
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        return $total_power;
+    }
+
+    protected function getTeamPower4($user, $collection = null) {
+        $userService = make(UserService::class);
+        $startTime = microtime(true);
+
+        $total_power = BigDecimal::zero();
+
+        if ($user->vip_level == 0 || $user->is_valid == 0) {
+            return $total_power;
+        }
+
+        if (!$collection) {
+            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
+        }
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        $excludes = [];
+        $rewards = [];
+        $reward_children = [];
+
+        foreach ($collection as $item) {
+
+            // 父级是否在排除名单
+            if (in_array($item->parent_id, $excludes)) {
+                continue;
+            }
+
+            if ($item->level == 1) {
+                if ($item->child->vip_level <= $user->vip_level) {
+                    $rewards[$item->child_id] = [
+                        'child' =>  $item,
+                        'diff'  =>  BigDecimal::zero()
+                    ];
+
+                    $reward_children[$item->child_id] = [
+                        'root'   =>  $item->child_id,
+                        'child'   =>  $item
+                    ];
+                }
+
+                continue;
+            }
+
+            if (isset($reward_children[$item->parent_id])) {
+                $root_id = $reward_children[$item->parent_id]['root'];
+
+                $reward_children[$item->child_id] = [
+                    'root'  =>  $reward_children[$item->parent_id]['root']
+                ];
+
+                if ($item->child->vip_level > $rewards[$root_id]['child']->child->vip_level) {
+
+                    // 减去自身团队算力
+                    $rewards[$root_id]['diff'] = BigDecimal::of($rewards[$root_id]['diff'])->plus($item->child->mine_power)->plus($item->child->team_mine_power);
+
+                    if ($item->child->vip_level <= $user->vip_level) {
+                        $rewards[$item->child_id] = [
+                            'child' =>  $item,
+                            'diff'  =>  BigDecimal::zero()
+                        ];
+                        $reward_children[$item->child_id] = [
+                            'root'  =>  $item->child_id
+                        ];
+                    } else {
+                        $excludes[] = $item->child_id;
+                    }
+
+                    if ($rewards[$root_id]['child']->child->vip_level == 0) {
+                        if (BigDecimal::of($rewards[$root_id]['diff'])->isGreaterThanOrEqualTo($rewards[$root_id]['child']->child->team_mine_power)) {
+                            unset($rewards[$root_id]);
+                        }
+                    }
+                }
+            }
+        }
+
+//        var_dump($rewards);
+
+        foreach ($rewards as $v) {
+            var_dump($v['child']->child_id);
+            var_dump((string)$v['diff']);
+
+            if ($v['child']->child->vip_level == $user->vip_level) {
+                $rate = 0.01;
+            } else if ($v['child']->child->vip_level <  $user->vip_level) {
+                $rate1 = $userService->getTeamLevelRate($user->vip_level);
+                $rate2 = $userService->getTeamLevelRate($v['child']->child->vip_level);
+                $rate = $rate1 - $rate2;
+            }
+
+            if ($rate > 0) {
+                $team_power = BigDecimal::of($v['child']->child->mine_power)->plus($v['child']->child->team_mine_power)->minus($v['diff']);
+                $real_power = $team_power->multipliedBy($rate);
+                $total_power = $total_power->plus($real_power);
+            }
+        }
+
+        var_dump((string)$total_power);
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        return $total_power;
+    }
+
+
+    protected function buildTrees($user,$collection = null) {
+        $trees[$user->id] = [$user->id];
+        $levels[0] = [$user->id];
+
+        $startTime = microtime(true);
+
+        if (!$collection) {
+            $collection = $user->children()->with(['child'=> function($query){
+                $query->where('is_valid', '=', 1);
+            }])->orderBy('level', 'asc')->get();
+        }
+
+        foreach ($collection as $k=>$v) {
+
+            if (!$v->child) continue;
+
+            if ($v->level >= 2) {
+                if (isset($levels[$v->level-2])) {
+                    $users = $levels[$v->level-2];
+                    foreach ($users as $user) {
+                        unset($trees[$user]);
+                    }
+
+                    unset($levels[$v->level-2]);
+                }
+            }
+
+            $old_path =  $trees[$v->parent_id];
+            $old_path[] = $v;
+
+            $trees[$v->child_id] = $old_path;
+
+            if (isset($levels[$v->level-1])) {
+                if (!in_array($v->parent_id, $levels[$v->level-1])) {
+                    $levels[$v->level-1][] = $v->parent_id;
+                }
+            } else {
+                $levels[$v->level-1][] = $v->parent_id;
+            }
+
+//            var_dump($trees);
+//            var_dump($levels);
+
+        }
+
+//        var_dump($trees);
+
+        $this->info(sprintf("耗时：%s ms", (microtime(true) - $startTime) * 1000));
+
+        return $trees;
     }
 
 
