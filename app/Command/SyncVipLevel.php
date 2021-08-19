@@ -73,7 +73,7 @@ class SyncVipLevel extends HyperfCommand
 
         foreach ($users as $user) {
             // 获取 部门有效节点
-            if($this->getUserNewLevel($user)) {
+            if($this->isNewLevel($user)) {
                 $user->vip_level1 += 1;
                 $user->save();
             }
