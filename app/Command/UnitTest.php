@@ -729,7 +729,7 @@ class UnitTest extends HyperfCommand
 
                 $collection = $user->children()->with('child')->get();
 
-                $children = $collection->where('level', '=', 1)->get();
+                $children = $collection->where('level', '=', 1)->all();
 
                 $uids = $children->pluck('child_id')->toArray();
 
