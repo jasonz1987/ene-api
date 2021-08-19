@@ -71,13 +71,10 @@ class UpdatePowerJob extends Job
                 $parent->user->team_power = $team_power;
 
                 if ($this->params['is_upgrade_vip']) {
-                    $parent->user->team_valid_num = $parent->user->team_num + 1;
-                    if ($parent->user->vip_level == 0) {
-                        if ($parent->user->team_valid_num >= 30) {
-                            $parent->user->vip_level = 1;
-                            $parent->user->save();
-                            $this->updateParentsLevel($parent->user, 1);
-                        }
+                    $parent->user->team_valid_num = $parent->user->team_valid_num + 1;
+
+                    if ($this->isNewLevel($parent->user)) {
+                        $parent->user->vip_level = $parent->user->vip_level+1;
                     }
                 }
 
@@ -96,51 +93,44 @@ class UpdatePowerJob extends Job
         }
     }
 
-    protected function updateParentsLevel($user, $level)
-    {
-        $parents = $user->parents()->with('user')->get();
+    protected function isNewLevel($user) {
 
-        if ($parents->count() > 0) {
-            foreach ($parents as $parent) {
+        if( $user->vip_level == 5) {
+            return false;
+        }
 
-                if ($parent->user->vip_level > $level) {
-                    continue;
+        if ($user->vip_level == 0) {
+            if ($user->team_valid_num >= 30) {
+                return true;
+            }
+        } else {
+            $collection = $user->children()->with('child')->get();
+            $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+
+            // 获取
+            $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
+                ->selectRaw('count(1) as count, user_id')
+                ->whereIn('user_id', $uids)
+                ->where('vip_level', '=', $user->vip_level)
+                ->groupBy('user_id')
+                ->get();
+
+            $count = 0;
+
+            foreach ($trees as $tree) {
+                if ($tree->count > 0) {
+                    $count++;
                 }
-
-                if ($parent->user->vip_level >= 5) {
-                    continue;
-                }
-
-                $collection = $parent->user->children()->with('child')->get();
-
-                $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
-
-                // 获取
-                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
-                    ->selectRaw('count(1) as count, user_id')
-                    ->whereIn('user_id', $uids)
-                    ->where('vip_level', '=', $level)
-                    ->groupBy('user_id')
-                    ->get();
-
-                $count = 0;
-
-                foreach ($trees as $tree) {
-                    if ($tree->count > 0) {
-                        $count++;
-                    }
-                    if ($count >= 3) {
-                        break;
-                    }
-                }
-
                 if ($count >= 3) {
-                    $parent->user->vip_level = $level + 1;
-                    $parent->user->save();
-                    $this->updateParentsLevel($parent->user, $parent->user->vip_level);
                     break;
                 }
             }
+
+            if ($count >= 3) {
+                return true;
+            }
         }
+
+        return false;
     }
 }
