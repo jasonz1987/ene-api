@@ -91,8 +91,23 @@ class SyncVipLevel extends HyperfCommand
                 return true;
             }
         } else {
-            $collection = $user->children()->with('child')->get();
-            $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
+            $children = $user->children()->with('child')->where('level', '=', 1)->get();
+
+            $count = 0;
+            $uids = [];
+
+            foreach ($children as $child) {
+                if ($child->child->vip_level1 == $user->vip_level1) {
+                    $count ++;
+                    continue;
+                }
+
+                if ($count >= 3) {
+                    return true;
+                }
+
+                $uids[] = $child->child_id;
+            }
 
             // 获取
             $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
@@ -109,12 +124,8 @@ class SyncVipLevel extends HyperfCommand
                     $count++;
                 }
                 if ($count >= 3) {
-                    break;
+                    return true;
                 }
-            }
-
-            if ($count >= 3) {
-                return true;
             }
         }
 
