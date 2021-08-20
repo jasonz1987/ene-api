@@ -61,6 +61,8 @@ class UnitTest extends HyperfCommand
 //        $this->updateParentsLevel($user, 1);
 //        $this->updateTokenAddress();
         $this->getUserLevel($user);
+        $userService = make(UserService::class);
+        var_dump($userService->getTeamNodes($user));
     }
 
 //    protected function updateParentsLevel($user, $level)
