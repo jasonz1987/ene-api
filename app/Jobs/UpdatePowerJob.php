@@ -112,11 +112,11 @@ class UpdatePowerJob extends Job
             foreach ($children as $child) {
                 if ($child->child->vip_level == $user->vip_level) {
                     $count ++;
-                    continue;
-                }
-
-                if ($count >= 3) {
-                    return true;
+                    if ($count >= 3) {
+                        return true;
+                    } else {
+                        continue;
+                    }
                 }
 
                 $uids[] = $child->child_id;
