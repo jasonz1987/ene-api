@@ -735,12 +735,12 @@ class UnitTest extends HyperfCommand
                 foreach ($children as $child) {
                     if ($child->child->vip_level == $user->vip_level) {
                         $count ++;
-                        continue;
-                    }
-
-                    if ($count >= 3) {
-                        $this->info("升级1！");
-                        break;
+                        if ($count >= 3) {
+                            $this->info("升级1！");
+                            break;
+                        } else {
+                            continue;
+                        }
                     }
 
                     $uids[] = $child->child_id;
