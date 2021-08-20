@@ -53,12 +53,12 @@ class SyncVipLevel extends HyperfCommand
     public function handle()
     {
         $users = User::where('is_valid', '=', 1)
-            ->where('vip_level1', '=', $this->input->getArgument('level'))
+            ->where('vip_level', '=', $this->input->getArgument('level'))
             ->get();
 
         foreach ($users as $user) {
             if($this->isNewLevel($user)) {
-                $user->vip_level1 += 1;
+                $user->vip_level += 1;
                 $user->save();
             }
         }
@@ -66,11 +66,11 @@ class SyncVipLevel extends HyperfCommand
 
     protected function isNewLevel($user) {
 
-        if( $user->vip_level1 == 5) {
+        if( $user->vip_level == 5) {
             return false;
         }
 
-        if ($user->vip_level1 == 0) {
+        if ($user->vip_level == 0) {
             if ($user->team_valid_num >= 30) {
                 return true;
             }
@@ -81,7 +81,7 @@ class SyncVipLevel extends HyperfCommand
             $uids = [];
 
             foreach ($children as $child) {
-                if ($child->child->vip_level1 == $user->vip_level1) {
+                if ($child->child->vip_level == $user->vip_level) {
                     $count ++;
                     if ($count >= 3) {
                         return true;
@@ -97,7 +97,7 @@ class SyncVipLevel extends HyperfCommand
             $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
                 ->selectRaw('count(1) as count, user_id')
                 ->whereIn('user_id', $uids)
-                ->where('vip_level1', '=', $user->vip_level1)
+                ->where('vip_level', '=', $user->vip_level)
                 ->groupBy('user_id')
                 ->get();
 
