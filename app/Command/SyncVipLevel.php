@@ -83,11 +83,11 @@ class SyncVipLevel extends HyperfCommand
             foreach ($children as $child) {
                 if ($child->child->vip_level1 == $user->vip_level1) {
                     $count ++;
-                    continue;
-                }
-
-                if ($count >= 3) {
-                    return true;
+                    if ($count >= 3) {
+                        return true;
+                    } else {
+                        continue;
+                    }
                 }
 
                 $uids[] = $child->child_id;
