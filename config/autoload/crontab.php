@@ -17,5 +17,8 @@ return [
         (new Crontab())->setType('command')->setName('CheckEvent')->setRule('*/5 * * * *')->setCallback([
             'command' => 'check:event',
         ]),
+//        (new Crontab())->setType('command')->setName('CheckEvent')->setRule('* * * * *')->setCallback([
+//            'command' => 'dao:draw',
+//        ]),
     ],
 ];
