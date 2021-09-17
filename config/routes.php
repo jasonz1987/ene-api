@@ -20,7 +20,8 @@ Router::addGroup('/api',function (){
     Router::addRoute(['GET', 'HEAD'], '/power/index', 'App\Controller\Api\PowerController@index');
     Router::addRoute(['POST', 'HEAD'], '/power/profit', 'App\Controller\Api\PowerController@profit');
     Router::addRoute(['GET', 'HEAD'], '/power/profit/logs', 'App\Controller\Api\PowerController@profitLogs');
-
+    Router::addRoute(['GET', 'HEAD'], '/wx/index', 'App\Controller\Api\WxController@index');
+    Router::addRoute(['POST', 'HEAD'], '/wx/profit', 'App\Controller\Api\WxController@profit');
 },
     ['middleware' => [AuthMiddleware::class]]
 );

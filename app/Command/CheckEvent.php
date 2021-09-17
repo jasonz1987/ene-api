@@ -167,6 +167,9 @@ class CheckEvent extends HyperfCommand
                                 });
 
                                 if ($new_power) {
+                                    // WX
+                                    $wx_mine_power =  BigDecimal::of($new_power)->minus($log->user->mine_power);
+
                                     $log->status = 1;
                                     $log->save();
                                     $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
@@ -177,6 +180,8 @@ class CheckEvent extends HyperfCommand
                                             $is_upgrade_vip = true;
                                         }
                                     }
+
+                                    $log->user->wx_mine_power = BigDecimal::of($log->user->wx_mine_power)->plus($wx_mine_power);
 
                                     $user->mine_power = $new_power;
                                     $user->save();

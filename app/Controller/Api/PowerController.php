@@ -372,5 +372,4 @@ class PowerController extends AbstractController
         ];
     }
 
-
 }

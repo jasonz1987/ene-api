@@ -72,10 +72,15 @@ class CheckDeposit extends HyperfCommand
             });
 
             if ($new_power) {
+
+                // WX
+                $wx_mine_power =  BigDecimal::of($new_power)->minus($log->user->mine_power);
+
                 Db::beginTransaction();
 
                 try {
                     $log->status = 1;
+                    $log->power = $wx_mine_power;
                     $log->save();
                     $is_upgrade_vip = false;
 
@@ -88,8 +93,12 @@ class CheckDeposit extends HyperfCommand
                         }
                     }
 
+                    $log->user->wx_mine_power = BigDecimal::of($log->user->wx_mine_power)->plus($wx_mine_power);
+
                     $log->user->mine_power = $new_power;
+
                     $log->user->save();
+
 
                     Db::commit();
 
