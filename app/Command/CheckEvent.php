@@ -146,6 +146,7 @@ class CheckEvent extends HyperfCommand
                             $is_upgrade_vip = false;
 
                             if ($user) {
+
                                 $log = new DepositLog();
                                 $log->user_id = $user->id;
                                 $log->tx_id = $object->transactionHash;
@@ -168,7 +169,7 @@ class CheckEvent extends HyperfCommand
 
                                 if ($new_power) {
                                     // WX
-                                    $wx_mine_power =  BigDecimal::of($new_power)->minus($log->user->mine_power);
+                                    $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->minus($log->user->mine_power);
 
                                     $log->status = 1;
                                     $log->save();
