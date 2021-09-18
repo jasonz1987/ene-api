@@ -178,6 +178,9 @@ class QueryEvent extends HyperfCommand
                                 $log->status = 1;
                                 $log->save();
 
+                                $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
+                                var_dump((string)$wx_mine_power);
+
                                 $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
 
                                 if ($user->is_valid == 0 ) {

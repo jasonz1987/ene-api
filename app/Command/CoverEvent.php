@@ -123,6 +123,7 @@ class CoverEvent extends HyperfCommand
 
                         $is_upgrade_vip = false;
 
+
                         if ($user) {
                             $log = new DepositLog();
                             $log->user_id = $user->id;
@@ -145,7 +146,13 @@ class CoverEvent extends HyperfCommand
                             });
 
                             if ($new_power) {
+
+
+                                $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
+                                var_dump((string)$wx_mine_power);
+
                                 $log->status = 1;
+                                $log->power = $wx_mine_power;
                                 $log->save();
 
                                 $new_power = BigDecimal::of($new_power)->dividedBy(1e18, 6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
@@ -157,20 +164,21 @@ class CoverEvent extends HyperfCommand
                                     }
                                 }
 
+                                $log->user->wx_mine_power = BigDecimal::of($log->user->wx_mine_power)->plus($wx_mine_power);
                                 $user->mine_power = $new_power;
                                 $user->save();
                             }
                         }
 
-                        Db::commit();
-
-                        if ($log->status == 1) {
-                            $queueService = $this->container->get(QueueService::class);
-                            $queueService->pushUpdatePower([
-                                'user_id'        => $user->id,
-                                'is_upgrade_vip' => $is_upgrade_vip
-                            ]);
-                        }
+//                        Db::commit();
+//
+//                        if ($log->status == 1) {
+//                            $queueService = $this->container->get(QueueService::class);
+//                            $queueService->pushUpdatePower([
+//                                'user_id'        => $user->id,
+//                                'is_upgrade_vip' => $is_upgrade_vip
+//                            ]);
+//                        }
                     } catch (\Exception $e) {
                         Db::rollBack();
                         throw new \Exception("更新算力失败：" . $e->getMessage());
