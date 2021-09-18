@@ -75,6 +75,7 @@ class CheckDeposit extends HyperfCommand
 
                 // WX
                 $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
+                var_dump($wx_mine_power);
 
                 Db::beginTransaction();
 
