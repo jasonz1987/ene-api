@@ -172,7 +172,9 @@ class CheckEvent extends HyperfCommand
                                     $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
 
                                     $log->status = 1;
+                                    $log->power = $wx_mine_power;
                                     $log->save();
+
                                     $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
 
                                     if ($user->is_valid == 0 ) {
@@ -182,8 +184,7 @@ class CheckEvent extends HyperfCommand
                                         }
                                     }
 
-                                    $log->user->wx_mine_power = BigDecimal::of($log->user->wx_mine_power)->plus($wx_mine_power);
-
+                                    $user->wx_mine_power = BigDecimal::of($user->wx_mine_power)->plus($wx_mine_power);
                                     $user->mine_power = $new_power;
                                     $user->save();
                                 } else {

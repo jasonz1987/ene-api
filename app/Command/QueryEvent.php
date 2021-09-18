@@ -175,11 +175,12 @@ class QueryEvent extends HyperfCommand
                             });
 
                             if ($new_power) {
-                                $log->status = 1;
-                                $log->save();
-
                                 $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
                                 var_dump((string)$wx_mine_power);
+
+                                $log->status = 1;
+                                $log->power = $wx_mine_power;
+                                $log->save();
 
                                 $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
 
@@ -190,6 +191,7 @@ class QueryEvent extends HyperfCommand
                                     }
                                 }
 
+                                $user->wx_mine_power = BigDecimal::of($user->wx_mine_power)->plus($wx_mine_power);
                                 $user->mine_power = $new_power;
                                 $user->save();
                             }
