@@ -169,7 +169,7 @@ class CheckEvent extends HyperfCommand
 
                                 if ($new_power) {
                                     // WX
-                                    $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->minus($log->user->mine_power);
+                                    $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
 
                                     $log->status = 1;
                                     $log->save();
