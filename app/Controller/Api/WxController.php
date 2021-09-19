@@ -74,8 +74,11 @@ class WxController extends AbstractController
             $price = 500;
         }
 
+        $time = Carbon::now()->diffInSeconds(Carbon::tomorrow());
+
         if (!$configService->isWxMineStart()) {
             $price = 0;
+            $time = 0;
         }
 
         return [
@@ -85,7 +88,7 @@ class WxController extends AbstractController
                 'global_power' => MyNumber::formatPower($global_power),
                 'mine_power'   => MyNumber::formatPower(BigDecimal::of($user->wx_mine_power)->isGreaterThan(6000)?$user->wx_mine_power:0),
                 'today_power'  => MyNumber::formatPower($today_power),
-                'time'         => Carbon::now()->diffInSeconds(Carbon::tomorrow()),
+                'time'         => $time,
                 'price'        => MyNumber::formatPower($price),
                 'balance'      => MyNumber::formatCpu($user->wx_balance),
                 'fee_address'  => env('WX_REWARD_ADDRESS'),
