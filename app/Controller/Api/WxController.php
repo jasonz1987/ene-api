@@ -77,7 +77,7 @@ class WxController extends AbstractController
             'message' => "",
             'data'    => [
                 'global_power' => MyNumber::formatPower($global_power),
-                'mine_power'   => MyNumber::formatPower(BigDecimal::of(($user->wx_mine_power)->isGreaterThan(6000)?$user->wx_mine_power:0)),
+                'mine_power'   => MyNumber::formatPower(BigDecimal::of($user->wx_mine_power)->isGreaterThan(6000)?$user->wx_mine_power:0),
                 'today_power'  => MyNumber::formatPower($today_power),
                 'time'         => Carbon::now()->diffInSeconds(Carbon::tomorrow()),
                 'price'        => MyNumber::formatPower($price),
