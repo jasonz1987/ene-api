@@ -52,10 +52,12 @@ class WxController extends AbstractController
     public function index(RequestInterface $request)
     {
         $user = Context::get('user');
+        $configService = ApplicationContext::getContainer()->get(ConfigService::class);
 
         // 累计产出
         $global_power = User::where('wx_mine_power', '>=', 6000)
         ->sum('wx_mine_power');
+
 
         $today_power = DepositLog::whereDate('created_at', '=', date('Y-m-d'))
             ->where('status', '=', 1)
@@ -70,6 +72,10 @@ class WxController extends AbstractController
             $price = 375;
         } else {
             $price = 500;
+        }
+
+        if (!$configService->isWxMineStart()) {
+            $price = 0;
         }
 
         return [
