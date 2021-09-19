@@ -54,10 +54,12 @@ class WxController extends AbstractController
         $user = Context::get('user');
 
         // 累计产出
-        $global_power = User::sum('wx_mine_power');
+        $global_power = User::where('wx_mine_power', '>=', 6000)
+        ->sum('wx_mine_power');
 
         $today_power = DepositLog::whereDate('created_at', '=', date('Y-m-d'))
             ->where('status', '=', 1)
+            ->where('power', '>=', 6000)
             ->sum('power');
 
         $today_power = $today_power ? BigDecimal::of($today_power) : BigDecimal::zero();
@@ -75,7 +77,7 @@ class WxController extends AbstractController
             'message' => "",
             'data'    => [
                 'global_power' => MyNumber::formatPower($global_power),
-                'mine_power'   => MyNumber::formatPower($user->wx_mine_power),
+                'mine_power'   => MyNumber::formatPower(BigDecimal::of(($user->wx_mine_power)->isGreaterThan(6000)?$user->wx_mine_power:0)),
                 'today_power'  => MyNumber::formatPower($today_power),
                 'time'         => Carbon::now()->diffInSeconds(Carbon::tomorrow()),
                 'price'        => MyNumber::formatPower($price),
