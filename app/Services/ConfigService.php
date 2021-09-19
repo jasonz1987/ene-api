@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Ethereum\EcRecover;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Redis\Redis;
@@ -51,6 +52,10 @@ class ConfigService
     public function setWithdrawLimit($uid,$time = 10) {
         $redis = $this->container->get(Redis::class);
         return $redis->set(sprintf("withdraw-limit:%s", $uid,), time(), ['nx', 'ex' => $time]);
+    }
+
+    public function isWxMineStart() {
+        return Carbon::now() >= Carbon::parse("2021-09-20 00:00:00");
     }
 
 }

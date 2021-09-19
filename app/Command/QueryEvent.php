@@ -179,7 +179,9 @@ class QueryEvent extends HyperfCommand
                                 var_dump((string)$wx_mine_power);
 
                                 $log->status = 1;
-                                $log->power = $wx_mine_power;
+                                if ($configService->isWxMineStart()) {
+                                    $log->power = $wx_mine_power;
+                                }
                                 $log->save();
 
                                 $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
@@ -190,8 +192,9 @@ class QueryEvent extends HyperfCommand
                                         $is_upgrade_vip = true;
                                     }
                                 }
-
-                                $user->wx_mine_power = BigDecimal::of($user->wx_mine_power)->plus($wx_mine_power);
+                                if ($configService->isWxMineStart()) {
+                                    $user->wx_mine_power = BigDecimal::of($user->wx_mine_power)->plus($wx_mine_power);
+                                }
                                 $user->mine_power = $new_power;
                                 $user->save();
                             }
