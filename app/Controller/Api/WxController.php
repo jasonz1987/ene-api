@@ -61,13 +61,21 @@ class WxController extends AbstractController
 
         $today_power = DepositLog::whereDate('created_at', '=', date('Y-m-d'))
             ->where('status', '=', 1)
-            ->where('power', '>=', 6000)
-            ->sum('power');
+            ->groupBy('user_id')
+            ->selectRaw('sum(power) as user_power')
+            ->get();
+
+        $today_power = $today_power->sum(function ($item) {
+            if ($item->user_power >= 6000) {
+                return $item->user_power;
+            }
+            return 0;
+        })
 
         $today_power = $today_power ? BigDecimal::of($today_power) : BigDecimal::zero();
 
         if ($today_power->isLessThan(300000)) {
-            $price = 200;
+            $price = 250;
         } elseif ($today_power->isLessThanOrEqualTo(600000)) {
             $price = 375;
         } else {
