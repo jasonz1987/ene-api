@@ -70,7 +70,7 @@ class WxController extends AbstractController
                 return $item->user_power;
             }
             return 0;
-        })
+        });
 
         $today_power = $today_power ? BigDecimal::of($today_power) : BigDecimal::zero();
 
