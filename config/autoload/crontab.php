@@ -20,5 +20,8 @@ return [
         (new Crontab())->setType('command')->setName('DaoDraw')->setRule('00 16 * * *')->setCallback([
             'command' => 'dao:draw',
         ]),
+        (new Crontab())->setType('command')->setName('CheckWxProfit')->setRule('* * * * *')->setCallback([
+            'command' => 'check:wx-profit',
+        ]),
     ],
 ];
