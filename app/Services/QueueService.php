@@ -6,6 +6,7 @@ namespace App\Services;
 
 
 use App\Jobs\SendFeeJob;
+use App\Jobs\SendWxFeeJob;
 use App\Jobs\UpdatePowerJob;
 use App\Jobs\UpdateTeamLevelJob;
 use App\Jobs\QueryProfitLog;
