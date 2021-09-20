@@ -205,9 +205,9 @@ class WxController extends AbstractController
             // $client 为协程化的 GuzzleHttp\Client 对象
             $client = $clientFactory->create($options);
 
-            $amount = BigDecimal::of($user->balance);
+            $amount = BigDecimal::of($user->wx_balance);
 
-            $fee = $amount->multipliedBy(0.02);
+            $fee = $amount->multipliedBy(0.05);
 
             $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 
