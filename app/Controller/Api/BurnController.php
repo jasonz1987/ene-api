@@ -150,12 +150,12 @@ class BurnController extends AbstractController
         $global_power = BigDecimal::zero();
 
         foreach ($users as $user) {
-            $total_power = BigDecimal::of($user->share_power)->plus($user->team_power);
+            $total_power = BigDecimal::of($user->new_share_power)->plus($user->new_team_power);
 
             $global_power = $global_power->plus($total_power);
         }
 
-        $redis->set("global_power", (string)$global_power, 300);
+//        $redis->set("global_power", (string)$global_power, 300);
 
         return $global_power;
     }
