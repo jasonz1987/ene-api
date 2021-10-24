@@ -56,14 +56,15 @@ class SyncSharePower extends HyperfCommand
         $userService = make(UserService2::class);
 
         $users = User::where('is_valid', '=', 1)
-            ->where('vip_level','>', 0)
             ->get();
 
         foreach ($users as $user) {
             $collection = $user->children()->with('child')->get();
 
             $user->new_share_power = $userService->getSharePower($user, $collection);
-            $user->new_team_power = $userService->getTeamPower($user, $collection);
+            if ($user->vip_level > 0) {
+                $user->new_team_power = $userService->getTeamPower($user, $collection);
+            }
             $user->save();
             usleep(100);
         }
