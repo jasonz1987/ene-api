@@ -138,9 +138,9 @@ class BurnController extends AbstractController
     {
         $redis = ApplicationContext::getContainer()->get(Redis::class);
 
-        if ($redis->get("global_power")) {
-            return $redis->get("global_power");
-        }
+//        if ($redis->get("global_power")) {
+//            return $redis->get("global_power");
+//        }
 
         // 获取所有的用户
         $users = User::where('is_valid', '=', 1)
