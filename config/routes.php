@@ -22,6 +22,10 @@ Router::addGroup('/api',function (){
     Router::addRoute(['GET', 'HEAD'], '/power/profit/logs', 'App\Controller\Api\PowerController@profitLogs');
     Router::addRoute(['GET', 'HEAD'], '/wx/index', 'App\Controller\Api\WxController@index');
     Router::addRoute(['POST', 'HEAD'], '/wx/profit', 'App\Controller\Api\WxController@profit');
+
+    Router::addRoute(['GET', 'HEAD'], '/burn/index', 'App\Controller\Api\BurnController@index');
+    Router::addRoute(['GET', 'HEAD'], '/burn/share', 'App\Controller\Api\BurnController@share');
+
 },
     ['middleware' => [AuthMiddleware::class]]
 );

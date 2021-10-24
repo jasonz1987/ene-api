@@ -74,13 +74,15 @@ class WxController extends AbstractController
 
         $today_power = $today_power ? BigDecimal::of($today_power) : BigDecimal::zero();
 
-        if ($today_power->isLessThan(300000)) {
-            $price = 250;
-        } elseif ($today_power->isLessThanOrEqualTo(600000)) {
-            $price = 375;
-        } else {
-            $price = 500;
-        }
+//        if ($today_power->isLessThan(300000)) {
+//            $price = 250;
+//        } elseif ($today_power->isLessThanOrEqualTo(600000)) {
+//            $price = 375;
+//        } else {
+//            $price = 500;
+//        }
+
+        $price = 250;
 
         $time = Carbon::now()->diffInSeconds(Carbon::tomorrow());
 

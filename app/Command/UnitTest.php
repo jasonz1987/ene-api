@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
+use App\Model\BurntLog;
 use App\Model\DepositLog;
 use App\Model\InvitationLog;
 use App\Model\User;
@@ -54,15 +55,24 @@ class UnitTest extends HyperfCommand
     {
 //        $this->getSharePower();
         $user = User::find($this->input->getArgument('uid'));
-//        $this->getSharePower2($user);
-//        $this->buildTrees($user);
-//        $this->getTeamPower4($user);
-//        $this->getTeamNodes2($user);
-//        $this->updateParentsLevel($user, 1);
-//        $this->updateTokenAddress();
-        $this->getUserLevel($user);
-        $userService = make(UserService::class);
-        var_dump($userService->getTeamNodes($user));
+////        $this->getSharePower2($user);
+////        $this->buildTrees($user);
+////        $this->getTeamPower4($user);
+////        $this->getTeamNodes2($user);
+////        $this->updateParentsLevel($user, 1);
+////        $this->updateTokenAddress();
+//        $this->getUserLevel($user);
+//        $userService = make(UserService::class);
+//        var_dump($userService->getTeamNodes($user));
+
+        $log = new BurntLog();
+        $log->user_id = $user->id;
+        $log->tx_id = mt_rand(1,23243143);
+        $log->block_number = mt_rand(0,1000000);
+        $log->power = mt_rand(1000,5000);
+        $log->burn_cpu = 20;
+        $log->burn_wx = 80;
+        $log->save();
     }
 
 //    protected function updateParentsLevel($user, $level)

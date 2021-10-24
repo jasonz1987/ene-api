@@ -11,6 +11,7 @@ use App\Service\OrderService;
 use App\Service\QueueService;
 use App\Service\SymbolService;
 use App\Services\UserService;
+use App\Services\UserService2;
 use App\Utils\Log;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -42,7 +43,7 @@ class UpdateTeamLevelJob extends Job
             return;
         }
 
-        $userService = ApplicationContext::getContainer()->get(UserService::class);
+        $userService = ApplicationContext::getContainer()->get(UserService2::class);
 
         $user = User::find($this->params);
 

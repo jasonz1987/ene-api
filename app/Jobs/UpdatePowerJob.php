@@ -40,7 +40,7 @@ class UpdatePowerJob extends Job
             return;
         }
 
-        $userService = ApplicationContext::getContainer()->get(UserService::class);
+        $userService = ApplicationContext::getContainer()->get(UserService2::class);
         $redis = ApplicationContext::getContainer()->get(Redis::class);
 
         $user = User::find($this->params['user_id']);
