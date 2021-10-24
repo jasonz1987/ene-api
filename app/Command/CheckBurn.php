@@ -158,9 +158,9 @@ class CheckBurn extends HyperfCommand
                             $log = new BurntLog();
                             $log->user_id = $user->id;
                             $log->tx_id = $object->transactionHash;
-                            $log->power = BigDecimal::of($decodedData['power']);
-                            $log->burn_cpu = BigDecimal::of($decodedData['cpuAmount']);
-                            $log->burn_wx = BigDecimal::of($decodedData['wxAmount']);
+                            $log->power = BigDecimal::of($decodedData['power'])->dividedBy(1e18,6, RoundingMode::DOWN);
+                            $log->burn_cpu = BigDecimal::of($decodedData['cpuAmount'])->dividedBy(1e18,6, RoundingMode::DOWN);
+                            $log->burn_wx = BigDecimal::of($decodedData['wxAmount'])->dividedBy(1e18,6, RoundingMode::DOWN);
                             $log->block_number = hexdec($object->blockNumber);
                             $log->save();
 
