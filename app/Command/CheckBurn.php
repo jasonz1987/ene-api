@@ -180,9 +180,6 @@ class CheckBurn extends HyperfCommand
                                 $new_power = BigDecimal::of($user->mine_power)->plus($log->power);
 //                                $wx_mine_power =  (BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN))->plus($log->user->old_mine_power)->minus($log->user->mine_power);
 
-                                $log->status = 1;
-                                $log->save();
-
 //                                $new_power = BigDecimal::of($new_power)->dividedBy(1e18,6, RoundingMode::DOWN)->plus(BigDecimal::of($user->old_mine_power));
 
                                 if ($user->is_valid == 0 ) {
