@@ -16,6 +16,7 @@ namespace App\Controller\Api;
 use _HumbugBoxa9bfddcdef37\Nette\Utils\DateTime;
 use App\Controller\AbstractController;
 use App\Helpers\MyConfig;
+use App\Model\BurnLog;
 use App\Model\PowerRewardLog;
 use App\Model\ProfitLog;
 use App\Model\User;
@@ -59,8 +60,7 @@ class WxController extends AbstractController
         ->sum('wx_mine_power');
 
 
-        $today_power = DepositLog::whereDate('created_at', '=', date('Y-m-d'))
-            ->where('status', '=', 1)
+        $today_power = BurnLog::whereDate('created_at', '=', date('Y-m-d'))
             ->groupBy('user_id')
             ->selectRaw('sum(power) as user_power')
             ->get();
@@ -96,7 +96,7 @@ class WxController extends AbstractController
             'message' => "",
             'data'    => [
                 'global_power' => MyNumber::formatPower($global_power),
-                'mine_power'   => MyNumber::formatPower(BigDecimal::of($user->wx_mine_power)->isGreaterThan(6000)?$user->wx_mine_power:0),
+                'mine_power'   => MyNumber::formatPower(BigDecimal::of($user->wx_mine_power)->isGreaterThanOrEqualTo(6000)?$user->wx_mine_power:0),
                 'today_power'  => MyNumber::formatPower($today_power),
                 'time'         => $time,
                 'price'        => MyNumber::formatPower($price),

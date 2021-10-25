@@ -15,7 +15,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\Helpers\MyConfig;
-use App\Model\BurntLog;
+use App\Model\BurnLog;
 use App\Model\PowerRewardLog;
 use App\Model\ProfitLog;
 use App\Model\User;
@@ -163,7 +163,7 @@ class BurnController extends AbstractController
     public function getTop()
     {
         // 获取今日推荐的所有销毁订单
-        $logs = BurntLog::whereDate('created_at', '=', date('Y-m-d'))
+        $logs = BurnLog::whereDate('created_at', '=', date('Y-m-d'))
             ->with('user.parent')
             ->get();
 

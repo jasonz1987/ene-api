@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
-use App\Model\BurntLog;
+use App\Model\BurnLog;
 use App\Model\DepositLog;
 use App\Model\User;
 use App\Services\QueueService;
@@ -155,7 +155,7 @@ class CheckBurn extends HyperfCommand
                         $is_upgrade_vip = false;
 
                         if ($user) {
-                            $log = new BurntLog();
+                            $log = new BurnLog();
                             $log->user_id = $user->id;
                             $log->tx_id = $object->transactionHash;
                             $log->power = BigDecimal::of($decodedData['power'])->dividedBy(1e18,6, RoundingMode::DOWN);

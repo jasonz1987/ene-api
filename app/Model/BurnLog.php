@@ -5,7 +5,7 @@ namespace App\Model;
 
 /**
  */
-class BurntLog extends Model
+class BurnLog extends Model
 {
     /**
      * The table associated with the model.

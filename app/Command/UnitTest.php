@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
-use App\Model\BurntLog;
+use App\Model\BurnLog;
 use App\Model\DepositLog;
 use App\Model\InvitationLog;
 use App\Model\User;
@@ -65,7 +65,7 @@ class UnitTest extends HyperfCommand
 //        $userService = make(UserService::class);
 //        var_dump($userService->getTeamNodes($user));
 
-        $log = new BurntLog();
+        $log = new BurnLog();
         $log->user_id = $user->id;
         $log->tx_id = mt_rand(1,23243143);
         $log->block_number = mt_rand(0,1000000);
