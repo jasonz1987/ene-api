@@ -183,6 +183,10 @@ class BurnController extends AbstractController
         foreach ($logs as $log) {
             // 获取父级
             if ($log->user->parent) {
+                if ($log->user->parent->share_status == 0) {
+                    continue;
+                }
+
                 if (isset($users[$log->user->parent->address])) {
                     $users[$log->user->parent->address] = BigDecimal::of($users[$log->user->parent->address])->plus($log->power);
                 } else {
