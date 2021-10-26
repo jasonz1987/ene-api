@@ -194,6 +194,10 @@ class BurnController extends AbstractController
                     $users[$log->user->parent->address] = $log->power;
                 }
             }
+
+            if (count($users) == 10) {
+                break;
+            }
         }
 
         arsort($users);
