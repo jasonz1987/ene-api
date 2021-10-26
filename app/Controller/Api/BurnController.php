@@ -164,14 +164,13 @@ class BurnController extends AbstractController
     {
         $time = Carbon::parse(date('Y-m-d').' 21:00:00');
 
-        var_dump($time);
-
         // 小于9点
         if (Carbon::now()->lt($time)) {
-            $period = [$time->subDay(), $time];
+            $time_copy = $time;
+            $period = [$time_copy->subDay(), $time];
         } else {
-            $period = [$time, $time->addDay()];
-
+            $time_copy = $time;
+            $period = [$time, $time_copy->addDay()];
         }
 
         // 获取今日推荐的所有销毁订单
