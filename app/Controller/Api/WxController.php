@@ -132,7 +132,7 @@ class WxController extends AbstractController
 
         $user = Context::get('user');
 
-        if (BigDecimal::of($user->profit)->isLessThan(0.000001)) {
+        if (BigDecimal::of($user->wx_balance)->isLessThan(0.000001)) {
             return [
                 'code'    => 500,
                 'message' => '暂无可领取收益',
