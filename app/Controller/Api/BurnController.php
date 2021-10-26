@@ -162,8 +162,18 @@ class BurnController extends AbstractController
 
     public function getTop()
     {
+        $time = Carbon::parse(date('Y-m-d').' 21:00:00');
+
+        // 小于9点
+        if (Carbon::now()->lt($time)) {
+            $period = [$time->subDay(), $time];
+        } else {
+            $period = [$time, $time->addDay()];
+
+        }
+
         // 获取今日推荐的所有销毁订单
-        $logs = BurnLog::whereDate('created_at', '=', date('Y-m-d'))
+        $logs = BurnLog::whereBetween('created_at', $period)
             ->with('user.parent')
             ->get();
 
