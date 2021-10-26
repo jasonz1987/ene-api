@@ -166,10 +166,10 @@ class BurnController extends AbstractController
 
         // 小于9点
         if (Carbon::now()->lt($time)) {
-            $time_copy = $time;
+            $time_copy = clone($time);
             $period = [$time_copy->subDay(), $time];
         } else {
-            $time_copy = $time;
+            $time_copy = clone($time);
             $period = [$time, $time_copy->addDay()];
         }
 
