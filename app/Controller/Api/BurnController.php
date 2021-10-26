@@ -195,12 +195,13 @@ class BurnController extends AbstractController
                 }
             }
 
+            arsort($users);
+
             if (count($users) == 10) {
                 break;
             }
         }
 
-        arsort($users);
 
         $result = [];
 
