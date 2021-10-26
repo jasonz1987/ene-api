@@ -73,11 +73,17 @@ class UnitTest extends HyperfCommand
 //        $log->burn_cpu = 20;
 //        $log->burn_wx = 80;
 //        $log->save();
-        $queueService = $this->container->get(\App\Services\QueueService::class);
-        $queueService->pushUpdatePower([
-            'user_id'        => $this->input->getArgument('uid'),
-            'is_upgrade_vip' => false
-        ]);
+        $logs = BurnLog::all();
+
+        foreach ($logs as $log) {
+            $queueService = $this->container->get(\App\Services\QueueService::class);
+            $queueService->pushUpdatePower([
+                'user_id'        => $log->user_id,
+                'is_upgrade_vip' => false
+            ]);
+            sleep(5);
+        }
+
 
     }
 
