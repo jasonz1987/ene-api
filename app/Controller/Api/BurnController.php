@@ -164,6 +164,8 @@ class BurnController extends AbstractController
     {
         $time = Carbon::parse(date('Y-m-d').' 21:00:00');
 
+        var_dump($time);
+
         // 小于9点
         if (Carbon::now()->lt($time)) {
             $period = [$time->subDay(), $time];
