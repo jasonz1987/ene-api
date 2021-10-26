@@ -54,7 +54,7 @@ class UnitTest extends HyperfCommand
     public function handle()
     {
 //        $this->getSharePower();
-        $user = User::find($this->input->getArgument('uid'));
+//        $user = User::find($this->input->getArgument('uid'));
 ////        $this->getSharePower2($user);
 ////        $this->buildTrees($user);
 ////        $this->getTeamPower4($user);
@@ -65,14 +65,20 @@ class UnitTest extends HyperfCommand
 //        $userService = make(UserService::class);
 //        var_dump($userService->getTeamNodes($user));
 
-        $log = new BurnLog();
-        $log->user_id = $user->id;
-        $log->tx_id = mt_rand(1,23243143);
-        $log->block_number = mt_rand(0,1000000);
-        $log->power = mt_rand(1000,5000);
-        $log->burn_cpu = 20;
-        $log->burn_wx = 80;
-        $log->save();
+//        $log = new BurnLog();
+//        $log->user_id = $user->id;
+//        $log->tx_id = mt_rand(1,23243143);
+//        $log->block_number = mt_rand(0,1000000);
+//        $log->power = mt_rand(1000,5000);
+//        $log->burn_cpu = 20;
+//        $log->burn_wx = 80;
+//        $log->save();
+        $queueService = $this->container->get(\App\Services\QueueService::class);
+        $queueService->pushUpdatePower([
+            'user_id'        => $this->input->getArgument('uid'),
+            'is_upgrade_vip' => false
+        ]);
+
     }
 
 //    protected function updateParentsLevel($user, $level)
