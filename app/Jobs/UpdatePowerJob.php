@@ -67,8 +67,8 @@ class UpdatePowerJob extends Job
                 // 获取团队算力
                 $team_power = $userService->getTeamPower($parent->user, $collection);
 
-                $parent->user->share_power = $share_power;
-                $parent->user->team_power = $team_power;
+                $parent->user->new_share_power = $share_power;
+                $parent->user->new_team_power = $team_power;
 
                 if ($this->params['is_upgrade_vip']) {
                     $parent->user->team_valid_num = $parent->user->team_valid_num + 1;
@@ -85,7 +85,7 @@ class UpdatePowerJob extends Job
 
             Log::get()->info(sprintf('更新算力成功:%s' , json_encode($this->params)));
 
-            $redis->del("global_power");
+//            $redis->del("global_power");
 
         } catch (\Exception $e) {
             Db::rollBack();

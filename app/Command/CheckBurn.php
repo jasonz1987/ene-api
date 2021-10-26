@@ -204,13 +204,11 @@ class CheckBurn extends HyperfCommand
 
                         Db::commit();
 
-                        if ($log->status == 1) {
-                            $queueService = $this->container->get(QueueService::class);
-                            $queueService->pushUpdatePower([
-                                'user_id'        => $user->id,
-                                'is_upgrade_vip' => $is_upgrade_vip
-                            ]);
-                        }
+                        $queueService = $this->container->get(QueueService::class);
+                        $queueService->pushUpdatePower([
+                            'user_id'        => $user->id,
+                            'is_upgrade_vip' => $is_upgrade_vip
+                        ]);
                     } catch (\Exception $e) {
                         Db::rollBack();
                         \App\Utils\Log::get()->error(sprintf("更新算力失败:%s",  $e->getMessage()));
