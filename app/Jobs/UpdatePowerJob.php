@@ -6,7 +6,7 @@ namespace App\Jobs;
 
 use App\Model\InvitationLog;
 use App\Model\User;
-use App\Services\UserService;
+use App\Services\UserService2;
 use App\Utils\Log;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
