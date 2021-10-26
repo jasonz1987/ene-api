@@ -157,9 +157,9 @@ class UserService2
             $tree = $trees->where('user_id', '=', $child->child_id)->first();
 
             if ($tree) {
-                $power = BigDecimal::of($tree->new_team_power)->plus($child->child->mine_power);
+                $power = BigDecimal::of($tree->team_power)->plus($child->child->mine_power);
             } else {
-                $power = BigDecimal::of($child->child->new_team_power);
+                $power = BigDecimal::of($child->child->mine_power);
             }
 
             $rate = 0;
