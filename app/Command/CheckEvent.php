@@ -11,6 +11,8 @@ use App\Services\ConfigService;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+
 use Hyperf\DbConnection\Db;
 use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerInterface;
