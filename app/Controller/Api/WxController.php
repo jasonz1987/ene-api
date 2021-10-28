@@ -172,12 +172,12 @@ class WxController extends AbstractController
             ];
         }
 
-        if ($transaction->to != strtolower(env('WX_REWARD_ADDRESS'))) {
-            return [
-                'code'    => 500,
-                'message' => '交易不合法',
-            ];
-        }
+//        if ($transaction->to != strtolower(env('WX_REWARD_ADDRESS'))) {
+//            return [
+//                'code'    => 500,
+//                'message' => '交易不合法',
+//            ];
+//        }
 
 //        $fee = BigNumber::of($gasPrice)->multipliedBy($ethService->getGasLimit());
 //
