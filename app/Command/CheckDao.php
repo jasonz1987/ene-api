@@ -19,6 +19,7 @@ use Hyperf\DbConnection\Db;
 use Hyperf\Redis\Redis;
 use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Input\InputArgument;
 use Web3\Contract;
 use Web3\Providers\HttpProvider;
 use Web3\RequestManagers\HttpRequestManager;
@@ -81,7 +82,7 @@ class CheckDao extends HyperfCommand
         $eventSignature = $contract->getEthabi()->encodeEventSignature($events[$eventName]);
         $ethabi = $contract->getEthabi();
 
-        $start = 10705506;
+        $start = $this->input->getArgument('start');
         $max = 12179762;
 
         while($start <= $max) {
@@ -181,6 +182,11 @@ class CheckDao extends HyperfCommand
             }
         }
 
-
+    protected function getArguments()
+    {
+        return [
+            ['start', InputArgument::REQUIRED, '开始区块']
+        ];
+    }
 
 }
