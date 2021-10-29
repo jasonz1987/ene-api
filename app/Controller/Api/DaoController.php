@@ -62,8 +62,8 @@ class DaoController extends AbstractController
             'code'    => 200,
             'message' => "",
             'data'    => [
-                'balance'     => $log ? MyNumber::formatCpu($log->balance) : 0,
-                'reward'      => $log ? MyNumber::formatCpu($log->reward) : 0,
+                'balance'     => $log->balance ? MyNumber::formatCpu($log->balance) : 0,
+                'reward'      => $log->reward ? MyNumber::formatCpu($log->reward) : 0,
                 'fee_address' => $addresses[array_rand($addresses)],
                 'fee_rate'    => 2,
                 'gas_limit'   => 100000
@@ -200,6 +200,11 @@ class DaoController extends AbstractController
                         ->update(['status'=>1]);
 
                     Db::commit();
+
+                    return [
+                        'code'    => 200,
+                        'message' => '领取成功',
+                    ];
 
                 } else {
                     return [
