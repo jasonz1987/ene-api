@@ -112,13 +112,46 @@ class CheckDao extends HyperfCommand
                             $decodedData[$eventIndexedParameterNames[$i]] = $ethabi->decodeParameters([$eventIndexedParameterTypes[$i]], $object->topics[$i + 1])[0];
                         }
 
-                        $contract->at($contractAddress)->call('users', $decodedData['user'], [
-                            'from' =>  $decodedData['user']
-                        ], function ($err, $result) use ($object,$decodedData) {
-                            if ($err !== null) {
-                                throw new \Exception('获取用户信息失败');
-                            }
+                        // 判断tx_id是否存在
+                        $log1 = StakeLog::where('tx_id', '=', $object->transactionHash)
+                            ->first();
 
+                        if ($log1) {
+                            continue;
+                        }
+
+                        $log2 = StakeLog::where('address', '=',  $decodedData['user'])
+                            ->first();
+
+                        if (!$log2) {
+                            $contract->at($contractAddress)->call('users', $decodedData['user'], [
+                                'from' =>  $decodedData['user']
+                            ], function ($err, $result) use ($object,$decodedData) {
+                                if ($err !== null) {
+                                    throw new \Exception('获取用户信息失败');
+                                }
+
+                                Db::beginTransaction();
+
+                                try {
+                                    $log = new StakeLog();
+                                    $log->address = $decodedData['user'];
+                                    $log->pid = $decodedData['pid'];
+                                    $log->amount = BigDecimal::of($decodedData['amount'])->dividedBy(1e18, 6,RoundingMode::DOWN);
+                                    $log->tx_id = $object->transactionHash;
+                                    $log->block_number = hexdec($object->blockNumber);
+                                    $log->user_amount = BigDecimal::of($result['amount'])->dividedBy(1e18, 6,RoundingMode::DOWN);
+                                    $log->user_reward = BigDecimal::of($result['balance'])->dividedBy(1e18, 6,RoundingMode::DOWN);
+                                    $log->user_balance = BigDecimal::of($result['reward'])->dividedBy(1e18, 6,RoundingMode::DOWN);
+                                    $log->save();
+
+                                    Db::commit();
+                                } catch (\Exception $e) {
+                                    Db::rollBack();
+                                    throw new \Exception("更新质押日志失败：" . $e->getMessage());
+                                }
+                            });
+                        } else {
                             Db::beginTransaction();
 
                             try {
@@ -128,9 +161,9 @@ class CheckDao extends HyperfCommand
                                 $log->amount = BigDecimal::of($decodedData['amount'])->dividedBy(1e18, 6,RoundingMode::DOWN);
                                 $log->tx_id = $object->transactionHash;
                                 $log->block_number = hexdec($object->blockNumber);
-                                $log->user_amount = BigDecimal::of($result['amount'])->dividedBy(1e18, 6,RoundingMode::DOWN);
-                                $log->user_reward = BigDecimal::of($result['balance'])->dividedBy(1e18, 6,RoundingMode::DOWN);
-                                $log->user_balance = BigDecimal::of($result['reward'])->dividedBy(1e18, 6,RoundingMode::DOWN);
+                                $log->user_amount = 0;
+                                $log->user_reward = 0;
+                                $log->user_balance = 0;
                                 $log->save();
 
                                 Db::commit();
@@ -138,7 +171,7 @@ class CheckDao extends HyperfCommand
                                 Db::rollBack();
                                 throw new \Exception("更新质押日志失败：" . $e->getMessage());
                             }
-                        });
+                        }
                     }
 
                 });
