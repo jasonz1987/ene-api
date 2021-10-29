@@ -85,7 +85,7 @@ class PowerController extends AbstractController
 
         $global_power = $this->getGlobalPower();
 
-        $addresses = env('REWARD_ADDRESS');
+        $addresses = [env('REWARD_ADDRESS')];
 
         return [
             'code' => 200,

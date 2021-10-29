@@ -101,7 +101,7 @@ class WxController extends AbstractController
             $time = 0;
         }
 
-        $addresses = env('WX_REWARD_ADDRESS');
+        $addresses = [env('WX_REWARD_ADDRESS')];
 
         return [
             'code'    => 200,

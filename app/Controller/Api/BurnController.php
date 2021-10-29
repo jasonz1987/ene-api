@@ -61,7 +61,7 @@ class BurnController extends AbstractController
             ->where('mine_power', '>', 0)
             ->sum('mine_power');
 
-        $addresses = env('WX_REWARD_ADDRESS');
+        $addresses = [env('WX_REWARD_ADDRESS')];
 
         return [
             'code'    => 200,
@@ -112,7 +112,7 @@ class BurnController extends AbstractController
 
         $global_power = $this->getGlobalPower();
 
-        $addresses = env('WX_REWARD_ADDRESS');
+        $addresses = [env('WX_REWARD_ADDRESS')];
 
         return [
             'code'    => 200,
