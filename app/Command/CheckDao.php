@@ -81,7 +81,7 @@ class CheckDao extends HyperfCommand
         $eventSignature = $contract->getEthabi()->encodeEventSignature($events[$eventName]);
         $ethabi = $contract->getEthabi();
 
-        $start = 10700506;
+        $start = 10705506;
         $max = 12179762;
 
         while($start <= $max) {
