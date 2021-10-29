@@ -82,10 +82,17 @@ class CheckDao extends HyperfCommand
         $eventSignature = $contract->getEthabi()->encodeEventSignature($events[$eventName]);
         $ethabi = $contract->getEthabi();
 
-        $start = $this->input->getArgument('start');
-        $max = 12179762;
+        $redis = $this->container->get(Redis::class);
 
-        while($start <= $max) {
+        $start = $redis->get('dao_block_number');
+        $max = 12045000;
+
+        if ($start > $max) {
+            \App\Utils\Log::get()->error("扫描结束");
+            return;
+        }
+
+        \App\Utils\Log::get()->info(sprintf("扫描区块:%s", $start));
 
             $this->info("区块：". $start);
 
@@ -177,16 +184,15 @@ class CheckDao extends HyperfCommand
 
                 });
 
-            $start += 5000;
+        $redis->set('dao_block_number', $start+5000);
 
-            }
-        }
-
-    protected function getArguments()
-    {
-        return [
-            ['start', InputArgument::REQUIRED, '开始区块']
-        ];
     }
+
+//    protected function getArguments()
+//    {
+//        return [
+//            ['start', InputArgument::REQUIRED, '开始区块']
+//        ];
+//    }
 
 }
