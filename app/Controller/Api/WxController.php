@@ -59,8 +59,18 @@ class WxController extends AbstractController
         $global_power = User::where('wx_mine_power', '>=', 6000)
         ->sum('wx_mine_power');
 
+        $time = Carbon::parse(date('Y-m-d').' 21:00:00');
 
-        $today_power = BurnLog::whereDate('created_at', '=', date('Y-m-d'))
+        // 小于9点
+        if (Carbon::now()->lt($time)) {
+            $time_copy = clone($time);
+            $period = [$time_copy->subDay(), $time];
+        } else {
+            $time_copy = clone($time);
+            $period = [$time, $time_copy->addDay()];
+        }
+
+        $today_power = BurnLog::whereBetween('created_at', $period)
             ->groupBy('user_id')
             ->selectRaw('sum(power) as user_power')
             ->get();
