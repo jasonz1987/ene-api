@@ -8,6 +8,7 @@ use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
 use App\Model\BurnLog;
 use App\Model\DepositLog;
 use App\Model\InvitationLog;
+use App\Model\StakeLog;
 use App\Model\User;
 use App\Service\QueueService;
 use App\Services\ConfigService;
@@ -73,16 +74,7 @@ class UnitTest extends HyperfCommand
 //        $log->burn_cpu = 20;
 //        $log->burn_wx = 80;
 //        $log->save();
-        $logs = BurnLog::all();
 
-        foreach ($logs as $log) {
-            $queueService = $this->container->get(\App\Services\QueueService::class);
-            $queueService->pushUpdatePower([
-                'user_id'        => $log->user_id,
-                'is_upgrade_vip' => false
-            ]);
-            sleep(5);
-        }
 
 
     }

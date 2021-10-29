@@ -26,6 +26,9 @@ Router::addGroup('/api',function (){
     Router::addRoute(['GET', 'HEAD'], '/burn/index', 'App\Controller\Api\BurnController@index');
     Router::addRoute(['GET', 'HEAD'], '/burn/share', 'App\Controller\Api\BurnController@share');
 
+    Router::addRoute(['GET', 'HEAD'], '/dao/index', 'App\Controller\Api\DaoController@index');
+    Router::addRoute(['POST', 'HEAD'], '/dao/profit', 'App\Controller\Api\DaoController@profit');
+
 },
     ['middleware' => [AuthMiddleware::class]]
 );
