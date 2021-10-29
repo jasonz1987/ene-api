@@ -95,12 +95,6 @@ class DaoController extends AbstractController
 
         $user = Context::get('user');
 
-        if (BigDecimal::of($user->balance)->isLessThan(0.000001)) {
-            return [
-                'code'    => 500,
-                'message' => '暂无可领取收益',
-            ];
-        }
 
         $configService = ApplicationContext::getContainer()->get(ConfigService::class);
 
