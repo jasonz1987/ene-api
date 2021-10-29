@@ -21,6 +21,7 @@ class CreateStakeLogsTable extends Migration
             $table->decimal('user_amount', 40, 20)->comment('数量');
             $table->decimal('user_balance', 40, 20)->comment('数量');
             $table->decimal('user_reward', 40, 20)->comment('数量');
+            $table->tinyInteger('status')->default(0)->comment('数量');
             $table->timestamps();
         });
     }

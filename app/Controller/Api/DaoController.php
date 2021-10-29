@@ -52,6 +52,7 @@ class DaoController extends AbstractController
         $user = Context::get('user');
 
         $log = StakeLog::where('address', '=', $user->address)
+            ->where('status', '=', 0)
             ->selectRaw('SUM(user_amount+user_reward) as balance, SUM(user_balance) as reward')
             ->first();
 
@@ -201,19 +202,12 @@ class DaoController extends AbstractController
                     $log->type = 2;
                     $log->save();
 
-                    $user->balance = 0;
-                    $user->save();
+                    StakeLog::where('address', '=', $user->address)
+                        ->update(['status'=>1]);
+
 
                     Db::commit();
 
-                    $real_fee = $fee->toScale(6, RoundingMode::DOWN);
-
-                    $queueService->pushSendFee((string)$real_fee, 30);
-
-                    return [
-                        'code'    => 200,
-                        'message' => '领取成功',
-                    ];
                 } else {
                     return [
                         'code'    => 500,
