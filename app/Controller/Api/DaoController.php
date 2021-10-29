@@ -168,7 +168,7 @@ class DaoController extends AbstractController
 
             $amount = BigDecimal::of($user->balance);
 
-            $fee = $amount->multipliedBy(0.02);
+            $fee = 0;
 
             $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 
@@ -198,7 +198,6 @@ class DaoController extends AbstractController
 
                     StakeLog::where('address', '=', $user->address)
                         ->update(['status'=>1]);
-
 
                     Db::commit();
 
