@@ -156,6 +156,32 @@ class DaoController extends AbstractController
             ];
         }
 
+        $log = StakeLog::where('address', '=', $user->address)
+            ->where('status', '=', 0)
+            ->selectRaw('SUM(user_amount+user_reward) as balance, SUM(user_balance) as reward')
+            ->first();
+
+        if (!$log->balance && !$log->reward) {
+            return [
+                'code'    => 500,
+                'message' => '暂无可领取收益',
+            ];
+        }
+
+        $amount = BigDecimal::zero();
+
+        if ($log->balance) {
+            $amount = $amount->plus($log->balance);
+        }
+
+        if ($log->reward) {
+            $amount = $amount->plus($log->reward);
+        }
+
+        $fee = 0;
+
+        $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
+
         Db::beginTransaction();
 
         try {
@@ -165,12 +191,6 @@ class DaoController extends AbstractController
             $options = [];
             // $client 为协程化的 GuzzleHttp\Client 对象
             $client = $clientFactory->create($options);
-
-            $amount = BigDecimal::of($user->balance);
-
-            $fee = 0;
-
-            $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 
             $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice * 1.2);
 
