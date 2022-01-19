@@ -58,9 +58,9 @@ class MineController extends AbstractController
         $collection = $user->children()->with('child')->get();
 
         // 累计产出
-        $total_mine = User::sum('profit');
+//        $total_mine = User::sum('profit');
 
-        $total_mine = round($total_mine / 50) * 50;
+//        $total_mine = round($total_mine / 50) * 50;
 
         // 获取挖矿算力
         $equipment_power = $user->equipment_power;
