@@ -4,20 +4,19 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Migrations\Migration;
 
-class CreateDepositLogsTable extends Migration
+class CreateBindLogsTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('deposit_logs', function (Blueprint $table) {
+        Schema::create('bind_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('user_id')->comment('用户ID');
-            $table->unsignedInteger('token_id')->comment('TOKEN ID');
-            $table->string('tx_id')->comment('交易ID')->unique();
+            $table->string('user')->comment('用户地址');
+            $table->string('referrer')->comment('推荐人地址');
+            $table->string('tx_id')->comment('总体力')->unique();
             $table->unsignedInteger('block_number')->comment('区块高度');
-            $table->unsignedInteger('power')->comment('体力');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ class CreateDepositLogsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deposit_logs');
+        Schema::dropIfExists('mine_logs');
     }
 }
