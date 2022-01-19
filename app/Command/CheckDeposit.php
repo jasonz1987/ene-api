@@ -176,6 +176,7 @@ class CheckDeposit extends HyperfCommand
                             $log->save();
 
                             $user->icrement('equipment_power', $decodedData['power']);
+                            $user->icrement('total_equipment_power', $decodedData['power']);
                             $user->save();
                         }
 

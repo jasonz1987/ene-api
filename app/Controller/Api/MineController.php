@@ -57,33 +57,19 @@ class MineController extends AbstractController
         // 获取全网总算力
         $collection = $user->children()->with('child')->get();
 
-        // 累计产出
-//        $total_mine = User::sum('profit');
-
-//        $total_mine = round($total_mine / 50) * 50;
-
         // 获取挖矿算力
         $equipment_power = $user->equipment_power;
         // 获取分享算力
-        $share_power = 0;
+        $share_power = $user->share_power;
         // 获取团队算力
-        $team_power = 0;
+        $team_power = $user->team_power;
 
         // 累计个人算力
         $total_power = BigDecimal::of($equipment_power)->plus($share_power)->plus($team_power);
 
-        // 获取直邀用户数量
-
-        $direct_num = $userService->getDirectChildrenNum($collection);
-
-        // 获取团队有效用户数量
-//        if ($user->team_level == 0) {
-//            $team_num = $userService->getTeamNum($user, $collection);
-//        } else {
-//            $team_num = $userService->getTeamNodes($user, $collection);
-//        }
-
-        $global_power = 100000;
+        $global_power = User::all()->sum(function($t){
+            return $t->equipment_power + $t->share_power + $t->team_power;
+        });
 
         return [
             'code'    => 200,
@@ -99,10 +85,8 @@ class MineController extends AbstractController
                     'share_power'      => MyNumber::formatPower($share_power),
                     'team_power'       => MyNumber::formatPower($team_power),
                     'balance'          => MyNumber::formatCpu($user->balance),
-                    'remain_bonus'     => MyNumber::formatPower(0),
-                    'team_performance' => MyNumber::formatPower(0),
+                    'team_performance' => MyNumber::formatPower($user->team_performance),
                     'team_level'       => $user->team_level,
-                    'team_num'         => 0,
                     'bonus'            => MyNumber::formatCpu($user->bonus),
                 ]
             ]
