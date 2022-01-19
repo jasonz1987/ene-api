@@ -12,7 +12,7 @@ use App\Service\QueueService;
 use App\Services\ConfigService;
 use App\Services\EthService;
 use App\Services\UserService;
-use App\Services\UserService2;
+use App\Services\UserService;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use http\Exception\RuntimeException;
@@ -53,7 +53,7 @@ class SyncSharePower extends HyperfCommand
 
     public function handle()
     {
-        $userService = make(UserService2::class);
+        $userService = make(UserService::class);
 
         $users = User::where('is_valid', '=', 1)
             ->get();

@@ -21,7 +21,7 @@ class UserService
      *
      * @param $user
      */
-    public function getSharePower2($user, $collection = null) {
+    public function getSmallPerformance($user, $collection = null, $is_sub = false) {
         $total_power = BigDecimal::zero();
 
         if ($user->is_valid == 0) {
@@ -32,95 +32,81 @@ class UserService
             $collection = $user->children()->with('child')->get();
         }
 
-        // 获取直邀的有效用户
-        $direct_num = $this->getDirectChildrenNum($collection);
+        // 获取直邀用户
+        $children = $collection->where('level', '=', 1)->all();
 
-        if ($direct_num > 0) {
+        $big_performance = 0;
+        $small_performance = 0;
 
-            if ($direct_num > 10) {
-                $direct_num = 10;
-            }
+        $big_user_id = 0;
 
-            $trees = $this->getTrees($collection, $user->id, true);
+        foreach($children as $child) {
+            $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equitment_power);
 
-            // 获取奖励的代数和比例
-            $levels = $this->getShareRate($direct_num);
-
-            $users = [];
-
-            foreach ($trees as $tree) {
-
-                // 根据推荐数量获取对应的层级
-                $new_tree = array_slice($tree, 0, $direct_num);
-
-                foreach($new_tree as $k=>$v) {
-
-                    if (!isset($users[$v->id])) {
-                        $rate = $levels[$k];
-                        // 烧伤
-                        if (BigDecimal::of($user->mine_power)->isLessThan($v->mine_power)) {
-                            $power = BigDecimal::of($user->mine_power);
-                        } else {
-                            $power = BigDecimal::of($v->mine_power);
-                        }
-
-                        $power_add = $power->multipliedBy($rate);
-                        $total_power = $total_power->plus($power_add);
-
-                        $users[$v->id] = $v->id;
-                    }
-
-                }
+            if ($user_performance->isGreaterThan($big_performance)) {
+                $big_performance = $user_performance;
+                $big_user_id = $child->child->id;
             }
         }
 
-        return $total_power;
+        $small_performance = BigDecimal::of($user->team_performance)->minus($big_performance);
+
+        if ($is_sub && $big_user_id > 0) {
+            $children_small_performance = BigDecimal::zero();
+
+            foreach($children as $child) {
+               if ($child->child_id == $big_user_id ) {
+                   continue;
+               }
+
+                $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equitment_power);
+
+                $children_small_performance = $children_small_performance->plus($user_performance->minus($this->getTeamLevelRate($child->child->team_level)));
+            }
+
+            $parent_small_performance = $small_performance->minus($this->getTeamLevelRate($user->team_level));
+
+            if ($children_small_performance->isGreaterThan($parent_small_performance)) {
+                $small_performance = 0;
+            } else {
+                $small_performance = $parent_small_performance->minus($children_small_performance);
+            }
+        }
+
+
+        return $small_performance;
+    }
+
+    public function getTeamLevelRate($level) {
+
+        $levels = [
+            1   => 0.06,
+            2   => 0.12,
+            3   => 0.18,
+            4   => 0.24,
+            5   => 0.30
+        ];
+
+        return isset($levels[$level]) ? $levels[$level] : 0;
     }
 
     public function getSharePower($user, $collection = null) {
         $total_power = BigDecimal::zero();
 
-        if ($user->is_valid == 0) {
-            return $total_power;
-        }
-
         if (!$collection) {
-            $collection = $user->children()->with('child')->get();
+            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
         }
 
-        // 获取直邀的有效用户
-        $direct_num = $this->getDirectChildrenNum($collection);
+        $children = $collection->where('level', '<=', 2)->all();
 
-        if ($direct_num > 0) {
-
-            if ($direct_num > 10) {
-                $direct_num = 10;
+        foreach ($children as $child) {
+            if (BigDecimal::of($child->child->total_equipment_power)->isGreaterThan($user->total_equipment_power)) {
+                $power = $user->total_equipment_power;
+            } else {
+                $power = $child->child->total_equipment_power;
             }
 
-            // 获取奖励的代数和比例
-            $levels = $this->getShareRate($direct_num);
-
-            $users = [];
-
-            $new_collection  = $collection->where('level', '<=', $direct_num)->all();
-
-            foreach ($new_collection as $k=>$v) {
-
-                if (!isset($users[$v->child->id])) {
-                    $rate = $levels[$v->level - 1];
-                    // 烧伤
-                    if (BigDecimal::of($user->mine_power)->isLessThan($v->child->mine_power)) {
-                        $power = BigDecimal::of($user->mine_power);
-                    } else {
-                        $power = BigDecimal::of($v->child->mine_power);
-                    }
-
-                    $power_add = $power->multipliedBy($rate);
-                    $total_power = $total_power->plus($power_add);
-
-                    $users[$v->child->id] = $v->child->id;
-                }
-            }
+            $total_power = $total_power->plus($power->minus($this->getShareRate($child->level)));
         }
 
         return $total_power;
@@ -132,194 +118,43 @@ class UserService
      *
      * @param $user
      */
-    public function getTeamPower($user, $collection = null) {
-        $total_power = BigDecimal::zero();
+    public function getTeamInfo($user, $collection = null) {
+        // 获取小区业绩
+        $small_performance = $this->getSmallPerformance($user, $collection, false);
+        $team_level = $this->getTeamLevelByPerformance($small_performance);
+        $team_power = $this->getSmallPerformance($user, $collection, true);
 
-        if ($user->vip_level == 0 || $user->is_valid == 0) {
-            return $total_power;
-        }
-
-        if (!$collection) {
-            $collection = $user->children()->with('child')->get();
-        }
-
-        $children = $collection->where('level', '=', 1)->all();
-        $uids = $collection->where('level', '=', 1)->pluck('child_id')->toArray();
-
-        $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
-            ->selectRaw('SUM(users.mine_power) as team_power, user_id')
-            ->whereIn('user_id', $uids)
-            ->where('is_valid', '=', 1)
-            ->groupBy('user_id')
-            ->get();
-
-        foreach ($children as $child) {
-            $tree = $trees->where('user_id', '=', $child->child_id)->first();
-
-            if ($tree) {
-                $power = BigDecimal::of($tree->team_power)->plus($child->child->mine_power);
-            } else {
-                $power = BigDecimal::of($child->child->mine_power);
-            }
-
-            $rate = 0;
-
-            // 平级
-            if ($child->child->vip_level == $user->vip_level) {
-                $rate = 0.01;
-            } else if ($child->child->vip_level <  $user->vip_level) {
-                $rate1 = $this->getTeamLevelRate($user->vip_level);
-                $rate2 = $this->getTeamLevelRate($child->child->vip_level);
-                $rate = $rate1 - $rate2;
-            }
-
-            if ($rate > 0) {
-                $real_power = $power->multipliedBy($rate);
-                // 计算总算李
-                $total_power = $total_power->plus($real_power);
-            }
-        }
-
-        return $total_power;
+        return compact('team_power', 'small_performance', 'team_level');
     }
 
-    public function getTeamPower2($user, $collection = null) {
-        $total_power = BigDecimal::zero();
+    public function getTeamLevelByPerformance($performance) {
+        $levels = [5000, 20000, 60000, 150000, 300000];
 
-        if ($user->vip_level == 0 || $user->is_valid == 0) {
-            return $total_power;
-        }
-
-        if (!$collection) {
-            $collection = $user->children()->with('child')->get();
-        }
-
-        // 获取该用户下的所有几条线
-        $trees = $this->getTrees($collection, $user->id, true);
-
-        foreach ($trees as $tree) {
-            $max_level = 0;
-            $power = BigDecimal::zero();
-
-            foreach ($tree as $k=>$v) {
-                if ($v->vip_level > $max_level) {
-                    $max_level = $v->vip_level;
-                }
-
-                if (!isset($users[$v->id])) {
-                    $power = $power->plus($v->mine_power);
-                    $users[$v->id] = $user->id;
-                }
+        for($i = count($levels) - 1 ;$i >=0;$i--) {
+            if (BigDecimal::of($performance)->isGreaterThanOrEqualTo($levels[$i])) {
+                return $i+1;
             }
-
-            // 平级
-            if ($max_level >= $user->vip_level) {
-                $rate = 0.01;
-            } else {
-                $rate = $this->getTeamLevelRate($user->vip_level);
-            }
-
-            // 计算总算李
-            $total_power = $total_power->plus($power->multipliedBy($rate));
         }
 
-        return $total_power;
-
+        return 0;
     }
 
-    /**
-     * 获取直邀的有效用户
-     *
-     * @param $collection
-     * @return mixed
-     */
-    public function getDirectChildrenNum($collection) {
-        $direct_num = $collection
-            ->where('level', '=', 1)
-            ->sum(function ($item){
-                if ($item->child->is_valid == 1) {
-                    return 1;
-                }
-
-                return 0;
-            });
-
-        return $direct_num;
-    }
 
     /**
      * 获取分享比例
      *
-     * @param $num
+     * @param $level
      * @return array|float[]
      */
-    public function getShareRate($num) {
-        $rate = [0.3, 0.2, 0.15, 0.1, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03];
+    public function getShareRate($level) {
+        $levels = [
+            1 =>0.5,
+            2 => 0.3
+        ];
 
-        if ($num > 10) {
-            return $rate;
-        }
-
-        if ($num == 0) {
-            return [];
-        }
-
-        return array_slice($rate, 0, $num);
+        return isset($levels[$level]) ? $levels[$level] : 0;
     }
 
-    /**
-     * 获取团队比例
-     *
-     * @param $level
-     * @return float|int
-     */
-    public function getTeamLevelRate($level) {
-        $rate = [0.06, 0.1, 0.14, 0.18, 0.22];
-
-        if ($level == 0) {
-            return 0;
-        }
-
-        return $rate[$level-1];
-    }
-
-
-    /**
-     * 获取树（从上而下）
-     *
-     * @param $collection
-     * @param $root_id
-     * @param bool $is_valid
-     * @return array
-     */
-    public function getTrees($collection,$root_id, $is_valid = false) {
-        $trees = [];
-
-        foreach ($collection as $k=>$v) {
-            if (!$this->isHasChildren($collection, $v->child_id)) {
-                $tree = [];
-
-                if ($is_valid) {
-                    if ($v->child->is_valid == 1) {
-                        $tree[0] = $v->child;
-                    }
-                }
-
-                if ($v->parent_id) {
-                    $parents = $this->getParents($collection, $v->parent_id, $root_id, $is_valid);
-                    if ($parents) {
-                        $tree = array_merge($tree, $parents);
-                    }
-                }
-
-                if ($tree) {
-                    $trees[] = array_reverse($tree);
-                }
-            }
-        }
-
-        return $trees;
-    }
 
     /**
      * 获取父级树（从下而上）

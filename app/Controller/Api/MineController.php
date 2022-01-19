@@ -94,15 +94,16 @@ class MineController extends AbstractController
                     'fee_address' => env('REWARD_ADDRESS')
                 ],
                 'my'     => [
-                    'total_power'     => MyNumber::formatPower($total_power),
-                    'equipment_power' => MyNumber::formatPower($user->equipment_power),
-                    'share_power'     => MyNumber::formatPower($share_power),
-                    'team_power'      => MyNumber::formatPower($team_power),
-                    'balance'         => MyNumber::formatCpu($user->balance),
-                    'remain_bonus'    => MyNumber::formatPower(0),
-                    'team_performance'    => MyNumber::formatPower(0),
-                    'team_level'      => $user->team_level,
-                    'team_num'        => 0,
+                    'total_power'      => MyNumber::formatPower($total_power),
+                    'equipment_power'  => MyNumber::formatPower($user->equipment_power),
+                    'share_power'      => MyNumber::formatPower($share_power),
+                    'team_power'       => MyNumber::formatPower($team_power),
+                    'balance'          => MyNumber::formatCpu($user->balance),
+                    'remain_bonus'     => MyNumber::formatPower(0),
+                    'team_performance' => MyNumber::formatPower(0),
+                    'team_level'       => $user->team_level,
+                    'team_num'         => 0,
+                    'bonus'            => MyNumber::formatCpu($user->bonus),
                 ]
             ]
         ];

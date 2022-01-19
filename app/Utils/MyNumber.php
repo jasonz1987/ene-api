@@ -16,7 +16,7 @@ class MyNumber
 
     public static function formatPower($amount)
     {
-        return BigDecimal::of($amount)->toScale(4, RoundingMode::DOWN);
+        return BigDecimal::of($amount)->toScale(0, RoundingMode::DOWN);
     }
 
 }

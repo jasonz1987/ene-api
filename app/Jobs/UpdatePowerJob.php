@@ -6,7 +6,7 @@ namespace App\Jobs;
 
 use App\Model\InvitationLog;
 use App\Model\User;
-use App\Services\UserService2;
+use App\Services\UserService;
 use App\Utils\Log;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -40,7 +40,7 @@ class UpdatePowerJob extends Job
             return;
         }
 
-        $userService = ApplicationContext::getContainer()->get(UserService2::class);
+        $userService = ApplicationContext::getContainer()->get(UserService::class);
         $redis = ApplicationContext::getContainer()->get(Redis::class);
 
         $user = User::find($this->params['user_id']);
@@ -61,15 +61,20 @@ class UpdatePowerJob extends Job
         try {
 
             foreach ($parents as $parent) {
-                $collection = $parent->user->children()->with('child')->get();
+                $parent->user->team_performance = BigDecimal::of($parent->user->team_performance)->plus($this->params['power']);
+
+                $collection = $parent->user->children()->with('child')->orderBy('level', 'asc')->get();
                 // 获取分享算力
                 $share_power = $userService->getSharePower($parent->user, $collection);
                 // 获取团队算力
-                $team_power = $userService->getTeamPower($parent->user, $collection);
+                $team_info = $userService->getTeamInfo($parent->user, $collection);
 
-                $parent->user->new_share_power = $share_power;
-                $parent->user->new_team_power = $team_power;
+                $parent->user->share_power = $share_power;
+                $parent->user->team_power = $team_info['team_power'];
+                $parent->user->small_performance = $team_info['small_performance'];
+                $parent->user->team_level = $team_info['team_level'];
 
+                // 团队业绩
                 $parent->user->save();
             }
 
@@ -85,56 +90,4 @@ class UpdatePowerJob extends Job
         }
     }
 
-    protected function isNewLevel($user) {
-
-        if( $user->vip_level == 5) {
-            return false;
-        }
-
-        if ($user->vip_level == 0) {
-            if ($user->team_valid_num >= 30) {
-                return true;
-            }
-        } else {
-            $children = $user->children()->with('child')->where('level', '=', 1)->get();
-
-            $count = 0;
-            $uids = [];
-
-            foreach ($children as $child) {
-                if ($child->child->vip_level == $user->vip_level) {
-                    $count ++;
-                    if ($count >= 3) {
-                        return true;
-                    } else {
-                        continue;
-                    }
-                }
-
-                $uids[] = $child->child_id;
-            }
-
-            if ($uids) {
-
-                // 获取
-                $trees = InvitationLog::join('users', 'users.id','=', 'invitation_logs.child_id')
-                    ->selectRaw('count(1) as count, user_id')
-                    ->whereIn('user_id', $uids)
-                    ->where('vip_level', '=', $user->vip_level)
-                    ->groupBy('user_id')
-                    ->get();
-
-                foreach ($trees as $tree) {
-                    if ($tree->count > 0) {
-                        $count++;
-                    }
-                    if ($count >= 3) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
 }

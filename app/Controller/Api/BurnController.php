@@ -23,7 +23,7 @@ use App\Services\ConfigService;
 use App\Services\EthService;
 use App\Services\QueueService;
 use App\Services\UserService;
-use App\Services\UserService2;
+use App\Services\UserService;
 use App\Utils\HashId;
 use App\Utils\MyNumber;
 use Brick\Math\BigDecimal;
@@ -83,7 +83,7 @@ class BurnController extends AbstractController
     {
         $user = Context::get('user');
 
-        $userService = ApplicationContext::getContainer()->get(UserService2::class);
+        $userService = ApplicationContext::getContainer()->get(UserService::class);
 
         // 获取全网总算力
         $collection = $user->children()->with('child')->get();
