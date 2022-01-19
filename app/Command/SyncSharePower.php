@@ -12,7 +12,6 @@ use App\Service\QueueService;
 use App\Services\ConfigService;
 use App\Services\EthService;
 use App\Services\UserService;
-use App\Services\UserService;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use http\Exception\RuntimeException;
