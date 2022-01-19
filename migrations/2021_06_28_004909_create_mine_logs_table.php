@@ -14,10 +14,10 @@ class CreateMineLogsTable extends Migration
         Schema::create('mine_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('user_id')->comment('用户ID');
-            $table->decimal('total_power',40, 20)->comment('总算力');
-            $table->decimal('mine_power',40, 20)->comment('挖矿算力');
-            $table->decimal('share_power',40, 20)->comment('分享算力');
-            $table->decimal('team_power',40, 20)->comment('团队算力');
+            $table->decimal('total_power',40, 20)->comment('总体力');
+            $table->decimal('equipment_power',40, 20)->comment('装备体力');
+            $table->decimal('share_power',40, 20)->comment('分享体力');
+            $table->decimal('team_power',40, 20)->comment('团队体力力');
             $table->decimal('global_power', 40, 20)->comment('全网算力');
             $table->decimal('amount', 40, 20)->comment('产量');
             $table->decimal('rate', 40, 20)->comment('百分比');

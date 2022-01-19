@@ -127,7 +127,7 @@ class AuthController extends AbstractController
             $request->all(),
             [
                 'address'   => 'required|regex:/^(0x)?[0-9a-zA-Z]{40}$/',
-                'source'    => 'regex:/^(0x)?[0-9a-zA-Z]{40}$/',
+//                'source'    => 'regex:/^(0x)?[0-9a-zA-Z]{40}$/',
                 'signature' => 'required|regex:/^(0x)?[0-9a-zA-Z]{130}$/',
             ],
             [
@@ -192,39 +192,39 @@ class AuthController extends AbstractController
             }
 
             // 生成TOKEN
-            if ($request->has('source')) {
-                if (!$user->source_address) {
-                    $source_address = strtolower($request->input('source'));
-                    // 查询原地址是否存在
-                    $source = User::where('address', '=', $source_address)
-                        ->first();
-
-                    if (!$source) {
-                        return [
-                            'code'    => 500,
-                            'message' => '源地址不存在',
-                        ];
-                    }
-
-                    if ($source->is_valid == 0) {
-                        return [
-                            'code'    => 500,
-                            'message' => '源地址不是有效账号',
-                        ];
-                    }
-
-                    $this->insertChildren($user, $source);
-                    $user->source_address = $source->address;
-                    $user->save();
-                }
-            } else {
-                if (!$user->source_address) {
-                    return [
-                        'code'    => 500,
-                        'message' => '未绑定好友地址'
-                    ];
-                }
-            }
+//            if ($request->has('source')) {
+//                if (!$user->source_address) {
+//                    $source_address = strtolower($request->input('source'));
+//                    // 查询原地址是否存在
+//                    $source = User::where('address', '=', $source_address)
+//                        ->first();
+//
+//                    if (!$source) {
+//                        return [
+//                            'code'    => 500,
+//                            'message' => '源地址不存在',
+//                        ];
+//                    }
+//
+//                    if ($source->is_valid == 0) {
+//                        return [
+//                            'code'    => 500,
+//                            'message' => '源地址不是有效账号',
+//                        ];
+//                    }
+//
+//                    $this->insertChildren($user, $source);
+//                    $user->source_address = $source->address;
+//                    $user->save();
+//                }
+//            } else {
+//                if (!$user->source_address) {
+//                    return [
+//                        'code'    => 500,
+//                        'message' => '未绑定好友地址'
+//                    ];
+//                }
+//            }
 
             Db::commit();
 
