@@ -14,8 +14,6 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
-use App\Helpers\MyConfig;
-use App\Model\PowerRewardLog;
 use App\Model\ProfitLog;
 use App\Model\User;
 use App\Services\ConfigService;

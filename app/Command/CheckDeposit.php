@@ -17,7 +17,6 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
 use Hyperf\Redis\Redis;
-use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerInterface;
 use Web3\Contract;
 use Web3\Providers\HttpProvider;
