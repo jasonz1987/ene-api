@@ -70,14 +70,6 @@ class UpdatePowerJob extends Job
                 $parent->user->new_share_power = $share_power;
                 $parent->user->new_team_power = $team_power;
 
-                if ($this->params['is_upgrade_vip']) {
-                    $parent->user->team_valid_num = $parent->user->team_valid_num + 1;
-
-                    if ($this->isNewLevel($parent->user)) {
-                        $parent->user->vip_level = $parent->user->vip_level+1;
-                    }
-                }
-
                 $parent->user->save();
             }
 

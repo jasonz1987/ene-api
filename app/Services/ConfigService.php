@@ -49,6 +49,11 @@ class ConfigService
         return $redis->set('latest_block_number', $number);
     }
 
+    public function setEnePrice($price) {
+        $redis = $this->container->get(Redis::class);
+        return $redis->set('ene_price', $price);
+    }
+
     public function setWithdrawLimit($uid,$time = 10) {
         $redis = $this->container->get(Redis::class);
         return $redis->set(sprintf("withdraw-limit:%s", $uid,), time(), ['nx', 'ex' => $time]);
