@@ -100,6 +100,7 @@ class MineController extends AbstractController
                     'team_power'      => MyNumber::formatPower($team_power),
                     'balance'         => MyNumber::formatCpu($user->balance),
                     'remain_bonus'    => MyNumber::formatPower(0),
+                    'team_performance'    => MyNumber::formatPower(0),
                     'team_level'      => $user->team_level,
                     'team_num'        => 0,
                 ]
