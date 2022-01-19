@@ -1,9 +1,4 @@
-# CPU API文档
-
-| 版本 | 撰写人  | 撰写时间   | 备注     |
-| ---- | ------- | ---------- | -------- |
-| 1.0  | Jason.z | 2021.07.01 | 初始版本 |
-|      |         |            |          |
+# ENE API文档
 
 
 
@@ -25,11 +20,11 @@
 
 ## 环境
 
-| 环境     | public api             |
-| -------- | ---------------------- |
-| 本地环境 |                        |
-| 测试环境 |                        |
-| 生产环境 | http://api.cpuswap.io/ |
+| 环境     | public api              |
+| -------- | ----------------------- |
+| 本地环境 |                         |
+| 测试环境 | http://8.212.18.16:9502 |
+| 生产环境 |                         |
 
 ## 返回
 
@@ -87,50 +82,6 @@
 
 
 ##  API接口
-
-### 认证模块
-
-
-
-#### 查询地址
-
-**请求方式：**
-
-GET
-
-**请求地址：**
-
-```
-http://{{host}}/api/auth/info
-```
-
-**是否认证**：
-
-否
-
-**请求参数：**
-
-| 参数名  | 参数类型 | 是否必须 | 参数说明 |
-| ------- | -------- | -------- | -------- |
-| address | String   | 是       | 钱包地址 |
-
-**返回结果：**
-
-```json
-{
-    "code": 200,
-    "message": "success",
-    "data": {
-        "is_bind": true,
-    }
-}
-```
-
-**返回参数：**
-
-| 参数名  | 参数类型 | 参数说明 |
-| ------- | -------- | -------- |
-| Is_bind | boolean  | 是否绑定 |
 
 
 
@@ -194,11 +145,10 @@ http://{{host}}/api/auth/token
 
 **请求参数：**
 
-| 参数名    | 参数类型 | 是否必须 | 参数说明     |
-| --------- | -------- | -------- | ------------ |
-| address   | String   | 是       | 钱包地址     |
-| source    | String   | 是       | 邀请钱包地址 |
-| signature | String   | 是       | 签名         |
+| 参数名    | 参数类型 | 是否必须 | 参数说明 |
+| --------- | -------- | -------- | -------- |
+| address   | String   | 是       | 钱包地址 |
+| signature | String   | 是       | 签名     |
 
 **返回结果：**
 
@@ -233,7 +183,7 @@ GET
 **请求地址：**
 
 ```
-http://{{host}}/api/power/index
+http://{{host}}/api/mine/index
 ```
 
 **是否认证**：
@@ -253,18 +203,14 @@ http://{{host}}/api/power/index
     "data": {
         "global": {
             "total_power": 0,
-            "total_mine": "0xbb2225273a96cb229f8a128b1b59a3f0f6477837",
-            "total_burn":"0xbb2225273a96cb229f8a128b1b59a3f0f6477837"
         },
         "my": {
             "total_power": 0,
-            "mine_power": "0.111",
-            "share_power": "0xbb2225273a96cb229f8a128b1b59a3f0f6477837",
+            "equipment_power": "0.111",
+            "share_power": "11000",
             "team_power": "0.111",
             "balance": 0,
-            "vip_level": 0,
-            "team_nums": 0,
-            "direct_nums": 0
+            "team_level": 0,
         }
     }
 }
@@ -272,23 +218,23 @@ http://{{host}}/api/power/index
 
 **返回参数：**
 
-| 参数名      | 参数类型 | 参数说明   |
-| ----------- | -------- | ---------- |
-| global      | Object   | 全局数据   |
-| <Object>    |          |            |
-| total_power | String   | 总算力     |
-| total_mine  | String   | 总挖矿产出 |
-| </Object>   |          |            |
-| my          | Object   | 个人数据   |
-| <Object>    |          |            |
-| total_power | String   | 个人总算力 |
-| mine_power  | String   | 矿池算力   |
-| share_power | String   | 分享算力   |
-| balance     | String   | 用户余额   |
-| vip_level   | String   | 节点等级   |
-| team_num    | Integer  | 团队人数   |
-| direct_num  | Integer  | 直邀人数   |
-| </Object>   |          |            |
+| 参数名          | 参数类型 | 参数说明   |
+| --------------- | -------- | ---------- |
+| global          | Object   | 全局数据   |
+| <Object>        |          |            |
+| total_power     | String   | 总算力     |
+| fee_address     | String   | 手续费地址 |
+| </Object>       |          |            |
+| my              | Object   | 个人数据   |
+| <Object>        |          |            |
+| total_power     | String   | 个人总算力 |
+| equipment_power | String   | 装备算力   |
+| share_power     | String   | 分享算力   |
+| balance         | String   | 用户余额   |
+| remain_bonus    | String   | 剩余收益   |
+| team_level      | String   | 团队等级   |
+| team_num        | Integer  | 团队人数   |
+| </Object>       |          |            |
 
 #### 领取收益
 
@@ -299,7 +245,7 @@ POST
 **请求地址：**
 
 ```
-http://{{host}}/api/power/profit
+http://{{host}}/api/mine/profit
 ```
 
 **是否认证**：
@@ -329,48 +275,4 @@ http://{{host}}/api/power/profit
 | tx_id  | String   | 交易ID   |
 
 
-
-#### 收益明细
-
-**请求方式：**
-
-GET
-
-**请求地址：**
-
-```
-http://{{host}}/api/power/profit/logs
-```
-
-**是否认证**：
-
-是
-
-**请求参数：**
-
-分页参数page,per_page
-
-**返回结果：**
-
-```json
-{
-    "status_code": 200,
-    "message": "",
-    "data": [
-      {
-        "id": 126213411233,
-        "amount": "100.0000",
-        "created_at": "2021-01-01 10:00:00"
-      }
-    ]
-}
-```
-
-**返回参数：**
-
-| 参数名     | 参数类型 | 参数说明 |
-| ---------- | -------- | -------- |
-| Id         | String   | ID       |
-| amount     | String   | 数量     |
-| created_at | Datetime | 创建时间 |
 

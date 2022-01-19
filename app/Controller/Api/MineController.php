@@ -37,7 +37,7 @@ use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Di\Annotation\Inject;
 
-class PowerController extends AbstractController
+class MineController extends AbstractController
 {
     /**
      * @Inject()
@@ -60,7 +60,7 @@ class PowerController extends AbstractController
         // 累计产出
         $total_mine = User::sum('profit');
 
-        $total_mine = round($total_mine/50) * 50;
+        $total_mine = round($total_mine / 50) * 50;
 
         // 获取挖矿算力
         $mine_power = $user->mine_power;
@@ -74,7 +74,7 @@ class PowerController extends AbstractController
 
         // 获取直邀用户数量
 
-        $direct_num  = $userService->getDirectChildrenNum($collection);
+        $direct_num = $userService->getDirectChildrenNum($collection);
 
         // 获取团队有效用户数量
         if ($user->vip_level == 0) {
@@ -85,39 +85,35 @@ class PowerController extends AbstractController
 
         $global_power = $this->getGlobalPower();
 
-        $addresses = [env('REWARD_ADDRESS'),'0xB9Db2D5745133E1CBeD460C5fB6a63fe985DE002'];
-
         return [
-            'code' => 200,
-            'message'     => "",
-            'data'        => [
+            'code'    => 200,
+            'message' => "",
+            'data'    => [
                 'global' => [
                     'total_power' => MyNumber::formatPower($global_power),
-                    'total_mine' => MyNumber::formatCpu($total_mine),
+                    'fee_address' => env('REWARD_ADDRESS')
                 ],
                 'my'     => [
-                    'total_power' => MyNumber::formatPower($total_power),
-                    'mine_power'  => MyNumber::formatPower($mine_power),
-                    'share_power' => MyNumber::formatPower($share_power),
-                    'team_power'  => MyNumber::formatPower($team_power),
-                    'balance'      => MyNumber::formatCpu($user->balance),
-                    'vip_level'   => $user->vip_level,
-                    'direct_num'  => $direct_num,
-                    'team_num'    => $team_num,
-                ],
-                'fee_address'  => $addresses[array_rand($addresses)],
-                'fee_rate'  => 2,
-                'gas_limit' => 100000
+                    'total_power'     => MyNumber::formatPower($total_power),
+                    'equipment_power' => MyNumber::formatPower($user->equipment_power),
+                    'share_power'     => MyNumber::formatPower($share_power),
+                    'team_power'      => MyNumber::formatPower($team_power),
+                    'balance'         => MyNumber::formatCpu($user->balance),
+                    'remain_bonus'    => MyNumber::formatPower(0),
+                    'team_level'      => $user->team_level,
+                    'team_num'        => $team_num,
+                ]
             ]
         ];
     }
 
-    public function getGlobalPower() {
+    public function getGlobalPower()
+    {
 
         $userService = ApplicationContext::getContainer()->get(UserService::class);
         $redis = ApplicationContext::getContainer()->get(Redis::class);
 
-        if($redis->get("global_power")) {
+        if ($redis->get("global_power")) {
             return $redis->get("global_power");
         }
 
@@ -156,7 +152,7 @@ class PowerController extends AbstractController
             ],
             [
                 'tx_id.required' => '请提供交易ID',
-                'tx_id.regex' => '交易ID不合法',
+                'tx_id.regex'    => '交易ID不合法',
             ]
         );
 
@@ -192,7 +188,7 @@ class PowerController extends AbstractController
 
         $fee_tx_id = strtolower($request->input('tx_id'));
 
-        $transaction  = $ethService->getTransactionReceipt($fee_tx_id);
+        $transaction = $ethService->getTransactionReceipt($fee_tx_id);
 
         var_dump($transaction);
 
@@ -240,8 +236,8 @@ class PowerController extends AbstractController
         Db::beginTransaction();
 
         try {
-            $clientFactory  = ApplicationContext::getContainer()->get(ClientFactory::class);
-            $queueService  = ApplicationContext::getContainer()->get(QueueService::class);
+            $clientFactory = ApplicationContext::getContainer()->get(ClientFactory::class);
+            $queueService = ApplicationContext::getContainer()->get(QueueService::class);
 
             $options = [];
             // $client 为协程化的 GuzzleHttp\Client 对象
@@ -253,14 +249,14 @@ class PowerController extends AbstractController
 
             $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice*1.2);
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice * 1.2);
 
             $response = $client->request('GET', $url);
 
-            $code =  $response->getStatusCode(); // 200
+            $code = $response->getStatusCode(); // 200
 
             if ($code == 200) {
-                $body =  $response->getBody()->getContents();
+                $body = $response->getBody()->getContents();
 
                 var_dump($body);
 
@@ -307,13 +303,14 @@ class PowerController extends AbstractController
 
             return [
                 'code'    => 500,
-                'message' => '领取失败：'. $e->getMessage(),
+                'message' => '领取失败：' . $e->getMessage(),
             ];
 
         }
     }
 
-    public function profitLogs(RequestInterface $request) {
+    public function profitLogs(RequestInterface $request)
+    {
         $validator = $this->validationFactory->make(
             $request->all(),
             [
@@ -338,7 +335,7 @@ class PowerController extends AbstractController
 
         $logs = ProfitLog::where('user_id', '=', $user->id)
             ->orderBy('id', 'desc')
-            ->paginate((int)$request->input('per_page', 10),['*'], 'page', (int)$request->input('page'));
+            ->paginate((int)$request->input('per_page', 10), ['*'], 'page', (int)$request->input('page'));
 
         return [
             'code'    => 200,
@@ -354,9 +351,9 @@ class PowerController extends AbstractController
 
         foreach ($logs as $log) {
             $result[] = [
-                'id'           => HashId::encode($log->id),
-                'amount'          => MyNumber::formatCpu($log->amount),
-                'created_at'   => Carbon::parse($log->created_at)->toDateTimeString(),
+                'id'         => HashId::encode($log->id),
+                'amount'     => MyNumber::formatCpu($log->amount),
+                'created_at' => Carbon::parse($log->created_at)->toDateTimeString(),
             ];
         }
 
