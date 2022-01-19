@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
 use App\Model\BindLog;
 use App\Model\DepositLog;
 use App\Model\User;
@@ -12,7 +11,6 @@ use App\Services\QueueService;
 use App\Services\ConfigService;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
-use http\Exception\RuntimeException;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
