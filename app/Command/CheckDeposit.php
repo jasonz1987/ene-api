@@ -183,7 +183,7 @@ class CheckDeposit extends HyperfCommand
                             $user->save();
 
                             $uids = InvitationLog::where('child_id', '=', $user->id)
-                                ->pluck('parent_id')->toArray();
+                                ->pluck('user_id')->toArray();
 
                             User::whereIn('id', $uids)
                                 ->update([
