@@ -106,7 +106,7 @@ class UserService
                 $power = $child->child->total_equipment_power;
             }
 
-            $total_power = $total_power->plus(BigDecimal::of($power)->minus($this->getShareRate($child->level)));
+            $total_power = $total_power->plus(BigDecimal::of($power)->multipliedBy($this->getShareRate($child->level)));
         }
 
         return $total_power;
