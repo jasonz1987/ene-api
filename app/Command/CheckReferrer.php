@@ -76,10 +76,13 @@ class CheckReferrer extends HyperfCommand
             $latest_block_number = (int)($blockNumber->toString());
         });
 
+
         if ($latest_block_number == null) {
-            $this->error("【扫描绑定】获取最新区块失败");
+            \App\Utils\Log::get()->error("【扫描质押】获取最新区块失败");
             return;
         }
+
+        \App\Utils\Log::get()->info(sprintf("【扫描质押】最新区块号:%s", $latest_block_number));
 
         $eventParameterNames = [];
         $eventParameterTypes = [];

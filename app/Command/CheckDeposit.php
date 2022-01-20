@@ -72,9 +72,12 @@ class CheckDeposit extends HyperfCommand
         });
 
         if ($latest_block_number == null) {
-            $this->error("【扫描质押】获取最新区块失败");
+            \App\Utils\Log::get()->error("【扫描质押】获取最新区块失败");
             return;
         }
+
+        \App\Utils\Log::get()->info(sprintf("【扫描质押】最新区块号:%s", $latest_block_number));
+
 //
 //        $this->info("最新区块");
 //        $this->info($latest_block_number);
