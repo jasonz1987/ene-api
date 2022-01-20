@@ -8,6 +8,9 @@ return [
         (new Crontab())->setType('command')->setName('CheckDeposit')->setRule('* * * * *')->setCallback([
             'command' => 'check:deposit',
         ]),
+        (new Crontab())->setType('command')->setName('CheckReferrer')->setRule('* * * * *')->setCallback([
+            'command' => 'check:referrer',
+        ]),
         (new Crontab())->setType('command')->setName('CheckProfit')->setRule('* * * * *')->setCallback([
             'command' => 'check:profit',
         ]),
