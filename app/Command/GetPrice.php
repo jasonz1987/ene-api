@@ -75,7 +75,7 @@ class GetPrice extends HyperfCommand
 
             $price = BigDecimal::of($result['_reserve1'])->dividedBy($result['_reserve0'], 4, RoundingMode::DOWN);
 
-            $configService->setEnePrice($price);
+            $configService->setEnePrice((string)$price);
 
         });
     }
