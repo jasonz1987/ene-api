@@ -66,7 +66,11 @@ class MineController extends AbstractController
         $total_power = BigDecimal::of($equipment_power)->plus($share_power)->plus($team_power);
 
         $global_power = User::all()->sum(function($t){
-            return $t->equipment_power + $t->share_power + $t->team_power;
+            if ($t->equipment_power > 0) {
+                return $t->equipment_power + $t->share_power + $t->team_power;
+            } else {
+                return 0;
+            }
         });
 
         return [
@@ -83,7 +87,7 @@ class MineController extends AbstractController
                     'share_power'      => MyNumber::formatPower($share_power),
                     'team_power'       => MyNumber::formatPower($team_power),
                     'balance'          => MyNumber::formatCpu($user->balance),
-                    'team_performance' => MyNumber::formatPower($user->team_performance),
+                    'team_performance' => MyNumber::formatPower($user->small_performance),
                     'team_level'       => $user->team_level,
                     'bonus'            => MyNumber::formatCpu($user->bonus),
                 ]
@@ -168,7 +172,7 @@ class MineController extends AbstractController
 
         $ethService = make(EthService::class);
 
-        $gasPrice = $ethService->getGasPrice();
+//        $gasPrice = $ethService->getGasPrice();
 
         $fee_tx_id = strtolower($request->input('tx_id'));
 
@@ -233,7 +237,7 @@ class MineController extends AbstractController
 
             $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', $user->address, (string)$real_amount, $gasPrice * 1.2);
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s', $user->address, (string)$real_amount);
 
             $response = $client->request('GET', $url);
 
