@@ -20,6 +20,7 @@ class CreateMineLogsTable extends Migration
             $table->decimal('team_power',40, 20)->comment('团队体力力');
             $table->decimal('global_power', 40, 20)->comment('全网算力');
             $table->decimal('amount', 40, 20)->comment('产量');
+            $table->decimal('usdt_amount', 40, 20)->comment('产量');
             $table->decimal('rate', 40, 20)->comment('百分比');
             $table->timestamps();
         });

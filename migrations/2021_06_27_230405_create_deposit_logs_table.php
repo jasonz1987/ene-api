@@ -18,6 +18,7 @@ class CreateDepositLogsTable extends Migration
             $table->string('tx_id')->comment('交易ID')->unique();
             $table->unsignedInteger('block_number')->comment('区块高度');
             $table->unsignedInteger('power')->comment('体力');
+            $table->tinyInteger('is_out')->default(0)->comment('是否出局');
             $table->timestamps();
         });
     }
