@@ -48,6 +48,7 @@ class CheckDeposit extends HyperfCommand
     public function handle()
     {
         $configService = $this->container->get(ConfigService::class);
+        $queueService = $this->container->get(QueueService::class);
 
         $web3 = new Web3(new HttpProvider(new HttpRequestManager(env('RPC_PROVIDER'), 10)));
 
@@ -122,7 +123,7 @@ class CheckDeposit extends HyperfCommand
             'topics' => [$eventSignature],
             'address' => $contractAddress
         ],
-            function ($err, $result) use (&$eventLogData, &$fromBlock, $tx_ids, &$configService, &$latest_block_number, $contract, $contractAddress, $ethabi, $eventParameterTypes, $eventParameterNames, $eventIndexedParameterTypes, $eventIndexedParameterNames, $numEventIndexedParameterNames) {
+            function ($err, $result) use (&$eventLogData, &$fromBlock, $tx_ids, $queueService, &$latest_block_number, $contract, $contractAddress, $ethabi, $eventParameterTypes, $eventParameterNames, $eventIndexedParameterTypes, $eventIndexedParameterNames, $numEventIndexedParameterNames) {
                 if($err !== null) {
                     \App\Utils\Log::get()->error(sprintf("【扫描质押】扫描失败:%s", $err->getMessage()));
                     throw new \Exception($err->getMessage());
@@ -176,14 +177,18 @@ class CheckDeposit extends HyperfCommand
                             $log->power = $decodedData['power'];
                             $log->save();
 
-                            $user->icrement('equipment_power', $decodedData['power']);
-                            $user->icrement('total_equipment_power', $decodedData['power']);
+                            $user->increment('equipment_power', $decodedData['power']);
+                            $user->increment('total_equipment_power', $decodedData['power']);
                             $user->save();
                         }
 
                         Db::commit();
 
                         // TODO 更新上级的分享算力和团队算力
+                        $queueService->pushUpdatePower([
+                            'user_id'        => $user->id,
+                            'power' => $decodedData['power']
+                        ]);
 
                     } catch (\Exception $e) {
                         Db::rollBack();
