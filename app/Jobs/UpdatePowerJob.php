@@ -46,7 +46,7 @@ class UpdatePowerJob extends Job
         $user = User::find($this->params['user_id']);
 
         if (!$user) {
-            Log::get()->error(sprintf('【%s】:用户不存在' , $this->params));
+            Log::get()->error(sprintf('【%s】:用户不存在' ,$this->params['user_id']));
             return;
         }
 
@@ -59,6 +59,18 @@ class UpdatePowerJob extends Job
         Db::beginTransaction();
 
         try {
+
+            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
+            // 获取分享算力
+            $share_power = $userService->getSharePower($user, $collection);
+            // 获取团队算力
+            $team_info = $userService->getTeamInfo($user, $collection);
+
+            $user->share_power = $share_power;
+            $user->team_power = $team_info['team_power'];
+            $user->small_performance = $team_info['small_performance'];
+            $user->team_level = $team_info['team_level'];
+            $user->save();
 
             foreach ($parents as $parent) {
                 $collection = $parent->user->children()->with('child')->orderBy('level', 'asc')->get();
