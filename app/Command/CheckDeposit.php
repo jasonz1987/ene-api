@@ -187,7 +187,7 @@ class CheckDeposit extends HyperfCommand
 
                     } catch (\Exception $e) {
                         Db::rollBack();
-                        \App\Utils\Log::get()->error(sprintf("【扫描质押】更新算力失败:%s",  $e->getMessage));
+                        \App\Utils\Log::get()->error(sprintf("【扫描质押】更新算力失败:%s",  $e->getMessage()));
                         throw new \Exception("【扫描质押】更新算力失败：" . $e->getMessage());
                     }
                 }
