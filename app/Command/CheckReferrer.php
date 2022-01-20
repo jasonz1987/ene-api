@@ -128,7 +128,7 @@ class CheckReferrer extends HyperfCommand
 
                     if (in_array($object->transactionHash, $tx_ids)) {
                         \App\Utils\Log::get()->info(sprintf("【扫描绑定】交易已存在，跳过:%s", $object->transactionHash));
-
+                        continue;
                     }
 
                     //decode the data from the log into the expected formats, with its corresponding named key
@@ -171,8 +171,8 @@ class CheckReferrer extends HyperfCommand
                         Db::commit();
                     } catch (\Exception $e) {
                         Db::rollBack();
-                        \App\Utils\Log::get()->error(sprintf("更新算力失败:%s",  $e->getMessage));
-                        throw new \Exception("更新算力失败：" . $e->getMessage());
+                        \App\Utils\Log::get()->error(sprintf("更新绑定失败:%s",  $e->getMessage));
+                        throw new \Exception("更新绑定失败：" . $e->getMessage());
                     }
                 }
 

@@ -136,6 +136,7 @@ class CheckDeposit extends HyperfCommand
 
                     if (in_array($object->transactionHash, $tx_ids)) {
                         \App\Utils\Log::get()->info(sprintf("【扫描质押】交易已存在，跳过:%s", $object->transactionHash));
+                        continue;
                     }
 
                     //decode the data from the log into the expected formats, with its corresponding named key
