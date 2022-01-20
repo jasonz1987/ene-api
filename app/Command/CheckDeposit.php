@@ -114,7 +114,7 @@ class CheckDeposit extends HyperfCommand
         \App\Utils\Log::get()->info("【扫描质押】开始扫描...");
 
         $web3->getEth()->getLogs([
-            'fromBlock' => '0x' - $latest_block_number - 5000,
+            'fromBlock' => '0x' . ($latest_block_number - 5000),
             'toBlock' => '0x' . $latest_block_number,
             'topics' => [$eventSignature],
             'address' => $contractAddress

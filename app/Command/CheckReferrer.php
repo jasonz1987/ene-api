@@ -106,7 +106,7 @@ class CheckReferrer extends HyperfCommand
         $tx_ids = BindLog::pluck('tx_id')->toArray();
 
         $web3->getEth()->getLogs([
-            'fromBlock' => '0x' - $latest_block_number - 5000,
+            'fromBlock' => '0x' . ($latest_block_number - 5000),
             'toBlock' => '0x' . $latest_block_number,
             'topics' => [$eventSignature],
             'address' => $contractAddress
