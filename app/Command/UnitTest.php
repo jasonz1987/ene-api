@@ -54,6 +54,14 @@ class UnitTest extends HyperfCommand
 
     public function handle()
     {
+
+        $queueService = $this->container->get(\App\Services\QueueService::class);
+
+        $queueService->pushUpdatePower([
+            'user_id'        => 36,
+            'power' => 200
+        ]);
+
 //        $this->getSharePower();
 //        $user = User::find($this->input->getArgument('uid'));
 ////        $this->getSharePower2($user);
