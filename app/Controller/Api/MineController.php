@@ -233,7 +233,7 @@ class MineController extends AbstractController
 
             $amount = BigDecimal::of($user->balance);
 
-            $fee = $amount->multipliedBy(0.02);
+            $fee = $amount->multipliedBy(0.01);
 
             $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
 

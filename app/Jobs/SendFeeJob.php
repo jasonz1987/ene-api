@@ -45,13 +45,6 @@ class SendFeeJob extends Job
 
         $fee = $this->params;
 
-        $ethService = make(EthService::class);
-
-        $gasPrice = $ethService->getGasPrice();
-
-        if (!$gasPrice) {
-            throw new \Exception("获取gasprice失败");
-        }
 
         try {
             $clientFactory  = ApplicationContext::getContainer()->get(ClientFactory::class);
@@ -60,7 +53,7 @@ class SendFeeJob extends Job
             // $client 为协程化的 GuzzleHttp\Client 对象
             $client = $clientFactory->create($options);
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s&gas=%s', '0x450f9f661365BBEf3C49927402D5F4fa9cfb2462', $fee, $gasPrice);
+            $url = sprintf('http://localhost:3000?to=%s&amount=%s', '0x5D3367BF28EC838302233B7d9FC717F4aFCbDabd', $fee);
 
             Log::get()->info(sprintf('发送手续费URL：%s' , $url));
 
