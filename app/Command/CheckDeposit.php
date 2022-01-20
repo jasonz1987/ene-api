@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Model\BindLog;
 use App\Model\DepositLog;
+use App\Model\InvitationLog;
 use App\Model\User;
 use App\Services\QueueService;
 use App\Services\ConfigService;
@@ -180,6 +181,14 @@ class CheckDeposit extends HyperfCommand
                             $user->increment('equipment_power', (string)$decodedData['power']);
                             $user->increment('total_equipment_power', (string)$decodedData['power']);
                             $user->save();
+
+                            $uids = InvitationLog::where('child_id', '=', $user->id)
+                                ->pluck('parent_id')->toArray();
+
+                            User::whereIn('id', $uids)
+                                ->update([
+                                    'team_performance' =>  Db::raw('team_performance +' . (string)$decodedData['power'])
+                                ]);
                         }
 
                         Db::commit();

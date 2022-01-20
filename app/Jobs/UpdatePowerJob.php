@@ -61,8 +61,6 @@ class UpdatePowerJob extends Job
         try {
 
             foreach ($parents as $parent) {
-                $parent->user->team_performance = BigDecimal::of($parent->user->team_performance)->plus($this->params['power']);
-
                 $collection = $parent->user->children()->with('child')->orderBy('level', 'asc')->get();
                 // 获取分享算力
                 $share_power = $userService->getSharePower($parent->user, $collection);
