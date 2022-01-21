@@ -152,10 +152,15 @@ class CheckReferrer extends HyperfCommand
                         $log->block_number = hexdec($object->blockNumber);
                         $log->save();
 
-                        $user = new User();
-                        $user->address =  $decodedData['user'];
-                        $user->source_address =  $decodedData['referrer'];
-                        $user->save();
+                        $user = User::where('address', '=', $decodedData['user'])
+                            ->first();
+
+                        if (!$user) {
+                            $user = new User();
+                            $user->address =  $decodedData['user'];
+                            $user->source_address =  $decodedData['referrer'];
+                            $user->save();
+                        }
 
                         $referrer = User::where('address', '=', $decodedData['referrer'])
                             ->first();
@@ -171,7 +176,7 @@ class CheckReferrer extends HyperfCommand
                         Db::commit();
                     } catch (\Exception $e) {
                         Db::rollBack();
-                        \App\Utils\Log::get()->error(sprintf("更新绑定失败:%s",  $e->getMessage));
+                        \App\Utils\Log::get()->error(sprintf("更新绑定失败:%s",  $e->getMessage()));
                         throw new \Exception("更新绑定失败：" . $e->getMessage());
                     }
                 }
