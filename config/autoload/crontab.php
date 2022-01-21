@@ -14,9 +14,9 @@ return [
         (new Crontab())->setType('command')->setName('CheckProfit')->setRule('* * * * *')->setCallback([
             'command' => 'check:profit',
         ]),
-//        (new Crontab())->setType('command')->setName('CheckDeposit')->setRule('* * * * *')->setCallback([
-//            'command' => 'check:deposit',
-//        ]),
+        (new Crontab())->setType('command')->setName('GetPrice')->setRule('* * * * *')->setCallback([
+            'command' => 'get:price',
+        ]),
 //        (new Crontab())->setType('command')->setName('CheckEvent')->setRule('*/5 * * * *')->setCallback([
 //            'command' => 'check:event',
 //        ]),
