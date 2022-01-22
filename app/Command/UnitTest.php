@@ -72,6 +72,7 @@ class UnitTest extends HyperfCommand
 //        var_dump((string)$teamInfo['team_level']);
 
         $users = User::where('team_performance', '>' ,0)
+            ->orderBy('id', 'desc')
             ->get();
 
         $upgrade_users = [];
