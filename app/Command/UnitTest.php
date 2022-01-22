@@ -67,7 +67,9 @@ class UnitTest extends HyperfCommand
 
         $teamInfo = $userService->getTeamInfo($user);
 
-        var_dump($teamInfo);
+        var_dump((string)$teamInfo['team_power']);
+        var_dump((string)$teamInfo['small_performance']);
+        var_dump((string)$teamInfo['team_level']);
 
 
 //        $this->getSharePower();
