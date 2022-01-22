@@ -53,7 +53,7 @@ class UserService
                    continue;
                }
 
-                $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equitment_power);
+                $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equipment_power);
 
                 $children_small_performance = $children_small_performance->plus($user_performance->minus($this->getTeamLevelRate($child->child->team_level)));
             }
