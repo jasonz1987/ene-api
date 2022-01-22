@@ -22,12 +22,6 @@ class UserService
      * @param $user
      */
     public function getSmallPerformance($user, $collection = null, $is_sub = false) {
-        $total_power = BigDecimal::zero();
-
-        if ($user->is_valid == 0) {
-            return $total_power;
-        }
-
         if (!$collection) {
             $collection = $user->children()->with('child')->get();
         }
