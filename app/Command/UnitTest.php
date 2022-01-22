@@ -63,13 +63,39 @@ class UnitTest extends HyperfCommand
 //            'power' => 200
 //        ]);
 
-        $user = User::find($this->input->getArgument('uid'));
+//        $user = User::find($this->input->getArgument('uid'));
+//
+//        $teamInfo = $userService->getTeamInfo($user);
+//
+//        var_dump((string)$teamInfo['team_power']);
+//        var_dump((string)$teamInfo['small_performance']);
+//        var_dump((string)$teamInfo['team_level']);
 
-        $teamInfo = $userService->getTeamInfo($user);
+        $users = User::where('team_performance', '>' ,0)
+            ->get();
 
-        var_dump((string)$teamInfo['team_power']);
-        var_dump((string)$teamInfo['small_performance']);
-        var_dump((string)$teamInfo['team_level']);
+        $upgrade_users = [];
+
+        foreach ($users as $user) {
+            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
+
+            $team_info = $userService->getTeamInfo($user,$collection);
+
+            if ($team_info['team_level'] != $user->level()) {
+                $upgrade_users[] = $user;
+            }
+
+            $user->team_power = $team_info['team_power'];
+            $user->small_performance = $team_info['small_performance'];
+            $user->team_level = $team_info['team_level'];
+            $user->save();
+        }
+
+        foreach ($upgrade_users as $user) {
+            $team_power = $this->getSmallPerformance($user, null, true);
+            $user->team_power = $team_power;
+            $user->save();
+        }
 
 
 //        $this->getSharePower();

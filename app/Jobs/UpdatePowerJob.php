@@ -60,11 +60,17 @@ class UpdatePowerJob extends Job
 
         try {
 
+            $upgrade_users = [];
+
             $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
             // 获取分享算力
             $share_power = $userService->getSharePower($user, $collection);
             // 获取团队算力
             $team_info = $userService->getTeamInfo($user, $collection);
+
+            if ($team_info['team_level'] != $user->level()) {
+                $upgrade_users[] = $user;
+            }
 
             $user->share_power = $share_power;
             $user->team_power = $team_info['team_power'];
@@ -79,6 +85,10 @@ class UpdatePowerJob extends Job
                 // 获取团队算力
                 $team_info = $userService->getTeamInfo($parent->user, $collection);
 
+                if ($team_info['team_level'] != $parent->user->level()) {
+                    $upgrade_users[] = $parent;
+                }
+
                 $parent->user->share_power = $share_power;
                 $parent->user->team_power = $team_info['team_power'];
                 $parent->user->small_performance = $team_info['small_performance'];
@@ -86,6 +96,11 @@ class UpdatePowerJob extends Job
 
                 // 团队业绩
                 $parent->user->save();
+            }
+
+            foreach ($upgrade_users as $user) {
+                $team_power = $this->getSmallPerformance($user, $collection, true);
+                $user->team_power = $team_power;
             }
 
             Db::commit();
