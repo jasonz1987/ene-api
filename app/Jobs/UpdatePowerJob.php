@@ -68,7 +68,7 @@ class UpdatePowerJob extends Job
             // 获取团队算力
             $team_info = $userService->getTeamInfo($user, $collection);
 
-            if ($team_info['team_level'] != $user->level()) {
+            if ($team_info['team_level'] != $user->team_level) {
                 $upgrade_users[] = $user;
             }
 
@@ -85,7 +85,7 @@ class UpdatePowerJob extends Job
                 // 获取团队算力
                 $team_info = $userService->getTeamInfo($parent->user, $collection);
 
-                if ($team_info['team_level'] != $parent->user->level()) {
+                if ($team_info['team_level'] != $parent->user->team_level) {
                     $upgrade_users[] = $parent;
                 }
 
@@ -99,7 +99,7 @@ class UpdatePowerJob extends Job
             }
 
             foreach ($upgrade_users as $user) {
-                $team_power = $this->getSmallPerformance($user, $collection, true);
+                $team_power = $userService->getSmallPerformance($user, $collection, true);
                 $user->team_power = $team_power;
             }
 

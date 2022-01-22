@@ -82,7 +82,7 @@ class UnitTest extends HyperfCommand
 
             $team_info = $userService->getTeamInfo($user,$collection);
 
-            if ($team_info['team_level'] != $user->level()) {
+            if ($team_info['team_level'] != $user->team_level) {
                 $upgrade_users[] = $user;
             }
 
@@ -93,7 +93,7 @@ class UnitTest extends HyperfCommand
         }
 
         foreach ($upgrade_users as $user) {
-            $team_power = $this->getSmallPerformance($user, null, true);
+            $team_power = $userService->getSmallPerformance($user, null, true);
             $user->team_power = $team_power;
             $user->save();
         }
