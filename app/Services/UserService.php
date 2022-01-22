@@ -35,10 +35,7 @@ class UserService
         $big_user_id = 0;
 
         foreach($children as $child) {
-            var_dump($child);
-            var_dump($child->child);
-            var_dump($child->child->team_performance);
-            $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equitment_power);
+            $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equipment_power);
 
             if ($user_performance->isGreaterThan($big_performance)) {
                 $big_performance = $user_performance;
