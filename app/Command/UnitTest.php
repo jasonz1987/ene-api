@@ -70,33 +70,39 @@ class UnitTest extends HyperfCommand
 //        var_dump((string)$teamInfo['team_power']);
 //        var_dump((string)$teamInfo['small_performance']);
 //        var_dump((string)$teamInfo['team_level']);
-
-        $users = User::where('team_performance', '>' ,0)
+//
+        $users = User::where('team_level', '>' ,0)
             ->orderBy('id', 'desc')
             ->get();
 
-        $upgrade_users = [];
-
         foreach ($users as $user) {
-            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
-
-            $team_info = $userService->getTeamInfo($user,$collection);
-
-            if ($team_info['team_level'] != $user->team_level) {
-                $upgrade_users[] = $user;
-            }
-
-            $user->team_power = $team_info['team_power'];
-            $user->small_performance = $team_info['small_performance'];
-            $user->team_level = $team_info['team_level'];
-            $user->save();
-        }
-
-        foreach ($upgrade_users as $user) {
             $team_power = $userService->getSmallPerformance($user, null, true);
             $user->team_power = $team_power;
             $user->save();
         }
+//
+//        $upgrade_users = [];
+//
+//        foreach ($users as $user) {
+//            $collection = $user->children()->with('child')->orderBy('level', 'asc')->get();
+//
+//            $team_info = $userService->getTeamInfo($user,$collection);
+//
+//            if ($team_info['team_level'] != $user->team_level) {
+//                $upgrade_users[] = $user;
+//            }
+//
+//            $user->team_power = $team_info['team_power'];
+//            $user->small_performance = $team_info['small_performance'];
+//            $user->team_level = $team_info['team_level'];
+//            $user->save();
+//        }
+//
+//        foreach ($upgrade_users as $user) {
+//            $team_power = $userService->getSmallPerformance($user, null, true);
+//            $user->team_power = $team_power;
+//            $user->save();
+//        }
 
 
 //        $this->getSharePower();

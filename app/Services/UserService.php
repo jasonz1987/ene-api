@@ -55,10 +55,10 @@ class UserService
 
                 $user_performance = BigDecimal::of($child->child->team_performance)->plus($child->child->total_equipment_power);
 
-                $children_small_performance = $children_small_performance->plus($user_performance->minus($this->getTeamLevelRate($child->child->team_level)));
+                $children_small_performance = $children_small_performance->plus($user_performance->multipliedBy($this->getTeamLevelRate($child->child->team_level)));
             }
 
-            $parent_small_performance = $small_performance->minus($this->getTeamLevelRate($user->team_level));
+            $parent_small_performance = $small_performance->multipliedBy($this->getTeamLevelRate($user->team_level));
 
             if ($children_small_performance->isGreaterThan($parent_small_performance)) {
                 $small_performance = 0;
