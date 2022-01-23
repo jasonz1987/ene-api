@@ -58,24 +58,24 @@ class UnitTest extends HyperfCommand
         $queueService = $this->container->get(\App\Services\QueueService::class);
         $userService = $this->container->get(\App\Services\UserService::class);
 
-//        $queueService->pushUpdatePower([
-//            'user_id'        => $this->input->getArgument('uid'),
-//            'power' => 200
-//        ]);
+        $queueService->pushUpdatePower([
+            'user_id'        => $this->input->getArgument('uid'),
+            'power' => 200
+        ]);
 
 //        $user = User::find($this->input->getArgument('uid'));
 //        $power = $userService->getSharePower($user);
 //        var_dump((string)$power);
 
-        $users = User::where('equipment_power', '>' ,0)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        foreach ($users as $user) {
-            $share_power = $userService->getSharePower($user, null, true);
-            $user->share_power = $share_power;
-            $user->save();
-        }
+//        $users = User::where('equipment_power', '>' ,0)
+//            ->orderBy('id', 'desc')
+//            ->get();
+//
+//        foreach ($users as $user) {
+//            $share_power = $userService->getSharePower($user, null, true);
+//            $user->share_power = $share_power;
+//            $user->save();
+//        }
 
 //
 //        $teamInfo = $userService->getTeamInfo($user);
