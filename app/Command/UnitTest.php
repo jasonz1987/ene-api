@@ -63,7 +63,10 @@ class UnitTest extends HyperfCommand
 //            'power' => 200
 //        ]);
 
-//        $user = User::find($this->input->getArgument('uid'));
+        $user = User::find($this->input->getArgument('uid'));
+        $power = $userService->getSharePower($user);
+        var_dump((string)$power);
+
 //
 //        $teamInfo = $userService->getTeamInfo($user);
 //
@@ -71,15 +74,15 @@ class UnitTest extends HyperfCommand
 //        var_dump((string)$teamInfo['small_performance']);
 //        var_dump((string)$teamInfo['team_level']);
 //
-        $users = User::where('team_level', '>' ,0)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        foreach ($users as $user) {
-            $team_power = $userService->getSmallPerformance($user, null, true);
-            $user->team_power = $team_power;
-            $user->save();
-        }
+//        $users = User::where('team_level', '>' ,0)
+//            ->orderBy('id', 'desc')
+//            ->get();
+//
+//        foreach ($users as $user) {
+//            $team_power = $userService->getSmallPerformance($user, null, true);
+//            $user->team_power = $team_power;
+//            $user->save();
+//        }
 //
 //        $upgrade_users = [];
 //
