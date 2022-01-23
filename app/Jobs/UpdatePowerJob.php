@@ -99,7 +99,7 @@ class UpdatePowerJob extends Job
             }
 
             foreach ($upgrade_users as $user) {
-                $team_power = $userService->getSmallPerformance($user, $collection, true);
+                $team_power = $userService->getSmallPerformance($user, null, true);
                 $user->team_power = $team_power;
                 $user->save();
             }
