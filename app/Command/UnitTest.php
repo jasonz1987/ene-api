@@ -63,9 +63,19 @@ class UnitTest extends HyperfCommand
 //            'power' => 200
 //        ]);
 
-        $user = User::find($this->input->getArgument('uid'));
-        $power = $userService->getSharePower($user);
-        var_dump((string)$power);
+//        $user = User::find($this->input->getArgument('uid'));
+//        $power = $userService->getSharePower($user);
+//        var_dump((string)$power);
+
+        $users = User::where('equipment_power', '>' ,0)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        foreach ($users as $user) {
+            $share_power = $userService->getSharePower($user, null, true);
+            $user->share_power = $share_power;
+            $user->save();
+        }
 
 //
 //        $teamInfo = $userService->getTeamInfo($user);
