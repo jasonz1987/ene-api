@@ -101,6 +101,7 @@ class UpdatePowerJob extends Job
             foreach ($upgrade_users as $user) {
                 $team_power = $userService->getSmallPerformance($user, $collection, true);
                 $user->team_power = $team_power;
+                $user->save();
             }
 
             Db::commit();
