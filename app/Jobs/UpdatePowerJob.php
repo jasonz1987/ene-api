@@ -97,7 +97,7 @@ class UpdatePowerJob extends Job
                 // 团队业绩
                 $parent->user->save();
             }
-
+            var_dump($upgrade_users);
             foreach ($upgrade_users as $user) {
                 $team_power = $userService->getSmallPerformance($user, null, true);
                 $user->team_power = $team_power;
