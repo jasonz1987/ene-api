@@ -407,8 +407,8 @@ class MineController extends AbstractController
 
             Db::commit();
 
-//            $queueService = ApplicationContext::getContainer()->get(QueueService::class);
-//            $queueService->pushWithdraw($log->id,1);
+            $queueService = ApplicationContext::getContainer()->get(QueueService::class);
+            $queueService->pushWithdraw($log->id,1);
 
             return [
                 'code'    => 200,
