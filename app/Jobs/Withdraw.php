@@ -76,13 +76,13 @@ class Withdraw extends Job
                 } else {
                     $log->error = $body['message'];
                     $log->save();
-                    Log::get()->error(sprintf('提现失败：%s' ,$body['message']));
+                    Log::get()->error(sprintf('提现失败1：%s' ,$body['message']));
                 }
             } else {
-                Log::get()->error(sprintf('提现失败：%s' ,$response->getStatusCode()));
+                Log::get()->error(sprintf('提现失败2：%s' ,$response->getStatusCode()));
             }
         } catch (\Exception $e) {
-            Log::get()->error(sprintf('提现失败：%s' , $e->getMessage()));
+            Log::get()->error(sprintf('提现失败3：%s' , $e->getMessage()));
         }
 
 
