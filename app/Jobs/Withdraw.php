@@ -61,7 +61,9 @@ class Withdraw extends Job
             // $client 为协程化的 GuzzleHttp\Client 对象
             $client = $clientFactory->create($options);
 
-            $url = sprintf('http://localhost:3001?to=%s&amount=%s', $log->user->address, $log->amount);
+            $amount = BigDecimal::of($log->amount)->toScale(6, RoundingMode::DOWN);
+
+            $url = sprintf('http://localhost:3001?to=%s&amount=%s', $log->user->address, (string)$amount);
 
             $response = $client->request('GET', $url);
 
