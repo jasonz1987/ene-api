@@ -91,18 +91,18 @@ class UnitTest extends HyperfCommand
                   if ($response->getStatusCode() == 200) {
                       $body = json_decode($response->getBody()->getContents(), TRUE);
                       if ($body['code'] == 200) {
-                          $log->tx_id = $body['code']['txId'];
+                          $log->tx_id = $body['data']['txId'];
                           $log->save();
                       } else {
                           $log->error = $body['message'];
                           $log->save();
                       }
-                      Log::get()->info(sprintf('发送手续费成功：%s' , $response->getBody()->getContents()));
+                      \App\Utils\Log::get()->info(sprintf('发送手续费成功：%s' , $response->getBody()->getContents()));
                   } else {
-                      Log::get()->error(sprintf('发送手续费失败：%s' ,$response->getStatusCode()));
+                      \App\Utils\Log::get()->error(sprintf('发送手续费失败：%s' ,$response->getStatusCode()));
                   }
               } catch (\Exception $e) {
-                  Log::get()->error(sprintf('发送手续费失败：%s' , $e->getMessage()));
+                  \App\Utils\Log::get()->error(sprintf('发送手续费失败：%s' , $e->getMessage()));
               }
 
               sleep(5);
