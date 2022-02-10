@@ -63,7 +63,7 @@ class UnitTest extends HyperfCommand
 //            'power' => 200
 //        ]);
 
-        $queueService->pushUpdatePower($this->input->getArgument('uid'));
+        $queueService->pushWithdraw($this->input->getArgument('uid'));
 
 //        $user = User::find($this->input->getArgument('uid'));
 //        $power = $userService->getSharePower($user);
