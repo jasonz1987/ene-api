@@ -68,16 +68,17 @@ class Withdraw extends Job
             $response = $client->request('GET', $url);
 
             if ($response->getStatusCode() == 200) {
-                Log::get()->info(sprintf('提现成功：%s' , $response->getBody()->getContents()));
-                $body = json_decode($response->getBody()->getContents(), true);
-                var_dump($body);
-                if ($body['code'] == 200) {
-                    $log->tx_id = $body['data']['txId'];
+                $content = $response->getBody()->getContents();
+                Log::get()->info(sprintf('提现成功：%s' , $content));
+                $content = json_decode($content, true);
+                var_dump($content);
+                if ($content['code'] == 200) {
+                    $log->tx_id = $content['data']['txId'];
                     $log->save();
                 } else {
-                    $log->error = $body['message'];
+                    $log->error = $content['message'];
                     $log->save();
-                    Log::get()->error(sprintf('提现失败1：%s' ,$body['message']));
+                    Log::get()->error(sprintf('提现失败1：%s' ,$content['message']));
                 }
             } else {
                 Log::get()->error(sprintf('提现失败2：%s' ,$response->getStatusCode()));
