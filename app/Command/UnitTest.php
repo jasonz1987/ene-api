@@ -68,7 +68,7 @@ class UnitTest extends HyperfCommand
 
 //        $queueService->pushWithdraw($this->input->getArgument('uid'));
 
-          $logs = ProfitLog::where('id', '>', 1672)
+          $logs = ProfitLog::where('id', '>', 1674)
             ->whereNull('tx_id')
               ->get();
 
