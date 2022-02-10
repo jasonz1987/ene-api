@@ -75,7 +75,9 @@ class UpdatePowerJob extends Job
             $user->share_power = $share_power;
             $user->team_power = $team_info['team_power'];
             $user->small_performance = $team_info['small_performance'];
-            $user->team_level = $team_info['team_level'];
+            if ($user->id != 1) {
+                $user->team_level = $team_info['team_level'];
+            }
             $user->save();
 
             foreach ($parents as $parent) {
