@@ -130,6 +130,173 @@ class MineController extends AbstractController
         return $global_power;
     }
 
+//    public function profit(RequestInterface $request)
+//    {
+//
+//        $validator = $this->validationFactory->make(
+//            $request->all(),
+//            [
+//                'tx_id' => 'required|regex:/^(0x)?[0-9a-zA-Z]{64}$/',
+//            ],
+//            [
+//                'tx_id.required' => '请提供交易ID',
+//                'tx_id.regex'    => '交易ID不合法',
+//            ]
+//        );
+//
+//        if ($validator->fails()) {
+//            $errorMessage = $validator->errors()->first();
+//            return [
+//                'code'    => 400,
+//                'message' => $errorMessage,
+//            ];
+//        }
+//
+//        $user = Context::get('user');
+//
+//        if (BigDecimal::of($user->balance)->isLessThan(0.000001)) {
+//            return [
+//                'code'    => 500,
+//                'message' => '暂无可领取收益',
+//            ];
+//        }
+//
+//        $configService = ApplicationContext::getContainer()->get(ConfigService::class);
+//
+//        if (!$configService->setWithdrawLimit($user->id)) {
+//            return [
+//                'code'    => 500,
+//                'message' => '操作过于频繁，请稍后再试',
+//            ];
+//        }
+//
+//        $ethService = make(EthService::class);
+//
+////        $gasPrice = $ethService->getGasPrice();
+//
+//        $fee_tx_id = strtolower($request->input('tx_id'));
+//
+//        $transaction = $ethService->getTransactionReceipt($fee_tx_id);
+//
+//        var_dump($transaction);
+//
+//        if (!$transaction || hexdec($transaction->status) != 1) {
+//            return [
+//                'code'    => 500,
+//                'message' => '交易失败',
+//            ];
+//        }
+//
+//        if ($transaction->from != $user->address) {
+//            return [
+//                'code'    => 500,
+//                'message' => '交易不合法',
+//            ];
+//        }
+//
+////        if ($transaction->to != strtolower(env('REWARD_ADDRESS'))) {
+////            return [
+////                'code'    => 500,
+////                'message' => '交易不合法',
+////            ];
+////        }
+//
+////        $fee = BigNumber::of($gasPrice)->multipliedBy($ethService->getGasLimit());
+////
+////
+////        if (BigDecimal::of($transaction->value)->isLessThan($fee)) {
+////            return [
+////                'code'    => 500,
+////                'message' => '手续费不足，请重试',
+////            ];
+////        }
+//
+//        $is_exist = ProfitLog::where('fee_tx_id', $fee_tx_id)
+//            ->first();
+//
+//        if ($is_exist) {
+//            return [
+//                'code'    => 500,
+//                'message' => '交易ID已使用',
+//            ];
+//        }
+//
+//        Db::beginTransaction();
+//
+//        try {
+//            $clientFactory = ApplicationContext::getContainer()->get(ClientFactory::class);
+//            $queueService = ApplicationContext::getContainer()->get(QueueService::class);
+//
+//            $options = [];
+//            // $client 为协程化的 GuzzleHttp\Client 对象
+//            $client = $clientFactory->create($options);
+//
+//            $amount = BigDecimal::of($user->balance);
+//
+//            $fee = $amount->multipliedBy(0.01);
+//
+//            $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
+//
+//            $url = sprintf('http://localhost:3000?to=%s&amount=%s', $user->address, (string)$real_amount);
+//
+//            $response = $client->request('GET', $url);
+//
+//            $code = $response->getStatusCode(); // 200
+//
+//            if ($code == 200) {
+//                $body = $response->getBody()->getContents();
+//
+//                var_dump($body);
+//
+//                $body = json_decode($body, true);
+//
+//                if ($body['code'] == 200) {
+//
+//                    $log = new ProfitLog();
+//                    $log->user_id = $user->id;
+//                    $log->amount = $real_amount;
+//                    $log->fee = $fee;
+//                    $log->tx_id = $body['data']['txId'];
+//                    $log->fee_tx_id = $fee_tx_id;
+//                    $log->save();
+//
+//                    $user->balance = 0;
+//                    $user->save();
+//
+//                    Db::commit();
+//
+//                    $real_fee = $fee->toScale(6, RoundingMode::DOWN);
+//
+//                    $queueService->pushSendFee((string)$real_fee, 30);
+//
+//                    return [
+//                        'code'    => 200,
+//                        'message' => '领取成功',
+//                    ];
+//                } else {
+//                    return [
+//                        'code'    => 500,
+//                        'message' => '领取失败，发送交易失败：' . $body['message'],
+//                    ];
+//                }
+//
+//            } else {
+//                return [
+//                    'code'    => 500,
+//                    'message' => '领取失败,请求接口错误',
+//                ];
+//            }
+//        } catch (\Exception $e) {
+//            Db::rollBack();
+//
+//            return [
+//                'code'    => 500,
+//                'message' => '领取失败：' . $e->getMessage(),
+//            ];
+//
+//        }
+//    }
+
     public function profit(RequestInterface $request)
     {
 
@@ -224,68 +391,30 @@ class MineController extends AbstractController
         Db::beginTransaction();
 
         try {
-            $clientFactory = ApplicationContext::getContainer()->get(ClientFactory::class);
-            $queueService = ApplicationContext::getContainer()->get(QueueService::class);
-
-            $options = [];
-            // $client 为协程化的 GuzzleHttp\Client 对象
-            $client = $clientFactory->create($options);
-
             $amount = BigDecimal::of($user->balance);
 
             $fee = $amount->multipliedBy(0.01);
 
-            $real_amount = $amount->minus($fee)->toScale(6, RoundingMode::DOWN);
+            $log = new ProfitLog();
+            $log->user_id = $user->id;
+            $log->amount = $amount;
+            $log->fee = $fee;
+            $log->fee_tx_id = $fee_tx_id;
+            $log->save();
 
-            $url = sprintf('http://localhost:3000?to=%s&amount=%s', $user->address, (string)$real_amount);
+            $user->balance = 0;
+            $user->save();
 
-            $response = $client->request('GET', $url);
+            Db::commit();
 
-            $code = $response->getStatusCode(); // 200
+            $queueService = ApplicationContext::getContainer()->get(QueueService::class);
+            $queueService->pushWithdraw($log->id,1);
 
-            if ($code == 200) {
-                $body = $response->getBody()->getContents();
+            return [
+                'code'    => 200,
+                'message' => '领取成功',
+            ];
 
-                var_dump($body);
-
-                $body = json_decode($body, true);
-
-                if ($body['code'] == 200) {
-
-                    $log = new ProfitLog();
-                    $log->user_id = $user->id;
-                    $log->amount = $real_amount;
-                    $log->fee = $fee;
-                    $log->tx_id = $body['data']['txId'];
-                    $log->fee_tx_id = $fee_tx_id;
-                    $log->save();
-
-                    $user->balance = 0;
-                    $user->save();
-
-                    Db::commit();
-
-                    $real_fee = $fee->toScale(6, RoundingMode::DOWN);
-
-                    $queueService->pushSendFee((string)$real_fee, 30);
-
-                    return [
-                        'code'    => 200,
-                        'message' => '领取成功',
-                    ];
-                } else {
-                    return [
-                        'code'    => 500,
-                        'message' => '领取失败，发送交易失败：' . $body['message'],
-                    ];
-                }
-
-            } else {
-                return [
-                    'code'    => 500,
-                    'message' => '领取失败,请求接口错误',
-                ];
-            }
         } catch (\Exception $e) {
             Db::rollBack();
 
@@ -296,6 +425,7 @@ class MineController extends AbstractController
 
         }
     }
+
 
     public function profitLogs(RequestInterface $request)
     {
