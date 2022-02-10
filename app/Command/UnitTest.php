@@ -8,6 +8,7 @@ use _HumbugBoxa9bfddcdef37\Nette\Neon\Exception;
 use App\Model\BurnLog;
 use App\Model\DepositLog;
 use App\Model\InvitationLog;
+use App\Model\ProfitLog;
 use App\Model\StakeLog;
 use App\Model\User;
 use App\Service\QueueService;
@@ -20,6 +21,8 @@ use http\Exception\RuntimeException;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\DbConnection\Db;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Utils\ApplicationContext;
 use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -63,7 +66,48 @@ class UnitTest extends HyperfCommand
 //            'power' => 200
 //        ]);
 
-        $queueService->pushWithdraw($this->input->getArgument('uid'));
+//        $queueService->pushWithdraw($this->input->getArgument('uid'));
+
+          $logs = ProfitLog::where('id', '>', 1672)
+            ->whereNull('tx_id')
+              ->get();
+
+          foreach ($logs as $log) {
+              try {
+                  $clientFactory  = ApplicationContext::getContainer()->get(ClientFactory::class);
+
+                  $options = [];
+                  // $client 为协程化的 GuzzleHttp\Client 对象
+                  $client = $clientFactory->create($options);
+
+                  $real_amount = BigDecimal::of($log->amount)->minus($log->fee)->toScale(6, RoundingMode::DOWN);
+
+                  $url = sprintf('http://localhost:3000?to=%s&amount=%s', $log->user->address, (string)($real_amount));
+
+                  \App\Utils\Log::get()->info(sprintf('URL：%s' , $url));
+
+                  $response = $client->request('GET', $url);
+
+                  if ($response->getStatusCode() == 200) {
+                      $body = json_decode($response->getBody()->getContents(), TRUE);
+                      if ($body['code'] == 200) {
+                          $log->tx_id = $body['code']['txId'];
+                          $log->save();
+                      } else {
+                          $log->error = $body['message'];
+                          $log->save();
+                      }
+                      Log::get()->info(sprintf('发送手续费成功：%s' , $response->getBody()->getContents()));
+                  } else {
+                      Log::get()->error(sprintf('发送手续费失败：%s' ,$response->getStatusCode()));
+                  }
+              } catch (\Exception $e) {
+                  Log::get()->error(sprintf('发送手续费失败：%s' , $e->getMessage()));
+              }
+
+              sleep(5);
+
+          }
 
 //        $user = User::find($this->input->getArgument('uid'));
 //        $power = $userService->getSharePower($user);
