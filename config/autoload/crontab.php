@@ -14,6 +14,9 @@ return [
         (new Crontab())->setType('command')->setName('CheckProfit')->setRule('* * * * *')->setCallback([
             'command' => 'check:profit',
         ]),
+        (new Crontab())->setType('command')->setName('CheckLpProfit')->setRule('* * * * *')->setCallback([
+            'command' => 'check:lp-profit',
+        ]),
         (new Crontab())->setType('command')->setName('GetPrice')->setRule('* * * * *')->setCallback([
             'command' => 'get:price',
         ]),

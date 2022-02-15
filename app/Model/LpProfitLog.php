@@ -5,14 +5,14 @@ namespace App\Model;
 
 /**
  */
-class WxProfitLog extends Model
+class LpProfitLog extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'wx_profit_logs';
+    protected $table = 'lp_profit_logs';
     /**
      * The attributes that are mass assignable.
      *
