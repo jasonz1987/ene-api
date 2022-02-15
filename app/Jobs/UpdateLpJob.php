@@ -84,13 +84,7 @@ class UpdateLpJob extends Job
         $children = $user->children()->where('level', '<=', 2)->with('child')->orderBy('level', 'asc')->get();
 
         foreach ($children as $child) {
-            if (BigDecimal::of($child->child->total_equipment_power)->isGreaterThan($user->total_equipment_power)) {
-                $power = $user->total_equipment_power;
-            } else {
-                $power = $child->child->total_equipment_power;
-            }
-
-            $total_power = $total_power->plus(BigDecimal::of($power)->multipliedBy($this->getShareRate($child->level)));
+            $total_power = $total_power->plus(BigDecimal::of($child->child->stake_lp)->multipliedBy($this->getShareRate($child->level)));
         }
 
         return $total_power;
@@ -98,7 +92,7 @@ class UpdateLpJob extends Job
 
     public function getShareRate($level) {
         $levels = [
-            1 =>0.5,
+            1 => 0.5,
             2 => 0.3
         ];
 

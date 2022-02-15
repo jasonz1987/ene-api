@@ -164,9 +164,8 @@ class CheckStake extends HyperfCommand
                         Db::commit();
 
                         // TODO 更新上级的分享算力和团队算力
-                        $queueService->pushUpdatePower([
+                        $queueService->pushUpdateLp([
                             'user_id'        => $user->id,
-                            'power' => $decodedData['power']
                         ]);
 
                     } catch (\Exception $e) {
