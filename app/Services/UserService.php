@@ -142,8 +142,8 @@ class UserService
      */
     public function getShareRate($level) {
         $levels = [
-            1 =>0.5,
-            2 => 0.3
+            1 => 0.3,
+            2 => 0.2
         ];
 
         return isset($levels[$level]) ? $levels[$level] : 0;
