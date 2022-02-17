@@ -19,7 +19,7 @@ Router::addRoute(['POST', 'HEAD'], '/api/auth/token', 'App\Controller\Api\AuthCo
 Router::addGroup('/api',function (){
     Router::addRoute(['GET', 'HEAD'], '/mine/index', 'App\Controller\Api\MineController@index');
     Router::addRoute(['POST', 'HEAD'], '/mine/profit', 'App\Controller\Api\MineController@profit');
-    Router::addRoute(['POST', 'HEAD'], '/lp/index', 'App\Controller\Api\LpController@profit');
+    Router::addRoute(['GET', 'HEAD'], '/lp/index', 'App\Controller\Api\LpController@index');
     Router::addRoute(['POST', 'HEAD'], '/lp/profit', 'App\Controller\Api\LpController@profit');
 
 },
