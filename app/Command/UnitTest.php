@@ -66,17 +66,17 @@ class UnitTest extends HyperfCommand
 //            'power' => 200
 //        ]);
 
-        $users = User::where('equipment_power', '>' ,0)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        foreach ($users as $user) {
-            $share_power = $userService->getSharePower($user, null, true);
-            $user->share_power = $share_power;
-            $user->save();
-
-            sleep(1);
-        }
+//        $users = User::where('equipment_power', '>' ,0)
+//            ->orderBy('id', 'desc')
+//            ->get();
+//
+//        foreach ($users as $user) {
+//            $share_power = $userService->getSharePower($user, null, true);
+//            $user->share_power = $share_power;
+//            $user->save();
+//
+//            sleep(1);
+//        }
 
 //        $queueService->pushWithdraw($this->input->getArgument('uid'));
 
