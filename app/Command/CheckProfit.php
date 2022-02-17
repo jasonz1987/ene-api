@@ -56,6 +56,7 @@ class CheckProfit extends HyperfCommand
         $ethService = make(EthService::class);
 
         $logs = ProfitLog::where('status', '=', 0)
+            ->whereNotNull('tx_id')
             ->where('created_at', '<=', Carbon::now()->subMinutes(100))
             ->get();
 
