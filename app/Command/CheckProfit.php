@@ -57,7 +57,7 @@ class CheckProfit extends HyperfCommand
 
         $logs = ProfitLog::where('status', '=', 0)
             ->whereNotNull('tx_id')
-            ->where('created_at', '<=', Carbon::now()->subMinutes(100))
+            ->where('created_at', '<=', Carbon::now()->subMinutes(5))
             ->get();
 
         foreach ($logs as $log) {
