@@ -20,6 +20,10 @@ return [
         (new Crontab())->setType('command')->setName('GetPrice')->setRule('* * * * *')->setCallback([
             'command' => 'get:price',
         ]),
+
+        (new Crontab())->setType('command')->setName('CheckStake')->setRule('* * * * *')->setCallback([
+            'command' => 'check:stake',
+        ]),
 //        (new Crontab())->setType('command')->setName('CheckEvent')->setRule('*/5 * * * *')->setCallback([
 //            'command' => 'check:event',
 //        ]),
