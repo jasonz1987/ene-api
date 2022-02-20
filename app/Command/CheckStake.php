@@ -147,16 +147,18 @@ class CheckStake extends HyperfCommand
                             ->first();
 
                         if ($user) {
+                            $amount = BigDecimal::of($decodedData['amount'])->dividedBy(1e18, 18, RoundingMode::DOWN);
+
                             $log = new StakeLog();
                             $log->user_id = $user->id;
                             $log->tx_id = $object->transactionHash;
                             $log->index = $decodedData['index'];
                             $log->block_number = hexdec($object->blockNumber);
-                            $log->amount = $decodedData['amount'];
+                            $log->amount = $amount;
                             $log->period = $decodedData['period'];
                             $log->save();
 
-                            $user->increment('stake_lp', (string)$decodedData['amount']);
+                            $user->increment('stake_lp', (string)$amount);
                             $user->save();
 
                         }
