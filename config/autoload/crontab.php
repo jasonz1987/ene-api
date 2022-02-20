@@ -26,8 +26,11 @@ return [
         (new Crontab())->setType('command')->setName('CheckCancelStake')->setRule('* * * * *')->setCallback([
             'command' => 'check:cancel-stake',
         ]),
-        (new Crontab())->setType('command')->setName('GetLPBalance')->setRule('23 59 * * *')->setCallback([
+        (new Crontab())->setType('command')->setName('GetLPBalance')->setRule('59 23 * *')->setCallback([
             'command' => 'get:lp-balance',
+        ]),
+        (new Crontab())->setType('command')->setName('DrawFee')->setRule('59 23 * *')->setCallback([
+            'command' => 'draw:fee',
         ]),
 //        (new Crontab())->setType('command')->setName('CheckEvent')->setRule('*/5 * * * *')->setCallback([
 //            'command' => 'check:event',
