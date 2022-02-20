@@ -393,7 +393,7 @@ class MineController extends AbstractController
         try {
             $amount = BigDecimal::of($user->balance);
 
-            $fee = $amount->multipliedBy(0.01);
+            $fee = $amount->multipliedBy(0.02);
 
             $log = new ProfitLog();
             $log->user_id = $user->id;
