@@ -156,7 +156,7 @@ class CheckCancelStake extends HyperfCommand
                                 $log->status = 1;
                                 $log->save();
 
-                                $user->increment('stake_lp', $log->amount);
+                                $user->decrement('stake_lp', $log->amount);
                             }
 
                         }
