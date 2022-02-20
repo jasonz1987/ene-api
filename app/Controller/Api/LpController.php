@@ -52,7 +52,7 @@ class LpController extends AbstractController
         // 获取挖矿算力
         $stake_lp = $user->stake_lp;
         // 获取分享算力
-        $share_lp = $stake_lp >0 ? $user->share_lp : 4;
+        $share_lp = $stake_lp >0 ? $user->share_lp : 0;
 
         // 累计个人算力
         $total_lp = BigDecimal::of($stake_lp)->plus($share_lp);
@@ -70,12 +70,12 @@ class LpController extends AbstractController
             'message' => "",
             'data'    => [
                 'global' => [
-                    'total_lp' => MyNumber::formatPower($global_lp, 4),
+                    'total_lp' => MyNumber::formatCpu($global_lp, 4),
                 ],
                 'my'     => [
-                    'total_lp' => MyNumber::formatPower($total_lp, 4),
-                    'stake_lp' => MyNumber::formatPower($stake_lp, 4),
-                    'share_lp' => MyNumber::formatPower($share_lp, 4),
+                    'total_lp' => MyNumber::formatCpu($total_lp, 4),
+                    'stake_lp' => MyNumber::formatCpu($stake_lp, 4),
+                    'share_lp' => MyNumber::formatCpu($share_lp, 4),
                     'balance'  => MyNumber::formatCpu($user->lp_balance),
                 ]
             ]
