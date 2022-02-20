@@ -20,9 +20,14 @@ return [
         (new Crontab())->setType('command')->setName('GetPrice')->setRule('* * * * *')->setCallback([
             'command' => 'get:price',
         ]),
-
         (new Crontab())->setType('command')->setName('CheckStake')->setRule('* * * * *')->setCallback([
             'command' => 'check:stake',
+        ]),
+        (new Crontab())->setType('command')->setName('CheckCancelStake')->setRule('* * * * *')->setCallback([
+            'command' => 'check:cancel-stake',
+        ]),
+        (new Crontab())->setType('command')->setName('GetLPBalance')->setRule('23 59 * * *')->setCallback([
+            'command' => 'get:lp-balance',
         ]),
 //        (new Crontab())->setType('command')->setName('CheckEvent')->setRule('*/5 * * * *')->setCallback([
 //            'command' => 'check:event',

@@ -54,6 +54,11 @@ class ConfigService
         return $redis->set('ene_price', $price);
     }
 
+    public function setEneLPBalance($balance) {
+        $redis = $this->container->get(Redis::class);
+        return $redis->set('ene_lp_balance', $balance);
+    }
+
     public function setWithdrawLimit($uid,$time = 10) {
         $redis = $this->container->get(Redis::class);
         return $redis->set(sprintf("withdraw-limit:%s", $uid,), time(), ['nx', 'ex' => $time]);
