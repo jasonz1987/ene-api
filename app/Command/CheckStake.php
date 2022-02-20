@@ -157,7 +157,6 @@ class CheckStake extends HyperfCommand
                             $log->save();
 
                             $user->increment('stake_lp', (string)$decodedData['amount']);
-                            $user->increment('total_lp', (string)$decodedData['amount']);
                             $user->save();
 
                         }
